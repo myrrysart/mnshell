@@ -13,7 +13,6 @@
 #ifndef MINISHELL_H
 # define MINISHELL_H
 
-
 // PATH_MAX
 # include <limits.h>
 // STDIN_FILENO, STDOUT_FILENO, STDERR_FILENO
@@ -21,20 +20,19 @@
 // exit()
 # include <stdlib.h>
 // readline
-# include <stdio.h>
-# include <readline/readline.h>
 # include <readline/history.h>
+# include <readline/readline.h>
+# include <stdio.h>
 // sigaction & signals
-# include <signal.h>
 # include "libft.h"
+# include <signal.h>
 
 # define MAX_PROCESSES 30587
 # define ARG_MAX 4096
 
-
 extern volatile sig_atomic_t	g_received_signal;
 
-typedef	enum e_shell_code
+typedef enum e_shell_code
 {
 	OK = 0,
 	EXIT_GENERAL_ERROR = 1,
@@ -49,58 +47,58 @@ typedef	enum e_shell_code
 	EXIT_PARSE_ERROR = 67,
 	EXIT_REDIRECT_ERROR = 68,
 	EXIT_CAN_RETRY = 123
-} t_shell_code;
+}								t_shell_code;
 
-typedef	enum e_shell_state
+typedef enum e_shell_state
 {
 	SHELL_DEFAULT = 0,
-	EVALUATING = (1<<0),
-	WAITING_CHILD = (1<<1),
-	IN_HEREDOC = (1<<2),
-	NON_INTERACTIVE = (1<<3),
-	SHOULD_EXIT = (1<<4),
-	HAS_PIPE = (1<<5),
-	HAS_INPUT_REDIR = (1<<6),
-	HAS_OUTPUT_REDIR = (1<<7),
-	HAS_BUILTIN = (1<<8),
-	SUPPRESS_PROMPT = (1<<9)
-} t_shell_state;
+	EVALUATING = (1 << 0),
+	WAITING_CHILD = (1 << 1),
+	IN_HEREDOC = (1 << 2),
+	NON_INTERACTIVE = (1 << 3),
+	SHOULD_EXIT = (1 << 4),
+	HAS_PIPE = (1 << 5),
+	HAS_INPUT_REDIR = (1 << 6),
+	HAS_OUTPUT_REDIR = (1 << 7),
+	HAS_BUILTIN = (1 << 8),
+	SUPPRESS_PROMPT = (1 << 9)
+}								t_shell_state;
 
-typedef	struct s_shell
+typedef struct s_shell
 {
-	t_shell_state	state;
-	t_shell_code	code;
-	t_shell_code	last_code;
+	t_shell_state				state;
+	t_shell_code				code;
+	t_shell_code				last_code;
 
-	char			command_line[ARG_MAX];
-	char			*args[ARG_MAX];
-	int				argc;
+	char						command_line[ARG_MAX];
+	char						*args[ARG_MAX];
+	int							argc;
 
-	int				input_fd;
-	int				output_fd;
-	int				error_fd;
+	int							input_fd;
+	int							output_fd;
+	int							error_fd;
 
-	int				pipe_read_fd;
-	int				pipe_write_fd;
+	int							pipe_read_fd;
+	int							pipe_write_fd;
 
-	pid_t			process_id[MAX_PROCESSES];
-	int				process_exit_status[MAX_PROCESSES];
+	pid_t						process_id[MAX_PROCESSES];
+	int							process_exit_status[MAX_PROCESSES];
 
-	char			**env_vars;
-	char			working_directory[PATH_MAX];
+	char						**env_vars;
+	char						working_directory[PATH_MAX];
 
-	int				token_index[ARG_MAX];
-	int				token_types[ARG_MAX];
-	int				token_count;
+	int							token_index[ARG_MAX];
+	int							token_types[ARG_MAX];
+	int							token_count;
 
-	struct sigaction	saved_sigint;
-	struct sigaction	saved_sigquit;
-	struct sigaction	saved_sigterm;
-}	t_shell;
+	struct sigaction			saved_sigint;
+	struct sigaction			saved_sigquit;
+	struct sigaction			saved_sigterm;
+}								t_shell;
 
-void	init_signals(t_shell *shell);
-void	init_shell(int ac, char **av, t_shell *shell);
-void	run_shell(t_shell *shell);
-void	handle_signal(t_shell *shell, int sig);
+void							init_signals(t_shell *shell);
+void							init_shell(int ac, char **av, t_shell *shell);
+void							run_shell(t_shell *shell);
+void							handle_signal(t_shell *shell, int sig);
 
-#endif//MINISHELL_H
+#endif // MINISHELL_H

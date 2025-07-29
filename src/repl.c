@@ -6,20 +6,19 @@
 /*   By: jyniemit <jyniemit@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/29 12:37:53 by jyniemit          #+#    #+#             */
-/*   Updated: 2025/07/29 14:50:17 by jyniemit         ###   ########.fr       */
+/*   Updated: 2025/07/29 15:27:14 by jyniemit         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-void init_shell(int ac, char **av, t_shell *shell)
+	/*TODO: On ac and av: need to figure out if child process shells need these
+	* things, ortesting or something else. Now I'm just casting them to the
+	* void, but keeping them until we know for sure*/
+void	init_shell(int ac, char **av, t_shell *shell)
 {
-	/*TODO: need to figure out if child process shells need these things, or
-	 * testing or something else. Now I'm just casting them to the void, but
-	 * keeping them until we know for sure*/
 	(void)ac;
 	(void)av;
-	
 	shell->state = 0;
 	shell->code = OK;
 	shell->last_code = OK;
@@ -37,7 +36,9 @@ void init_shell(int ac, char **av, t_shell *shell)
 	}
 }
 
-static void parse_and_execute(t_shell *shell)
+	/* TODO: parsing goes here. Currently just calling a printf to tell
+	 * what has been written on the command line*/
+static void	parse_and_execute(t_shell *shell)
 {
 	if (!(shell->state & EVALUATING))
 		return ;
@@ -48,15 +49,14 @@ static void parse_and_execute(t_shell *shell)
 		shell->state |= SHOULD_EXIT;
 		return ;
 	}
-	/* TODO: parsing goes here. */
 	printf("Command received: %s\n", shell->command_line);
 	shell->code = OK;
 	shell->state &= ~EVALUATING;
 }
 
-void run_shell(t_shell *shell)
+void	run_shell(t_shell *shell)
 {
-	char *line;
+	char	*line;
 
 	while (!(shell->state & SHOULD_EXIT))
 	{
@@ -67,7 +67,7 @@ void run_shell(t_shell *shell)
 		{
 			write(STDOUT_FILENO, "exit\n", 5);
 			shell->state |= SHOULD_EXIT;
-			break;
+			break ;
 		}
 		if (*line)
 		{

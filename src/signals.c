@@ -6,15 +6,15 @@
 /*   By: jyniemit <jyniemit@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/29 14:30:38 by jyniemit          #+#    #+#             */
-/*   Updated: 2025/07/29 14:30:57 by jyniemit         ###   ########.fr       */
+/*   Updated: 2025/07/29 15:29:01 by jyniemit         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-volatile sig_atomic_t g_received_signal = 0;
+volatile sig_atomic_t	g_received_signal = 0;
 
-void signal_handler(int sig)
+void	signal_handler(int sig)
 {
 	g_received_signal = sig;
 	if (sig == SIGINT)
@@ -26,20 +26,19 @@ void signal_handler(int sig)
 	}
 }
 
-void init_signals(t_shell *shell)
+void	init_signals(t_shell *shell)
 {
-	struct sigaction sa;
+	struct sigaction	sa;
 
 	sa.sa_handler = signal_handler;
 	sigemptyset(&sa.sa_mask);
 	sa.sa_flags = 0;
-
 	sigaction(SIGINT, &sa, &shell->saved_sigint);
 	sigaction(SIGQUIT, &sa, &shell->saved_sigquit);
 	sigaction(SIGTERM, &sa, &shell->saved_sigterm);
 }
 
-void handle_signal(t_shell *shell, int sig)
+void	handle_signal(t_shell *shell, int sig)
 {
 	if (sig == SIGINT)
 	{
@@ -47,4 +46,3 @@ void handle_signal(t_shell *shell, int sig)
 	}
 	g_received_signal = 0;
 }
-

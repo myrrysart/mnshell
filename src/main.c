@@ -22,7 +22,3 @@ int	main(int ac, char **av)
 	run_shell(&shell);
 	return (shell.code);
 }
-
-
-	
-
