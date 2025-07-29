@@ -1,28 +1,18 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   main.c                                             :+:      :+:    :+:   */
+/*   ft_bzero.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jyniemit <jyniemit@student.hive.fi>        +#+  +:+       +#+        */
+/*   By: Jyniemit <jyniemit@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/07/29 14:50:29 by jyniemit          #+#    #+#             */
-/*   Updated: 2025/07/29 15:12:40 by jyniemit         ###   ########.fr       */
+/*   Created: 2024/11/11 12:40:08 by Jyniemit          #+#    #+#             */
+/*   Updated: 2024/11/11 12:40:55 by Jyniemit         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "minishell.h"
+#include "libft.h"
 
-int	main(int ac, char **av)
+void	ft_bzero(void *s, size_t n)
 {
-	t_shell	shell;
-
-	init_signals(&shell);
-	ft_bzero(&shell, sizeof(t_shell));
-	init_shell(ac, av, &shell);
-	run_shell(&shell);
-	return (shell.code);
+	ft_memset(s, 0, n);
 }
-
-
-	
-

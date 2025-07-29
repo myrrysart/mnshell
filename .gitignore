@@ -1,0 +1,5 @@
+include/libft/build
+include/libft/libft.a
+obj
+minishell
+old_Makefile

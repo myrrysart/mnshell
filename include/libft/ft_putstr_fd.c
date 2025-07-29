@@ -1,28 +1,20 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   main.c                                             :+:      :+:    :+:   */
+/*   ft_putstr_fd.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jyniemit <jyniemit@student.hive.fi>        +#+  +:+       +#+        */
+/*   By: Jyniemit <jyniemit@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/07/29 14:50:29 by jyniemit          #+#    #+#             */
-/*   Updated: 2025/07/29 15:12:40 by jyniemit         ###   ########.fr       */
+/*   Created: 2024/11/11 13:07:11 by Jyniemit          #+#    #+#             */
+/*   Updated: 2024/11/11 13:07:39 by Jyniemit         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "minishell.h"
+#include "libft.h"
 
-int	main(int ac, char **av)
+void	ft_putstr_fd(char *s, int fd)
 {
-	t_shell	shell;
-
-	init_signals(&shell);
-	ft_bzero(&shell, sizeof(t_shell));
-	init_shell(ac, av, &shell);
-	run_shell(&shell);
-	return (shell.code);
+	if (!s)
+		return ;
+	write(fd, s, ft_strlen(s));
 }
-
-
-	
-

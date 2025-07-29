@@ -1,28 +1,41 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   main.c                                             :+:      :+:    :+:   */
+/*   handle_hex_up.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: jyniemit <jyniemit@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/07/29 14:50:29 by jyniemit          #+#    #+#             */
-/*   Updated: 2025/07/29 15:12:40 by jyniemit         ###   ########.fr       */
+/*   Created: 2025/04/18 14:23:22 by jyniemit          #+#    #+#             */
+/*   Updated: 2025/04/28 14:38:31 by jyniemit         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
+#include "libft.h"
 
-#include "minishell.h"
-
-int	main(int ac, char **av)
+int	handle_hex_up(va_list args)
 {
-	t_shell	shell;
+	char			str[16];
+	int				i;
+	unsigned int	num;
+	int				count;
 
-	init_signals(&shell);
-	ft_bzero(&shell, sizeof(t_shell));
-	init_shell(ac, av, &shell);
-	run_shell(&shell);
-	return (shell.code);
+	i = 0;
+	count = 0;
+	num = va_arg(args, unsigned int);
+	if (num == 0)
+	{
+		write(1, "0", 1);
+		return (1);
+	}
+	while (num > 0)
+	{
+		str[i] = HEXHIGH[num % 16];
+		num /= 16;
+		i++;
+	}
+	while (i-- > 0)
+	{
+		write(1, &str[i], 1);
+		count++;
+	}
+	return (count);
 }
-
-
-	
-
