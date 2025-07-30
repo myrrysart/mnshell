@@ -17,12 +17,11 @@
 # include <limits.h>
 // STDIN_FILENO, STDOUT_FILENO, STDERR_FILENO
 # include <unistd.h>
-// exit()
-# include <stdlib.h>
 // readline
+# include <stdio.h>
+# include <stdlib.h>
 # include <readline/history.h>
 # include <readline/readline.h>
-# include <stdio.h>
 // sigaction & signals
 # include "libft.h"
 # include <signal.h>

@@ -53,7 +53,16 @@ SRCS = ft_atoi.c		\
 		handle_d.c		\
 		handle_p.c		\
 		handle_hex_low.c\
-		handle_hex_up.c
+		handle_hex_up.c \
+		ft_lstadd_back_bonus.c \
+		ft_lstadd_front_bonus.c \
+		ft_lstclear_bonus.c \
+		ft_lstdelone_bonus.c \
+		ft_lstiter_bonus.c \
+		ft_lstlast_bonus.c \
+		ft_lstmap_bonus.c \
+		ft_lstnew_bonus.c \
+		ft_lstsize_bonus.c \
 
 FLAGS = -Wall -Wextra -Werror
 OBJSDIR = ./build/
