@@ -14,9 +14,9 @@ NAME = minishell
 
 CC = cc
 CFLAGS = -Wall -Wextra -Werror
-LIBFTDIR = ./include/libft/
+LIBFTDIR = ./libft/
 LIBFT = $(LIBFTDIR)libft.a
-INCLUDES = -I./include -I$(LIBFTDIR)
+INCLUDES = -I. -I./include -I$(LIBFTDIR)
 LIBS = -lreadline $(LIBFT)
 
 SRCDIR = src
@@ -46,9 +46,11 @@ $(LIBFT):
 
 clean:
 	rm -rf $(OBJDIR)
+	make -C $(LIBFTDIR) clean
 
 fclean: clean
 	rm -f $(NAME)
+	make -C $(LIBFTDIR) fclean
 
 debug: fclean
 	@make -C $(LIBFTDIR) debug
