@@ -1,0 +1,60 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   test_lexer.c                                       :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: trupham <trupham@student.hive.fi>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/08/08 15:12:10 by trupham           #+#    #+#             */
+/*   Updated: 2025/08/08 15:12:48 by trupham          ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
+#include "../include/lexer.h"
+#include "arena.h"
+
+char *print_token_type2(t_token_type type)
+{
+	switch (type) {
+		case END: return "token end";
+		case SQUOTE: return "single quote";
+		case DQUOTE: return "double quote";
+		case WORD: return "word";
+		case HEREDOC: return "heredoc";
+		case REDIRECT_IN: return "redirect in";
+		case REDIRECT_OUT: return "redirect out";
+		case PIPE: return "pipe";
+		case APPEND: return "append";
+		case DOLLAR: return "dollar sign";
+		default: return "invalid";
+	}
+}
+
+int main()
+{
+	t_lexer l = build_lexer("hello world | >out | wc -l >> \'");
+	
+	// t_token *t = build_token(get_next_token(&l));
+	// printf("token text: %s token len: %zu\n", t->text, t->text_len);
+	// t_token *t1 = build_token(get_next_token(&l));
+	// t_token t1 = get_next_token(&l);
+	// printf("%s token size %zu\n", t1.text, t1.text_len);
+	// t_token *t2 = build_token(get_next_token(&l));
+	// printf("token text: %s token size %zu\n", t2->text, t2->text_len);
+	// t_token *t3 = build_token(get_next_token(&l));
+	// printf("token text: %s token size %zu\n", t3->text, t3->text_len);
+
+	// while (t.type != END)
+	// {
+	// 	printf("%s %.*s\n", print_token_type2(t.type), (int)t.text_len, t.text);
+	// 	t = get_next_token(&l);
+	// }
+
+	t_token *t = build_token_list(&l);
+	while (t)
+	{
+		printf("(%s): %s\n", print_token_type2(t->type), t->text);
+		t = t->next;
+	}
+	arena_free(get_static_arena());
+}

@@ -9,7 +9,7 @@
 #    Updated: 2025/07/29 14:32:03 by jyniemit         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
-
+MAKEFLAGS += --no-print-directory
 NAME = minishell
 
 CC = cc
@@ -18,24 +18,31 @@ LIBFTDIR = ./libft/
 LIBFT = $(LIBFTDIR)libft.a
 INCLUDES = -I. -I./include -I$(LIBFTDIR)
 LIBS = -lreadline $(LIBFT)
+TESTDIR = ./test/
 
 SRCDIR = src
 OBJDIR = obj
 
-SOURCES = \
-		  main.c	\
-		  repl.c	\
-		  signals.c
+SOURCES = repl.c	\
+		  signals.c \
+		  lexer.c 	\
+		  arena.c \
+
+SRCMAIN = $(SRCDIR)/main.c
+OBJMAIN = $(OBJDIR)/main.o
 
 OBJECTS = $(SOURCES:%.c=$(OBJDIR)/%.o)
 SRCFILES = $(addprefix $(SRCDIR)/, $(SOURCES))
 
 all: $(NAME)
 
-$(NAME): $(OBJECTS) $(LIBFT)
-	$(CC) $(OBJECTS) $(LIBS) -o $(NAME)
+$(NAME): $(OBJMAIN) $(OBJECTS) $(LIBFT)
+	$(CC) $(OBJECTS) $(OBJMAIN) $(LIBS) -o $(NAME)
 
 $(OBJDIR)/%.o: $(SRCDIR)/%.c | $(OBJDIR)
+	$(CC) $(CFLAGS) $(INCLUDES) -c $< -o $@
+
+$(OBJMAIN): $(SRCMAIN)
 	$(CC) $(CFLAGS) $(INCLUDES) -c $< -o $@
 
 $(OBJDIR):
@@ -43,6 +50,10 @@ $(OBJDIR):
 
 $(LIBFT):
 	make -C $(LIBFTDIR)
+
+test_lexer: $(TESTDIR)test_lexer.c
+	$(CC) $(OBJECTS) $(TESTDIR)$@.o $(LIBS) -o $(TESTDIR)$@
+	$(CC) $(CFLAGS) $(INCLUDES) -c $< -o $(TESTDIR)$@.o
 
 clean:
 	rm -rf $(OBJDIR)

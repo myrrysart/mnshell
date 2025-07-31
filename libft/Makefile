@@ -63,6 +63,7 @@ SRCS = ft_atoi.c		\
 		ft_lstmap_bonus.c \
 		ft_lstnew_bonus.c \
 		ft_lstsize_bonus.c \
+		ft_isspace.c \
 
 FLAGS = -Wall -Wextra -Werror
 OBJSDIR = ./build/
