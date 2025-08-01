@@ -6,7 +6,7 @@
 /*   By: jyniemit <jyniemit@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/29 13:40:26 by jyniemit          #+#    #+#             */
-/*   Updated: 2025/07/29 14:15:13 by jyniemit         ###   ########.fr       */
+/*   Updated: 2025/08/18 15:27:54 by jyniemit         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -64,7 +64,8 @@ typedef enum e_shell_state
 	HAS_BUILTIN = (1 << 8),
 	SUPPRESS_PROMPT = (1 << 9),
 	IN_SQUOTE = (1 << 10),
-	IN_DQUOTE = (1 << 11)
+	IN_DQUOTE = (1 << 11),
+	ENV_MODIFIED = (1 << 10)
 }								t_shell_state;
 
 typedef struct s_shell
@@ -87,7 +88,10 @@ typedef struct s_shell
 	pid_t						process_id[MAX_PROCESSES];
 	int							process_exit_status[MAX_PROCESSES];
 
-	char						**env_vars;
+	char						**original_env;
+	char						**heap_env;
+	int							env_count;
+	int							env_capacity;
 	char						working_directory[PATH_MAX];
 
 	int							token_index[ARG_MAX];
