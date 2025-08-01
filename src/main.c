@@ -21,6 +21,35 @@ int	main(int ac, char **av)
 	run_shell(&shell);
 	return (shell.code);
 }
+
+int		init_env(t_shell *shell)
+{
+	extern char	**environ;
+	int			i;
+	
+	i = -1;
+	shell->original_env = environ;
+	while (environ[shell->env_count])
+		shell->env_count++;
+	shell->capacity = shell->env_count + 10;
+	shell->heap_env = malloc(sizeof(char *) * (shell->capacity + 1))
+	if(!shell->heap_env)
+		return (0);
+	while (++i < shell->env_count)
+	{
+		shell->heap_env[i] = ft_strdup(environ[i]);
+		if (!shell->heap_env)
+		{
+			while (--i >= 0)
+				free(shell->heap_env);
+			free(shell->heap_env);
+			shell->heap_env = NULL;
+			return (0);
+		}
+	}
+	shell->heap_env[shell->env_count] = NULL;
+	return (1);
+}
 	/*TODO: On ac and av: need to figure out if child process shells need these
 	* things, ortesting or something else. Now I'm just casting them to the
 	* void, but keeping them until we know for sure*/
