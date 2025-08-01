@@ -6,16 +6,13 @@
 /*   By: jyniemit <jyniemit@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/29 14:50:29 by jyniemit          #+#    #+#             */
-/*   Updated: 2025/08/07 11:38:35 by trupham          ###   ########.fr       */
+/*   Updated: 2025/08/18 15:33:43 by jyniemit         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "lexer.h"
-#include "libft.h"
-#include "minishell.h"
-#include "arena.h"
 
-int	main1(int ac, char **av)
+int	main(int ac, char **av)
 {
 	t_shell	shell;
 
@@ -25,50 +22,19 @@ int	main1(int ac, char **av)
 	run_shell(&shell);
 	return (shell.code);
 }
-char *print_token_type2(t_token_type type)
+
+void	init_shell(int ac, char **av, t_shell *shell)
 {
-	switch (type) {
-		case END: return "token end";
-		case SQUOTE: return "single quote";
-		case DQUOTE: return "double quote";
-		case WORD: return "word";
-		case HEREDOC: return "heredoc";
-		case REDIRECT_IN: return "redirect in";
-		case REDIRECT_OUT: return "redirect out";
-		case PIPE: return "pipe";
-		case APPEND: return "append";
-		case DOLLAR: return "dollar sign";
-		default: return "invalid";
-	}
-}
-
-int main()
-{
-	// char *l1 = "hello world | >out | wc -l >> \'";
-	char *l2 = "| >> $|    $     >>   < \' echo hello world \" ";
-	t_lexer l = build_lexer(l2);
-	
-	// t_token *t = build_token(get_next_token(&l));
-	// printf("token text: %s token len: %zu\n", t->text, t->text_len);
-	// t_token *t1 = build_token(get_next_token(&l));
-	// t_token t1 = get_next_token(&l);
-	// printf("%s token size %zu\n", t1.text, t1.text_len);
-	// t_token *t2 = build_token(get_next_token(&l));
-	// printf("token text: %s token size %zu\n", t2->text, t2->text_len);
-	// t_token *t3 = build_token(get_next_token(&l));
-	// printf("token text: %s token size %zu\n", t3->text, t3->text_len);
-
-	// while (t.type != END)
-	// {
-	// 	printf("%s %.*s\n", print_token_type2(t.type), (int)t.text_len, t.text);
-	// 	t = get_next_token(&l);
-	// }
-
-	t_token *t = build_token_list(&l);
-	while (t)
+	(void)ac;
+	(void)av;
+	shell->input_fd = STDIN_FILENO;
+	shell->output_fd = STDOUT_FILENO;
+	shell->error_fd = STDERR_FILENO;
+	shell->pipe_read_fd = -1;
+	shell->pipe_write_fd = -1;
+	if (!getcwd(shell->working_directory, PATH_MAX) || !init_env(shell))
 	{
-		printf("current token (%s): %s\n", print_token_type2(t->type), t->text);
-		t = t->next;
+		shell->code = EXIT_SHELLINITFAIL;
+		shell->state |= SHOULD_EXIT;
 	}
-	arena_free(get_static_arena());
 }

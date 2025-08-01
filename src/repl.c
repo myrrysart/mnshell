@@ -6,15 +6,12 @@
 /*   By: jyniemit <jyniemit@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/29 12:37:53 by jyniemit          #+#    #+#             */
-/*   Updated: 2025/07/29 15:27:14 by jyniemit         ###   ########.fr       */
+/*   Updated: 2025/08/18 15:35:27 by jyniemit         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
-#include "lexer.h"
-	/*TODO: On ac and av: need to figure out if child process shells need these
-	* things, ortesting or something else. Now I'm just casting them to the
-	* void, but keeping them until we know for sure*/
+
 void	init_shell(int ac, char **av, t_shell *shell)
 {
 	(void)ac;
