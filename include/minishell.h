@@ -6,7 +6,7 @@
 /*   By: jyniemit <jyniemit@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/29 13:40:26 by jyniemit          #+#    #+#             */
-/*   Updated: 2025/08/18 15:27:54 by jyniemit         ###   ########.fr       */
+/*   Updated: 2025/08/18 15:34:30 by jyniemit         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,7 +23,6 @@
 # include <readline/history.h>
 # include <readline/readline.h>
 // sigaction & signals
-# include "libft.h"
 # include <signal.h>
 # include "lexer.h"
 # include "arena.h"
