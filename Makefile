@@ -9,7 +9,7 @@
 #    Updated: 2025/07/29 14:32:03 by jyniemit         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
-
+MAKEFLAGS += --no-print-directory
 NAME = minishell
 
 CC = cc
@@ -22,10 +22,10 @@ LIBS = -lreadline $(LIBFT)
 SRCDIR = src
 OBJDIR = obj
 
-SOURCES = \
-		  main.c	\
+SOURCES = main.c	\
 		  repl.c	\
-		  signals.c
+		  signals.c \
+		  lexer.c 	\
 
 OBJECTS = $(SOURCES:%.c=$(OBJDIR)/%.o)
 SRCFILES = $(addprefix $(SRCDIR)/, $(SOURCES))

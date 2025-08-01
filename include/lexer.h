@@ -14,6 +14,9 @@
 #define LEXER_H
 
 #include <stddef.h>
+#include "libft.h"
+#include <ctype.h>
+#include <stdio.h>
 
 typedef enum {
 	END = 0,
@@ -25,6 +28,8 @@ typedef enum {
 	REDIRECT_OUT,
 	PIPE,
 	APPEND,
+	DOLLAR,
+	INVALID,
 } t_token_type ;
 
 typedef struct s_token
@@ -43,5 +48,5 @@ typedef struct s_lexer
 } t_lexer;
 
 t_lexer build_lexer(const char *content);
-t_token *get_next_token(t_lexer *l);
+t_token get_next_token(t_lexer *l);
 #endif // !LEXER_H
