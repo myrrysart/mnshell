@@ -6,7 +6,7 @@
 /*   By: jyniemit <jyniemit@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/29 14:50:29 by jyniemit          #+#    #+#             */
-/*   Updated: 2025/08/18 15:44:46 by jyniemit         ###   ########.fr       */
+/*   Updated: 2025/08/18 15:46:23 by jyniemit         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,8 +32,8 @@ int		init_env(t_shell *shell)
 	shell->original_env = environ;
 	while (environ[shell->env_count])
 		shell->env_count++;
-	shell->capacity = shell->env_count + 10;
-	shell->heap_env = malloc(sizeof(char *) * (shell->capacity + 1))
+	shell->env_capacity = shell->env_count + 10;
+	shell->heap_env = malloc(sizeof(char *) * (shell->env_capacity + 1));
 	if(!shell->heap_env)
 		return (0);
 	while (++i < shell->env_count)
