@@ -6,7 +6,7 @@
 /*   By: jyniemit <jyniemit@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/29 14:50:29 by jyniemit          #+#    #+#             */
-/*   Updated: 2025/08/19 12:05:53 by jyniemit         ###   ########.fr       */
+/*   Updated: 2025/08/19 12:14:46 by jyniemit         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 #include "minishell.h"
