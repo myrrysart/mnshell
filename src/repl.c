@@ -6,35 +6,11 @@
 /*   By: jyniemit <jyniemit@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/29 12:37:53 by jyniemit          #+#    #+#             */
-/*   Updated: 2025/07/29 15:27:14 by jyniemit         ###   ########.fr       */
+/*   Updated: 2025/08/01 19:11:43 by jyniemit         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
-
-	/*TODO: On ac and av: need to figure out if child process shells need these
-	* things, ortesting or something else. Now I'm just casting them to the
-	* void, but keeping them until we know for sure*/
-void	init_shell(int ac, char **av, t_shell *shell)
-{
-	(void)ac;
-	(void)av;
-	shell->state = 0;
-	shell->code = OK;
-	shell->last_code = OK;
-	shell->argc = 0;
-	shell->input_fd = STDIN_FILENO;
-	shell->output_fd = STDOUT_FILENO;
-	shell->error_fd = STDERR_FILENO;
-	shell->pipe_read_fd = -1;
-	shell->pipe_write_fd = -1;
-	shell->token_count = 0;
-	if (getcwd(shell->working_directory, PATH_MAX) == NULL)
-	{
-		shell->code = EXIT_SHELLINITFAIL;
-		shell->state |= SHOULD_EXIT;
-	}
-}
 
 	/* TODO: parsing goes here. Currently just calling a printf to tell
 	 * what has been written on the command line*/
