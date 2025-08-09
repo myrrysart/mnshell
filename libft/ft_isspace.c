@@ -1,26 +1,20 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   main.c                                             :+:      :+:    :+:   */
+/*   ft_isspace.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jyniemit <jyniemit@student.hive.fi>        +#+  +:+       +#+        */
+/*   By: trupham <trupham@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/07/29 14:50:29 by jyniemit          #+#    #+#             */
-/*   Updated: 2025/08/07 11:38:35 by trupham          ###   ########.fr       */
+/*   Created: 2025/07/31 11:27:49 by trupham           #+#    #+#             */
+/*   Updated: 2025/07/31 11:30:04 by trupham          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "lexer.h"
-#include "libft.h"
-#include "minishell.h"
+#include <stdbool.h>
 
-int	main(int ac, char **av)
+bool ft_isspace(char c)
 {
-	t_shell	shell;
-
-	init_signals(&shell);
-	ft_bzero(&shell, sizeof(t_shell));
-	init_shell(ac, av, &shell);
-	run_shell(&shell);
-	return (shell.code);
+	if (c == ' ' || c == '\n' || c == '\t' || c == '\r')
+		return (true);
+	return (false);
 }
