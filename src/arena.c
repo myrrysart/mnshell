@@ -13,6 +13,7 @@
 #include "arena.h"
 #include "libft.h"
 #include <stdio.h>
+#include <stdlib.h>
 
 /*@brief: initialize the memory arena with max size of capacity
 * @return: pointer to the arena
@@ -75,6 +76,20 @@ void arena_free(t_arena *arena)
 		free(arena);
 		arena = next;
 	}
+}
+
+void *s_malloc(uint64_t size)
+{
+	void *buf;
+
+	buf = arena_alloc(get_static_arena(), size);
+	if (!buf)
+	{
+		arena_free(get_static_arena());
+		ft_putendl_fd("failed to allocate memory arena", 2);
+		exit(EXIT_FAILURE);
+	}
+	return buf;
 }
 
 t_arena *get_static_arena()
