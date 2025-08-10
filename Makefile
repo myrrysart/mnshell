@@ -25,7 +25,8 @@ OBJDIR = obj
 SOURCES = \
 		  main.c	\
 		  repl.c	\
-		  signals.c
+		  signals.c \
+		  arena.c \
 
 OBJECTS = $(SOURCES:%.c=$(OBJDIR)/%.o)
 SRCFILES = $(addprefix $(SRCDIR)/, $(SOURCES))

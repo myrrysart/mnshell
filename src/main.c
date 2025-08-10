@@ -6,10 +6,11 @@
 /*   By: jyniemit <jyniemit@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/29 14:50:29 by jyniemit          #+#    #+#             */
-/*   Updated: 2025/07/29 15:12:40 by jyniemit         ###   ########.fr       */
+/*   Updated: 2025/08/07 11:38:35 by trupham          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
+#include "libft.h"
 #include "minishell.h"
 
 int	main(int ac, char **av)
