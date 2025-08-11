@@ -23,26 +23,20 @@ TESTDIR = ./test/
 SRCDIR = src
 OBJDIR = obj
 
-SOURCES = repl.c	\
+SOURCES = \
+		  main.c	\
+		  repl.c	\
 		  signals.c \
-		  lexer.c 	\
 		  arena.c \
-
-SRCMAIN = $(SRCDIR)/main.c
-OBJMAIN = $(OBJDIR)/main.o
-
 OBJECTS = $(SOURCES:%.c=$(OBJDIR)/%.o)
 SRCFILES = $(addprefix $(SRCDIR)/, $(SOURCES))
 
 all: $(NAME)
 
-$(NAME): $(OBJMAIN) $(OBJECTS) $(LIBFT)
+$(NAME): $(OBJECTS) $(LIBFT)
 	$(CC) $(OBJECTS) $(OBJMAIN) $(LIBS) -o $(NAME)
 
 $(OBJDIR)/%.o: $(SRCDIR)/%.c | $(OBJDIR)
-	$(CC) $(CFLAGS) $(INCLUDES) -c $< -o $@
-
-$(OBJMAIN): $(SRCMAIN)
 	$(CC) $(CFLAGS) $(INCLUDES) -c $< -o $@
 
 $(OBJDIR):
@@ -50,10 +44,6 @@ $(OBJDIR):
 
 $(LIBFT):
 	make -C $(LIBFTDIR)
-
-test_lexer: $(TESTDIR)test_lexer.c
-	$(CC) $(OBJECTS) $(TESTDIR)$@.o $(LIBS) -o $(TESTDIR)$@
-	$(CC) $(CFLAGS) $(INCLUDES) -c $< -o $(TESTDIR)$@.o
 
 clean:
 	rm -rf $(OBJDIR)

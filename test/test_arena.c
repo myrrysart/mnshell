@@ -30,16 +30,16 @@ int main()
 {
 	t_arena *arena = get_static_arena();
 
-	char *buf = arena_alloc(arena, 12);
+	char *buf = s_malloc(12);
 	ft_strlcpy(buf, "hello world", 12);
 	print_arena();
-	t_list *list = arena_alloc(arena, sizeof(t_list));
+	t_list *list = s_malloc(sizeof(t_list));
 	(void)list;
 	print_arena();
-	char *bur1 = arena_alloc(arena, 1000);
+	char *bur1 = s_malloc(1000);
 	(void)bur1;
 	print_arena();
-	char *bur2 = arena_alloc(arena, 14);
+	char *bur2 = s_malloc(14);
 	(void)bur2;
 	print_arena();
 	arena_free(arena);
