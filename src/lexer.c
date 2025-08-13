@@ -13,7 +13,6 @@
 #include "lexer.h"
 #include "arena.h"
 #include "libft.h"
-#include <string.h>
 
 t_lexer build_lexer(char *content)
 {
@@ -77,13 +76,45 @@ t_token handle_append(t_lexer *l)
 	return token;
 }
 
+t_token handle_squote(t_lexer *l)
+{
+	t_token token;
+
+	ft_bzero(&token, sizeof(t_token));
+	token.type = SQUOTE;
+	while (l->content[l->cursor])
+	{
+		// TODO:
+	}
+	return token;
+}
+
+t_token handle_word(t_lexer *l)
+{
+	t_token token;
+
+	token.type = WORD;
+	token.text = &l->content[l->cursor];
+	while (!is_operator(l->content[l->cursor]))
+	{
+		token.text_len += 1;
+		l->cursor++;
+	}
+	return token;
+}
+
+/*@brief: returning a token with a corresponding type, len and content
+ * @param: pointer to the lexer structure. this funciton will modify the lexer
+ * and moving the cursor forward
+ */
 t_token get_next_token(t_lexer *l)
 {
 	t_token token;
 	t_token_type type;
 
 	ft_bzero(&token, sizeof(t_token));
-	trim_left(l);
+	if (l->content[l->cursor] != '\'' && l->content[l->cursor] != '\"')
+		trim_left(l);
 	token.text = &l->content[l->cursor];
 	if (l->cursor >= l->content_len)
 		return token;
@@ -91,15 +122,7 @@ t_token get_next_token(t_lexer *l)
 	if (type == REDIRECT_OUT && l->content[l->cursor + 1] == '>')
 		return handle_append(l);
 	if (!is_operator(l->content[l->cursor]))
-	{
-		token.type = WORD;
-		while (!is_operator(l->content[l->cursor]))
-		{
-			token.text_len += 1;
-			l->cursor++;
-		}
-		return token;
-	}
+		return handle_word(l);
 	token.type = type;
 	token.text_len = 1;
 	l->cursor++;
@@ -112,16 +135,19 @@ t_token get_next_token(t_lexer *l)
 t_token *build_token(t_token token)
 {
 	t_token *new_token;
+	size_t i;
 
-	new_token = arena_alloc(get_static_arena(), sizeof(t_token));
-	if (!new_token)
-		return NULL;
-	new_token->text = arena_alloc(get_static_arena(), token.text_len + 1);
-	if (!new_token->text)
-		return NULL;
+	i = 0;
+	new_token = s_malloc(sizeof(t_token));
+	new_token->text = s_malloc(token.text_len);
 	new_token->text_len = token.text_len;
 	new_token->type = token.type;
-	ft_strlcpy(new_token->text, token.text, token.text_len + 1);
+	while (i < new_token->text_len && token.text[i])
+	{
+		new_token->text[i] = token.text[i];
+		i++;
+	}
+	new_token->text[i] = '\0';
 	return new_token;
 }
 

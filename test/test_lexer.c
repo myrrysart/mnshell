@@ -54,6 +54,8 @@ int main()
 	while (t)
 	{
 		printf("(%s): %s\n", print_token_type2(t->type), t->text);
+		if (t->prev)
+			printf("(%s): %s\n", print_token_type2(t->prev->type), t->prev->text);
 		t = t->next;
 	}
 	arena_free(get_static_arena());

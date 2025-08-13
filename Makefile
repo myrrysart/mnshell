@@ -28,6 +28,8 @@ SOURCES = \
 		  repl.c	\
 		  signals.c \
 		  arena.c \
+		  lexer.c \
+
 OBJECTS = $(SOURCES:%.c=$(OBJDIR)/%.o)
 SRCFILES = $(addprefix $(SRCDIR)/, $(SOURCES))
 
@@ -53,8 +55,7 @@ fclean: clean
 	rm -f $(NAME)
 	make -C $(LIBFTDIR) fclean
 
-debug: fclean
-	@make -C $(LIBFTDIR) debug
+debug:
 	$(MAKE) CFLAGS="$(CFLAGS) -g" all
 
 re: fclean all
