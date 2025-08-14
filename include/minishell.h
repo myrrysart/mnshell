@@ -60,7 +60,9 @@ typedef enum e_shell_state
 	HAS_INPUT_REDIR = (1 << 6),
 	HAS_OUTPUT_REDIR = (1 << 7),
 	HAS_BUILTIN = (1 << 8),
-	SUPPRESS_PROMPT = (1 << 9)
+	SUPPRESS_PROMPT = (1 << 9),
+	IN_SQUOTE = (1 << 10),
+	IN_DQUOTE = (1 << 11)
 }								t_shell_state;
 
 typedef struct s_shell

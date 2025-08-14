@@ -9,7 +9,7 @@
 #    Updated: 2025/07/29 14:32:03 by jyniemit         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
-
+MAKEFLAGS += --no-print-directory
 NAME = minishell
 
 CC = cc
@@ -18,6 +18,7 @@ LIBFTDIR = ./libft/
 LIBFT = $(LIBFTDIR)libft.a
 INCLUDES = -I. -I./include -I$(LIBFTDIR)
 LIBS = -lreadline $(LIBFT)
+TESTDIR = ./test/
 
 SRCDIR = src
 OBJDIR = obj
@@ -27,6 +28,7 @@ SOURCES = \
 		  repl.c	\
 		  signals.c \
 		  arena.c \
+		  lexer.c \
 
 OBJECTS = $(SOURCES:%.c=$(OBJDIR)/%.o)
 SRCFILES = $(addprefix $(SRCDIR)/, $(SOURCES))
@@ -34,7 +36,7 @@ SRCFILES = $(addprefix $(SRCDIR)/, $(SOURCES))
 all: $(NAME)
 
 $(NAME): $(OBJECTS) $(LIBFT)
-	$(CC) $(OBJECTS) $(LIBS) -o $(NAME)
+	$(CC) $(OBJECTS) $(OBJMAIN) $(LIBS) -o $(NAME)
 
 $(OBJDIR)/%.o: $(SRCDIR)/%.c | $(OBJDIR)
 	$(CC) $(CFLAGS) $(INCLUDES) -c $< -o $@
@@ -53,8 +55,7 @@ fclean: clean
 	rm -f $(NAME)
 	make -C $(LIBFTDIR) fclean
 
-debug: fclean
-	@make -C $(LIBFTDIR) debug
+debug:
 	$(MAKE) CFLAGS="$(CFLAGS) -g" all
 
 re: fclean all

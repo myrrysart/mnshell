@@ -12,6 +12,7 @@
 
 #include "arena.h"
 #include "libft.h"
+#include <stdint.h>
 #include <stdio.h>
 #include <stdlib.h>
 
@@ -22,10 +23,10 @@ t_arena *arena_init(uint64_t capacity)
 {
 	t_arena *arena;
 	
-	arena = malloc(sizeof(t_arena));
+	arena = ft_calloc(1, sizeof(t_arena));
 	if (!arena)
 		return NULL;
-	arena->data = ft_calloc(capacity, sizeof(char));
+	arena->data = ft_calloc(capacity, sizeof(uintptr_t *));
 	if (!arena->data)
 	{
 		free(arena);

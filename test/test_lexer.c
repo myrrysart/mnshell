@@ -1,30 +1,18 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   main.c                                             :+:      :+:    :+:   */
+/*   test_lexer.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jyniemit <jyniemit@student.hive.fi>        +#+  +:+       +#+        */
+/*   By: trupham <trupham@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/07/29 14:50:29 by jyniemit          #+#    #+#             */
-/*   Updated: 2025/08/07 11:38:35 by trupham          ###   ########.fr       */
+/*   Created: 2025/08/08 15:12:10 by trupham           #+#    #+#             */
+/*   Updated: 2025/08/08 15:12:48 by trupham          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "lexer.h"
-#include "libft.h"
-#include "minishell.h"
+#include "../include/lexer.h"
 #include "arena.h"
 
-int	main1(int ac, char **av)
-{
-	t_shell	shell;
-
-	init_signals(&shell);
-	ft_bzero(&shell, sizeof(t_shell));
-	init_shell(ac, av, &shell);
-	run_shell(&shell);
-	return (shell.code);
-}
 char *print_token_type2(t_token_type type)
 {
 	switch (type) {
@@ -44,9 +32,7 @@ char *print_token_type2(t_token_type type)
 
 int main()
 {
-	// char *l1 = "hello world | >out | wc -l >> \'";
-	char *l2 = "| >> $|    $     >>   < \' echo hello world \" ";
-	t_lexer l = build_lexer(l2);
+	t_lexer l = build_lexer("hello world | >out | wc -l >> \'");
 	
 	// t_token *t = build_token(get_next_token(&l));
 	// printf("token text: %s token len: %zu\n", t->text, t->text_len);
@@ -67,7 +53,9 @@ int main()
 	t_token *t = build_token_list(&l);
 	while (t)
 	{
-		printf("current token (%s): %s\n", print_token_type2(t->type), t->text);
+		printf("(%s): %s\n", print_token_type2(t->type), t->text);
+		if (t->prev)
+			printf("(%s): %s\n", print_token_type2(t->prev->type), t->prev->text);
 		t = t->next;
 	}
 	arena_free(get_static_arena());
