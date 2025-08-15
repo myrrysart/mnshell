@@ -26,7 +26,7 @@ t_arena *arena_init(uint64_t capacity)
 	arena = ft_calloc(1, sizeof(t_arena));
 	if (!arena)
 		return NULL;
-	arena->data = ft_calloc(capacity, sizeof(uintptr_t *));
+	arena->data = ft_calloc(capacity, sizeof(uintptr_t));
 	if (!arena->data)
 	{
 		free(arena);
