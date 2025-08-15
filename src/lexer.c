@@ -93,8 +93,11 @@ t_token handle_word(t_lexer *l)
 {
 	t_token token;
 
+	token.text_len = 0;
 	token.type = WORD;
 	token.text = &l->content[l->cursor];
+	token.next = NULL;
+	token.prev = NULL;
 	while (!is_operator(l->content[l->cursor]))
 	{
 		token.text_len += 1;
