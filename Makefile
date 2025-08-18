@@ -60,4 +60,8 @@ debug:
 
 re: fclean all
 
+test: all
+	@make -C $(TESTDIR)
+	@./test/test
+
 .PHONY: all clean fclean re debug
