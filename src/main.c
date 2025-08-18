@@ -45,25 +45,8 @@ char *print_token_type2(t_token_type type)
 int main()
 {
 	// char *l1 = "hello world | >out | wc -l >> \'";
-	char *l2 = "| >> $|    $     >>   < \' echo hello world \" ";
-	t_lexer l = build_lexer(l2);
-	
-	// t_token *t = build_token(get_next_token(&l));
-	// printf("token text: %s token len: %zu\n", t->text, t->text_len);
-	// t_token *t1 = build_token(get_next_token(&l));
-	// t_token t1 = get_next_token(&l);
-	// printf("%s token size %zu\n", t1.text, t1.text_len);
-	// t_token *t2 = build_token(get_next_token(&l));
-	// printf("token text: %s token size %zu\n", t2->text, t2->text_len);
-	// t_token *t3 = build_token(get_next_token(&l));
-	// printf("token text: %s token size %zu\n", t3->text, t3->text_len);
-
-	// while (t.type != END)
-	// {
-	// 	printf("%s %.*s\n", print_token_type2(t.type), (int)t.text_len, t.text);
-	// 	t = get_next_token(&l);
-	// }
-
+	char *l1 = "| >> $|    $     >>   < \' echo hello world \" ./usr/bin/ls";
+	t_lexer l = build_lexer(l1);
 	t_token *t = build_token_list(&l);
 	while (t)
 	{
