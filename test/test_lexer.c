@@ -32,9 +32,7 @@ char *print_token_type2(t_token_type type)
 
 int main()
 {
-	// char *l1 = "hello world | >out | wc -l >> \'";
-	char *l1 = "| >> $|    $     >>   < \' echo hello world \" ./usr/bin/ls";
-	t_lexer l = build_lexer(l1);
+	t_lexer l = build_lexer("hello world | >out | wc -l >> \'");
 	t_token *t = build_token_list(&l);
 	while (t)
 	{
