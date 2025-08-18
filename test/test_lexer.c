@@ -36,9 +36,7 @@ int main()
 	t_token *t = build_token_list(&l);
 	while (t)
 	{
-		printf("(%s): %s\n", print_token_type2(t->type), t->text);
-		if (t->prev)
-			printf("(%s): %s\n", print_token_type2(t->prev->type), t->prev->text);
+		printf("current token (%s): %s\n", print_token_type2(t->type), t->text);
 		t = t->next;
 	}
 	arena_free(get_static_arena());
