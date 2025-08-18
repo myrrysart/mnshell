@@ -68,7 +68,6 @@ t_token handle_append(t_lexer *l)
 {
 	t_token token;
 
-	ft_bzero(&token, sizeof(t_token));
 	token.text = &l->content[l->cursor];
 	token.type = APPEND;
 	token.text_len = 2;
@@ -76,15 +75,19 @@ t_token handle_append(t_lexer *l)
 	return token;
 }
 
-t_token handle_squote(t_lexer *l)
+t_token handle_dollar(t_lexer *l)
 {
 	t_token token;
 
-	ft_bzero(&token, sizeof(t_token));
-	token.type = SQUOTE;
-	while (l->content[l->cursor])
+	token.text = &l->content[l->cursor];
+	token.type = DOLLAR;
+	token.text_len = 0;
+	token.prev = NULL;
+	token.next = NULL;
+	while (!ft_isspace(l->content[l->cursor]))
 	{
-		// TODO:
+		token.text_len += 1;
+		l->cursor++;
 	}
 	return token;
 }
@@ -103,6 +106,56 @@ t_token handle_word(t_lexer *l)
 		token.text_len += 1;
 		l->cursor++;
 	}
+	return token;
+}
+
+t_token handle_squote(t_lexer *l)
+{
+	t_token token;
+
+	token.type = SQUOTE;
+	token.text = &l->content[l->cursor];
+	l->cursor++;
+	token.text_len = 1;
+	token.prev = NULL;
+	token.next = NULL;
+	while (l->content[l->cursor] && l->content[l->cursor] != '\'')
+	{
+		token.text_len++;
+		l->cursor++;
+	}
+	if (l->content[l->cursor] == '\'')
+	{
+		token.text_len++;
+		l->cursor++;
+	}
+	else
+		token.type = INVALID;
+	return token;
+}
+
+t_token handle_dquote(t_lexer *l)
+{
+	t_token token;
+
+	token.type = DQUOTE;
+	token.text = &l->content[l->cursor];
+	l->cursor++;
+	token.text_len = 1;
+	token.prev = NULL;
+	token.next = NULL;
+	while (l->content[l->cursor] && l->content[l->cursor] != '\"')
+	{
+		token.text_len++;
+		l->cursor++;
+	}
+	if (l->content[l->cursor] == '\"')
+	{
+		token.text_len++;
+		l->cursor++;
+	}
+	else
+		token.type = INVALID;
 	return token;
 }
 
@@ -126,6 +179,12 @@ t_token get_next_token(t_lexer *l)
 		return handle_append(l);
 	if (!is_operator(l->content[l->cursor]))
 		return handle_word(l);
+	if (l->content[l->cursor] == '$')
+		return handle_dollar(l);
+	if (l->content[l->cursor] == '\'')
+		return handle_squote(l);
+	if (l->content[l->cursor] == '\"')
+		return handle_dquote(l);
 	token.type = type;
 	token.text_len = 1;
 	l->cursor++;
@@ -142,7 +201,7 @@ t_token *build_token(t_token token)
 
 	i = 0;
 	new_token = s_malloc(sizeof(t_token));
-	new_token->text = s_malloc(token.text_len);
+	new_token->text = s_malloc(token.text_len + 1);
 	new_token->text_len = token.text_len;
 	new_token->type = token.type;
 	while (i < new_token->text_len && token.text[i])
