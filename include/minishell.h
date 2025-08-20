@@ -6,7 +6,7 @@
 /*   By: jyniemit <jyniemit@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/29 13:40:26 by jyniemit          #+#    #+#             */
-/*   Updated: 2025/08/19 12:18:34 by jyniemit         ###   ########.fr       */
+/*   Updated: 2025/08/19 12:25:32 by jyniemit         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,6 +24,7 @@
 # include <readline/readline.h>
 // sigaction & signals
 # include <signal.h>
+# include "libft.h"
 # include "lexer.h"
 # include "arena.h"
 # define MAX_PROCESSES 30587
