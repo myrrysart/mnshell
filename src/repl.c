@@ -6,42 +6,28 @@
 /*   By: jyniemit <jyniemit@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/29 12:37:53 by jyniemit          #+#    #+#             */
-/*   Updated: 2025/08/20 13:55:46 by jyniemit         ###   ########.fr       */
+/*   Updated: 2025/08/21 12:55:17 by jyniemit         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-int		init_env(t_shell *shell)
+static void	init_env(char **env, t_shell *shell)
 {
-	extern char	**environ;
-	int			i;
+	int	i;
 	
 	i = -1;
-	shell->original_env = environ;
-	while (environ[shell->env_count])
+	shell->original_env = env;
+	while (env[shell->env_count])
 		shell->env_count++;
 	shell->env_capacity = shell->env_count + 10;
 	shell->heap_env = (char *)s_malloc(sizeof(char *) * (shell->env_capacity + 1));
-	if(!shell->heap_env)
-		return (0);
 	while (++i < shell->env_count)
-	{
-		shell->heap_env[i] = ft_strdup(environ[i]);
-		if (!shell->heap_env)
-		{
-			while (--i >= 0)
-				free(shell->heap_env);
-			free(shell->heap_env);
-			shell->heap_env = NULL;
-			return (0);
-		}
-	}
+		shell->heap_env[i] = a_strdup(env[i]);
 	shell->heap_env[shell->env_count] = NULL;
-	return (1);
 }
 
-void	init_shell(int ac, char **av, t_shell *shell)
+void	init_shell(int ac, char **av, char **env, t_shell *shell)
 {
 	(void)ac;
 	(void)av;
@@ -55,7 +41,8 @@ void	init_shell(int ac, char **av, t_shell *shell)
 	shell->pipe_read_fd = -1;
 	shell->pipe_write_fd = -1;
 	shell->token_count = 0;
-	if (!getcwd(shell->working_directory, PATH_MAX) || !init_env(shell))
+	init_env(env, shell);
+	if (!getcwd(shell->working_directory, PATH_MAX))
 	{
 		shell->code = EXIT_SHELLINITFAIL;
 		shell->state |= SHOULD_EXIT;
