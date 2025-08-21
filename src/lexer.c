@@ -6,13 +6,11 @@
 /*   By: trupham <trupham@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/31 10:45:01 by trupham           #+#    #+#             */
-/*   Updated: 2025/07/31 11:52:32 by trupham          ###   ########.fr       */
+/*   Updated: 2025/08/19 12:24:39 by jyniemit         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "lexer.h"
-#include "arena.h"
-#include "libft.h"
+#include "minishell.h"
 
 t_lexer build_lexer(char *content)
 {

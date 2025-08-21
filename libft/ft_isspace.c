@@ -6,11 +6,11 @@
 /*   By: trupham <trupham@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/31 11:27:49 by trupham           #+#    #+#             */
-/*   Updated: 2025/07/31 11:30:04 by trupham          ###   ########.fr       */
+/*   Updated: 2025/08/19 12:42:10 by jyniemit         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include <stdbool.h>
+#include "libft.h"
 
 bool ft_isspace(char c)
 {
