@@ -6,7 +6,7 @@
 /*   By: trupham <trupham@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/03 11:54:34 by trupham           #+#    #+#             */
-/*   Updated: 2025/08/03 11:57:26 by trupham          ###   ########.fr       */
+/*   Updated: 2025/08/21 12:58:02 by jyniemit         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -109,3 +109,7 @@ t_arena *get_static_arena()
 	}
 	return arena;
 }
+
+char *a_strdup(char *s)
+{
+
