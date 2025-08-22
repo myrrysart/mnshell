@@ -11,7 +11,7 @@
 /* ************************************************************************** */
 
 #include "minishell.h"
-#include "lexer.h"
+
 	/*TODO: On ac and av: need to figure out if child process shells need these
 	* things, ortesting or something else. Now I'm just casting them to the
 	* void, but keeping them until we know for sure*/
@@ -49,13 +49,6 @@ static void	parse_and_execute(t_shell *shell)
 		shell->state |= SHOULD_EXIT;
 		return ;
 	}
-	// t_lexer l = build_lexer(shell->command_line);
-	// t_token *t = build_token_list(&l);
-	// while (t)
-	// {
-	// 	printf("(%s) token length: %d\t\t\t%.*s\n",print_token_type(t->type), (int)t->text_len, (int)t->text_len, t->text);
-	// 	t = t->next;
-	// }
 	shell->code = OK;
 	shell->state &= ~EVALUATING;
 }
