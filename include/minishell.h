@@ -25,7 +25,8 @@
 // sigaction & signals
 # include "libft.h"
 # include <signal.h>
-
+# include "lexer.h"
+# include "arena.h"
 # define MAX_PROCESSES 30587
 # define ARG_MAX 4096
 

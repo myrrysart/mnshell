@@ -10,9 +10,7 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "lexer.h"
-#include "arena.h"
-#include "libft.h"
+#include "minishell.h"
 
 t_lexer build_lexer(char *content)
 {
@@ -54,7 +52,7 @@ bool is_operator(const char c)
 	int i;
 
 	i = 0;
-	operators = "\'\"|><$";
+	operators = "|>< \n\t";
 	while (operators[i])
 	{
 		if (c == operators[i])
@@ -71,6 +69,8 @@ t_token handle_append(t_lexer *l)
 	token.text = &l->content[l->cursor];
 	token.type = APPEND;
 	token.text_len = 2;
+	token.next = NULL;
+	token.prev = NULL;
 	l->cursor += 2;
 	return token;
 }
@@ -84,9 +84,9 @@ t_token handle_dollar(t_lexer *l)
 	token.text_len = 0;
 	token.prev = NULL;
 	token.next = NULL;
-	while (!ft_isspace(l->content[l->cursor]))
+	while (!ft_isspace(l->content[l->cursor]) && l->cursor < l->content_len)
 	{
-		token.text_len += 1;
+		token.text_len++;
 		l->cursor++;
 	}
 	return token;
@@ -101,12 +101,17 @@ t_token handle_word(t_lexer *l)
 	token.text = &l->content[l->cursor];
 	token.next = NULL;
 	token.prev = NULL;
-	while (!is_operator(l->content[l->cursor]))
+	while (!is_operator(l->content[l->cursor]) && l->cursor < l->content_len)
 	{
-		token.text_len += 1;
+		token.text_len++;
 		l->cursor++;
 	}
 	return token;
+}
+
+bool is_quote(const char c)
+{
+	return (c == '\'' || c == '\"');
 }
 
 t_token handle_squote(t_lexer *l)
@@ -119,12 +124,12 @@ t_token handle_squote(t_lexer *l)
 	token.text_len = 1;
 	token.prev = NULL;
 	token.next = NULL;
-	while (l->content[l->cursor] && l->content[l->cursor] != '\'')
+	while (l->cursor < l->content_len && l->content[l->cursor] != '\'')
 	{
 		token.text_len++;
 		l->cursor++;
 	}
-	if (l->content[l->cursor] == '\'')
+	if (l->cursor < l->content_len && l->content[l->cursor] == '\'')
 	{
 		token.text_len++;
 		l->cursor++;
@@ -144,12 +149,12 @@ t_token handle_dquote(t_lexer *l)
 	token.text_len = 1;
 	token.prev = NULL;
 	token.next = NULL;
-	while (l->content[l->cursor] && l->content[l->cursor] != '\"')
+	while (l->cursor < l->content_len && l->content[l->cursor] != '\"')
 	{
 		token.text_len++;
 		l->cursor++;
 	}
-	if (l->content[l->cursor] == '\"')
+	if (l->cursor < l->content_len && l->content[l->cursor] == '\"')
 	{
 		token.text_len++;
 		l->cursor++;
@@ -159,6 +164,18 @@ t_token handle_dquote(t_lexer *l)
 	return token;
 }
 
+t_token handle_other_token(t_lexer *l)
+{
+	t_token token;
+
+	token.text_len = 1;
+	token.text = &l->content[l->cursor];
+	token.type = get_token_type(l->content[l->cursor]);
+	token.next = NULL;
+	token.prev = NULL;
+	l->cursor++;
+	return token;
+}
 /*@brief: returning a token with a corresponding type, len and content
  * @param: pointer to the lexer structure. this funciton will modify the lexer
  * and moving the cursor forward
@@ -166,29 +183,22 @@ t_token handle_dquote(t_lexer *l)
 t_token get_next_token(t_lexer *l)
 {
 	t_token token;
-	t_token_type type;
 
 	ft_bzero(&token, sizeof(t_token));
-	if (l->content[l->cursor] != '\'' && l->content[l->cursor] != '\"')
-		trim_left(l);
-	token.text = &l->content[l->cursor];
 	if (l->cursor >= l->content_len)
 		return token;
-	type = get_token_type(l->content[l->cursor]);
-	if (type == REDIRECT_OUT && l->content[l->cursor + 1] == '>')
-		return handle_append(l);
-	if (!is_operator(l->content[l->cursor]))
-		return handle_word(l);
-	if (l->content[l->cursor] == '$')
-		return handle_dollar(l);
+	trim_left(l);
 	if (l->content[l->cursor] == '\'')
 		return handle_squote(l);
-	if (l->content[l->cursor] == '\"')
+	if (l->content[l->cursor] == '"')
 		return handle_dquote(l);
-	token.type = type;
-	token.text_len = 1;
-	l->cursor++;
-	return token;
+	if (l->content[l->cursor] == '>' && l->content[l->cursor + 1] == '>')
+		return handle_append(l);
+	if (l->content[l->cursor] == '$')
+		return handle_dollar(l);
+	if (!is_operator(l->content[l->cursor]) && !is_quote(l->content[l->cursor]))
+		return handle_word(l);
+	return handle_other_token(l);
 }
 
 /*@brief: allocate a token node in the memory arena from a copy of token passed in

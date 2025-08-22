@@ -10,10 +10,7 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "lexer.h"
-#include "libft.h"
 #include "minishell.h"
-#include "arena.h"
 
 int	main(int ac, char **av)
 {

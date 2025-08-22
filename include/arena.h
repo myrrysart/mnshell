@@ -22,7 +22,7 @@ typedef struct s_arena
 {
 	uint64_t capacity;
 	uint64_t cursor;
-	uintptr_t *data;
+	unsigned char *data;
 	struct s_arena *next;
 } t_arena;
 
