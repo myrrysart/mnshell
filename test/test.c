@@ -1,6 +1,8 @@
+#include <stdbool.h>
 #define MUNIT_ENABLE_ASSERT_ALIASES
 #include "lexer.h"
 #include "arena.h"
+#include "parser.h"
 #include "munit.h"
 
 static MunitResult test_lexer_general(const MunitParameter params[], void* data)
@@ -174,6 +176,51 @@ static MunitResult test_arena(const MunitParameter params[], void* data)
 	arena_free(arena);
 	return MUNIT_OK;
 }
+
+static MunitResult test_parser_syntax_check(const MunitParameter params[], void* data)
+{
+	(void)params;
+	(void)data;
+
+	{
+		char *str = "<out";
+		t_lexer l = build_lexer(str);
+		t_token *t = build_token_list(&l);
+		assert_int(parser_syntax_check(t), ==, true);
+	}
+	{
+		char *str = "< |";
+		t_lexer l = build_lexer(str);
+		t_token *t = build_token_list(&l);
+		assert_int(parser_syntax_check(t), ==, false);
+	}
+	{
+		char *str = "> |";
+		t_lexer l = build_lexer(str);
+		t_token *t = build_token_list(&l);
+		assert_int(parser_syntax_check(t), ==, false);
+	}
+	{
+		char *str = "> out";
+		t_lexer l = build_lexer(str);
+		t_token *t = build_token_list(&l);
+		assert_int(parser_syntax_check(t), ==, true);
+	}
+	{
+		char *str = "| out";
+		t_lexer l = build_lexer(str);
+		t_token *t = build_token_list(&l);
+		assert_int(parser_syntax_check(t), ==, true);
+	}
+	{
+		char *str = "| |";
+		t_lexer l = build_lexer(str);
+		t_token *t = build_token_list(&l);
+		assert_int(parser_syntax_check(t), ==, false);
+	}
+	return MUNIT_OK;
+}
+
 static MunitTest test_suite_tests[] = {
 	{ (char *) "/test/arena", test_arena, NULL, NULL, MUNIT_TEST_OPTION_NONE, NULL, },
 	{ (char *) "/test/lexer_general", test_lexer_general, NULL, NULL, MUNIT_TEST_OPTION_NONE, NULL, },
@@ -181,6 +228,7 @@ static MunitTest test_suite_tests[] = {
 	{ (char *) "/test/lexer_squote", test_lexer_squote, NULL, NULL, MUNIT_TEST_OPTION_NONE, NULL, },
 	{ (char *) "/test/lexer_dollar", test_lexer_dollar, NULL, NULL, MUNIT_TEST_OPTION_NONE, NULL, },
 	{ (char *) "/test/lexer_append", test_lexer_append, NULL, NULL, MUNIT_TEST_OPTION_NONE, NULL, },
+	{ (char *) "/test/parser_syntax_check", test_parser_syntax_check, NULL, NULL, MUNIT_TEST_OPTION_NONE, NULL, },
 	{ NULL, NULL, NULL, NULL, MUNIT_TEST_OPTION_NONE, NULL },
 };
 
