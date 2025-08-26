@@ -6,7 +6,7 @@
 /*   By: trupham <trupham@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/03 11:54:34 by trupham           #+#    #+#             */
-/*   Updated: 2025/08/21 12:58:02 by jyniemit         ###   ########.fr       */
+/*   Updated: 2025/08/25 16:50:51 by jyniemit         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -106,6 +106,17 @@ t_arena *get_static_arena()
 	return arena;
 }
 
-char *a_strdup(char *s)
+char *a_strdup(const char *s)
 {
+	size_t len;
+	char *dup;
 
+	if (!s)
+		return NULL;
+	len = ft_strlen(s);
+	dup = s_malloc(len + 1);
+	if (!dup)
+		return NULL;
+	ft_strlcpy(dup, s, len + 1);
+	return dup;
+}
