@@ -29,6 +29,7 @@ typedef struct s_arena
 t_arena *arena_init(uint64_t capacity);
 void *arena_alloc(t_arena *arena, uint64_t size);
 void *s_malloc(uint64_t size);
+char *a_strdup(const char *s);
 void arena_free(t_arena *arena);
 t_arena *get_static_arena();
 
