@@ -6,7 +6,7 @@
 #    By: jyniemit <jyniemit@student.hive.fi>        +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2025/07/29 12:37:53 by jyniemit          #+#    #+#              #
-#    Updated: 2025/07/29 14:32:03 by jyniemit         ###   ########.fr        #
+#    Updated: 2025/08/26 14:58:36 by jyniemit         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 MAKEFLAGS += --no-print-directory
@@ -22,6 +22,12 @@ TESTDIR = ./test/
 
 SRCDIR = src
 OBJDIR = obj
+INCLUDEDIR = include
+
+HEADERS = \
+		  minishell.h \
+		  lexer.h \
+		  arena.h \
 
 SOURCES = \
 		  main.c	\
@@ -29,16 +35,18 @@ SOURCES = \
 		  signals.c \
 		  arena.c \
 		  lexer.c \
+		  environment.c \
 
 OBJECTS = $(SOURCES:%.c=$(OBJDIR)/%.o)
 SRCFILES = $(addprefix $(SRCDIR)/, $(SOURCES))
+INCLUDEFILES = $(addprefix $(INCLUDEDIR)/, $(HEADERS))
 
 all: $(NAME)
 
 $(NAME): $(OBJECTS) $(LIBFT)
 	$(CC) $(OBJECTS) $(OBJMAIN) $(LIBS) -o $(NAME)
 
-$(OBJDIR)/%.o: $(SRCDIR)/%.c | $(OBJDIR)
+$(OBJDIR)/%.o: $(SRCDIR)/%.c $(INCLUDEFILES) | $(OBJDIR)
 	$(CC) $(CFLAGS) $(INCLUDES) -c $< -o $@
 
 $(OBJDIR):
