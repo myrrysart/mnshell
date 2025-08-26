@@ -6,7 +6,7 @@
 /*   By: jyniemit <jyniemit@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/29 13:40:26 by jyniemit          #+#    #+#             */
-/*   Updated: 2025/08/19 12:25:32 by jyniemit         ###   ########.fr       */
+/*   Updated: 2025/08/25 16:50:05 by jyniemit         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -103,8 +103,11 @@ typedef struct s_shell
 }								t_shell;
 
 void							init_signals(t_shell *shell);
-void							init_shell(int ac, char **av, t_shell *shell);
+void							init_shell(int ac, char **av, char **env, t_shell *shell);
 void							run_shell(t_shell *shell);
 void							handle_signal(t_shell *shell, int sig);
 
+void							set_env_var(t_shell *shell, char *key, char *value);
+char							*get_env_var(t_shell *shell, char *key);
+void							unset_env_var(t_shell *shell, char *key);
 #endif // MINISHELL_H
