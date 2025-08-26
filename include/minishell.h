@@ -6,7 +6,7 @@
 /*   By: jyniemit <jyniemit@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/29 13:40:26 by jyniemit          #+#    #+#             */
-/*   Updated: 2025/08/25 16:50:05 by jyniemit         ###   ########.fr       */
+/*   Updated: 2025/08/26 17:10:19 by jyniemit         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -101,6 +101,7 @@ typedef struct s_shell
 	struct sigaction			saved_sigint;
 	struct sigaction			saved_sigquit;
 	struct sigaction			saved_sigterm;
+	t_arena						*arena;
 }								t_shell;
 
 void							init_signals(t_shell *shell);
