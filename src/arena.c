@@ -6,7 +6,7 @@
 /*   By: trupham <trupham@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/03 11:54:34 by trupham           #+#    #+#             */
-/*   Updated: 2025/08/03 11:57:26 by trupham          ###   ########.fr       */
+/*   Updated: 2025/08/26 17:09:35 by jyniemit         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,7 +19,7 @@
 /*@brief: initialize the memory arena with max size of capacity
 * @return: pointer to the arena
 */
-t_arena *arena_init(uint64_t capacity)
+t_arena *arena_init(size_t capacity)
 {
 	t_arena *arena;
 	
@@ -43,7 +43,7 @@ t_arena *arena_init(uint64_t capacity)
  * @params: the head arena, the size to be allocated
  * @return: pointer to the buffer in the arena
 */
-void *arena_alloc(t_arena *arena, uint64_t size)
+void *arena_alloc(t_arena *arena, size_t size)
 {
 	void *buf;
 	t_arena *next;
@@ -108,4 +108,19 @@ t_arena *get_static_arena()
 			return NULL;
 	}
 	return arena;
+}
+
+char *arena_strdup(t_arena *arena, const char *s)
+{
+	size_t len;
+	char *dup;
+
+	if (!s)
+		return NULL;
+	len = ft_strlen(s);
+	dup = arena_alloc(arena, len + 1);
+	if (!dup)
+		return NULL;
+	ft_strlcpy(dup, s, len + 1);
+	return dup;
 }

@@ -6,7 +6,7 @@
 /*   By: jyniemit <jyniemit@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/29 13:40:26 by jyniemit          #+#    #+#             */
-/*   Updated: 2025/07/29 14:15:13 by jyniemit         ###   ########.fr       */
+/*   Updated: 2025/08/27 12:35:21 by jyniemit         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,8 +23,11 @@
 # include <readline/history.h>
 # include <readline/readline.h>
 // sigaction & signals
-# include "libft.h"
 # include <signal.h>
+// uint typedefinitions
+# include <stdint.h>
+// our own libraries
+# include "libft.h"
 # include "lexer.h"
 # include "arena.h"
 # include "parser.h"
@@ -50,22 +53,24 @@ typedef enum e_shell_code
 	EXIT_CAN_RETRY = 123
 }								t_shell_code;
 
-typedef enum e_shell_state
+typedef uint32_t t_shell_state;
+enum e_shell_state
 {
 	SHELL_DEFAULT = 0,
-	EVALUATING = (1 << 0),
-	WAITING_CHILD = (1 << 1),
-	IN_HEREDOC = (1 << 2),
-	NON_INTERACTIVE = (1 << 3),
-	SHOULD_EXIT = (1 << 4),
-	HAS_PIPE = (1 << 5),
-	HAS_INPUT_REDIR = (1 << 6),
-	HAS_OUTPUT_REDIR = (1 << 7),
-	HAS_BUILTIN = (1 << 8),
-	SUPPRESS_PROMPT = (1 << 9),
-	IN_SQUOTE = (1 << 10),
-	IN_DQUOTE = (1 << 11)
-}								t_shell_state;
+	EVALUATING = (1u << 0),
+	WAITING_CHILD = (1u << 1),
+	SHOULD_EXIT = (1u << 2),
+	NON_INTERACTIVE = (1u << 3),
+	IN_HEREDOC = (1u << 4),
+	IN_SQUOTE = (1u << 5),
+	IN_DQUOTE = (1u << 6),
+	HAS_PIPE = (1u << 7),
+	HAS_INPUT_REDIR = (1u << 8),
+	HAS_OUTPUT_REDIR = (1u << 9),
+	HAS_BUILTIN = (1u << 10),
+	SUPPRESS_PROMPT = (1u << 11),
+	ENV_MODIFIED = (1u << 12)
+};
 
 typedef struct s_shell
 {
@@ -87,7 +92,10 @@ typedef struct s_shell
 	pid_t						process_id[MAX_PROCESSES];
 	int							process_exit_status[MAX_PROCESSES];
 
-	char						**env_vars;
+	char						**original_env;
+	char						**heap_env;
+	int							env_count;
+	int							env_capacity;
 	char						working_directory[PATH_MAX];
 
 	int							token_index[ARG_MAX];
@@ -97,11 +105,16 @@ typedef struct s_shell
 	struct sigaction			saved_sigint;
 	struct sigaction			saved_sigquit;
 	struct sigaction			saved_sigterm;
+	t_arena						*arena;
 }								t_shell;
 
 void							init_signals(t_shell *shell);
-void							init_shell(int ac, char **av, t_shell *shell);
+void							init_shell(int ac, char **av, char **env, t_shell *shell);
 void							run_shell(t_shell *shell);
 void							handle_signal(t_shell *shell, int sig);
 
+void							set_env_var(t_shell *shell, char *key, char *value);
+char							*get_env_var(t_shell *shell, char *key);
+void							unset_env_var(t_shell *shell, char *key);
+void							print_env(t_shell *shell);
 #endif // MINISHELL_H

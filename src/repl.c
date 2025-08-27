@@ -6,41 +6,58 @@
 /*   By: jyniemit <jyniemit@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/29 12:37:53 by jyniemit          #+#    #+#             */
-/*   Updated: 2025/07/29 15:27:14 by jyniemit         ###   ########.fr       */
+/*   Updated: 2025/08/27 12:34:07 by jyniemit         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-	/*TODO: On ac and av: need to figure out if child process shells need these
-	* things, ortesting or something else. Now I'm just casting them to the
-	* void, but keeping them until we know for sure*/
-void	init_shell(int ac, char **av, t_shell *shell)
+static void	init_env(char **env, t_shell *shell)
+{
+	int	i;
+	
+	i = -1;
+	shell->original_env = env;
+	shell->env_count = 0;
+	while (env[shell->env_count])
+		shell->env_count++;
+	shell->env_capacity = shell->env_count * 2;
+	shell->heap_env = (char **)arena_alloc(shell->arena,
+				sizeof(char *) * (shell->env_capacity + 1));
+	if (!shell->heap_env)
+		return ;
+	while (++i < shell->env_count)
+		shell->heap_env[i] = arena_strdup(shell->arena, env[i]);
+	shell->heap_env[shell->env_count] = NULL;
+}
+
+void	init_shell(int ac, char **av, char **env, t_shell *shell)
 {
 	(void)ac;
 	(void)av;
-	shell->state = 0;
-	shell->code = OK;
-	shell->last_code = OK;
-	shell->argc = 0;
 	shell->input_fd = STDIN_FILENO;
 	shell->output_fd = STDOUT_FILENO;
 	shell->error_fd = STDERR_FILENO;
 	shell->pipe_read_fd = -1;
 	shell->pipe_write_fd = -1;
-	shell->token_count = 0;
-	if (getcwd(shell->working_directory, PATH_MAX) == NULL)
+	shell->arena = arena_init(ARENA_CAP);
+	if (!shell->arena)
+	{
+		shell->code = EXIT_SHELLINITFAIL;
+		shell->state |= SHOULD_EXIT;
+		return ;
+	}
+	init_env(env, shell);
+	if (!getcwd(shell->working_directory, PATH_MAX))
 	{
 		shell->code = EXIT_SHELLINITFAIL;
 		shell->state |= SHOULD_EXIT;
 	}
 }
 
-	/* TODO: parsing goes here. Currently just calling a printf to tell
-	 * what has been written on the command line*/
 static void	parse_and_execute(t_shell *shell)
 {
-	if (!(shell->state & EVALUATING))
+	if (!(shell->state & EVALUATING) || (shell->state & SHOULD_EXIT))
 		return ;
 	if (ft_strlen(shell->command_line) == 0)
 		return ;
