@@ -29,6 +29,11 @@ HEADERS = \
 		  lexer.h \
 		  arena.h \
 
+HEADERS = \
+		  minishell.h \
+		  lexer.h \
+		  arena.h \
+
 SOURCES = main.c	\
 		  repl.c	\
 		  signals.c	\

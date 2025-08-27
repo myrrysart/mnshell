@@ -19,7 +19,6 @@ int	main(int ac, char **av, char **env)
 	shell = (t_shell){};
 	init_shell(ac, av, env, &shell);
 	init_signals(&shell);
-	init_shell(ac, av, &shell);
 	run_shell(&shell);
 	arena_free(shell.arena);
 	return (shell.code);
