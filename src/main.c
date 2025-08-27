@@ -16,8 +16,8 @@ int	main(int ac, char **av)
 {
 	t_shell	shell;
 
+	shell = (t_shell){};
 	init_signals(&shell);
-	ft_bzero(&shell, sizeof(t_shell));
 	init_shell(ac, av, &shell);
 	run_shell(&shell);
 	return (shell.code);

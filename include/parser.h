@@ -14,8 +14,6 @@
 #define PARSER_H
 #include "minishell.h"
 
-bool parser_is_valid_pipe(t_token *token);
-bool parser_is_valid_redirect(t_token *token);
-bool parser_syntax_check(t_token *token);
+bool parser_is_syntax_correct(t_token *token);
 
 #endif // !PARSER_H

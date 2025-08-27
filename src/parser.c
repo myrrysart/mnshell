@@ -12,38 +12,29 @@
 
 #include "parser.h"
 
-bool parser_is_valid_redirect(t_token *token)
+/* checking for PIPE and REDIRECTION syntax
+ */
+bool parser_is_syntax_correct(t_token *token)
 {
+	t_token *last;
+
 	if (!token)
 		return false;
-	while (token && token->next)
-	{
-		if ((token->type == REDIRECT_OUT || token->type == REDIRECT_IN)
-			&& token->next->type != WORD)
-			return false;
-		token = token->next;
-	}
-	return true;
-}
-
-bool parser_is_valid_pipe(t_token *token)
-{
-	if (!token)
+	last = token;
+	while (last->next)
+		last = last->next;
+	if (last->type == PIPE || last->type == REDIRECT_OUT
+		|| last->type == REDIRECT_IN || last->type == APPEND)
 		return false;
 	while (token && token->next)
 	{
 		if (token->type == PIPE && token->next->type != WORD)
 			return false;
+		if ((token->type == REDIRECT_OUT || token->type == REDIRECT_IN 
+		|| token->type == APPEND)
+			&& token->next->type != WORD)
+			return false;
 		token = token->next;
 	}
-	return true;
-}
-
-bool parser_syntax_check(t_token *token)
-{
-	if (!parser_is_valid_pipe(token))
-		return false;
-	if (!parser_is_valid_redirect(token))
-		return false;
 	return true;
 }

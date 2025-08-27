@@ -27,6 +27,7 @@
 # include <signal.h>
 # include "lexer.h"
 # include "arena.h"
+# include "parser.h"
 # define MAX_PROCESSES 30587
 # define ARG_MAX 4096
 
