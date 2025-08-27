@@ -21,5 +21,6 @@ int	main(int ac, char **av, char **env)
 	init_signals(&shell);
 	init_shell(ac, av, &shell);
 	run_shell(&shell);
+	arena_free(shell.arena);
 	return (shell.code);
 }
