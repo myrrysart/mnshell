@@ -116,4 +116,5 @@ void							handle_signal(t_shell *shell, int sig);
 void							set_env_var(t_shell *shell, char *key, char *value);
 char							*get_env_var(t_shell *shell, char *key);
 void							unset_env_var(t_shell *shell, char *key);
+void							print_env(t_shell *shell);
 #endif // MINISHELL_H
