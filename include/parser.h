@@ -1,24 +1,19 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   main.c                                             :+:      :+:    :+:   */
+/*   parser.h                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jyniemit <jyniemit@student.hive.fi>        +#+  +:+       +#+        */
+/*   By: trupham <trupham@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/07/29 14:50:29 by jyniemit          #+#    #+#             */
-/*   Updated: 2025/08/07 11:38:35 by trupham          ###   ########.fr       */
+/*   Created: 2025/08/25 13:54:35 by trupham           #+#    #+#             */
+/*   Updated: 2025/08/25 14:09:52 by trupham          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
+#ifndef PARSER_H
+#define PARSER_H
 #include "minishell.h"
 
-int	main(int ac, char **av)
-{
-	t_shell	shell;
+bool parser_is_syntax_correct(t_token *token);
 
-	shell = (t_shell){};
-	init_signals(&shell);
-	init_shell(ac, av, &shell);
-	run_shell(&shell);
-	return (shell.code);
-}
+#endif // !PARSER_H

@@ -2,25 +2,30 @@ MAKEFLAGS += --no-print-directory
 NAME = test
 
 CC = cc
-CFLAGS = -Wall -Wextra -Werror
+CFLAGS = -Wall -Wextra
 LIBFTDIR = ../libft/
 LIBFT = $(LIBFTDIR)libft.a
 INCLUDES = -I. -I../include -I$(LIBFTDIR)
 
-SRCDIR = ../src
-OBJDIR = ../obj
+SRCDIR = ../src/
+OBJDIR = ../obj/
 
-SOURCES = test.c	\
-		  arena.c	\
-		  lexer.c	\
-		  munit.c	\
+SRC = arena.c	\
+	  lexer.c	\
+	  parser.c	\
 
-OBJECTS = $(SOURCES:%.c=$(OBJDIR)/%.o)
+TEST = test.c	\
+	   munit.c	\
+
+OBJ = $(SRC:.c=.o)
+TESTOBJ = $(TEST:.c=.o)
+
+OBJECTS = $(addprefix $(OBJDIR), $(OBJ))
 
 all: $(NAME)
 
-$(NAME): $(OBJECTS)
-	$(CC) $(OBJECTS) $(LIBFT) -o $(NAME)
+$(NAME): $(OBJECTS) $(TESTOBJ)
+	$(CC) $(OBJECTS) $(TESTOBJ) $(LIBFT) -o $(NAME)
 
-$(OBJDIR)/%.o: %.c
-	$(CC) $(CFLAGS) $(INCLUDES) -c $< -o $@
+%.o: %.c
+	cc $(CFLAGS) $(INCLUDES) -c $< -o $@

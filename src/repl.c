@@ -49,6 +49,23 @@ static void	parse_and_execute(t_shell *shell)
 		shell->state |= SHOULD_EXIT;
 		return ;
 	}
+	t_lexer l = build_lexer(shell->command_line);
+	t_token *t = build_token_list(&l);
+	if (!parser_is_syntax_correct(t))
+	{
+		ft_printf("[debug] Syntax Error\n");
+		return;
+	}
+	while (t)
+	{
+		if (t->type == INVALID)
+		{
+			ft_printf("[debug] Syntax Error\n");
+			return;
+		}
+		ft_printf("[token type: %d]: %s\n", t->type, t->text);
+		t = t->next;
+	}
 	shell->code = OK;
 	shell->state &= ~EVALUATING;
 }

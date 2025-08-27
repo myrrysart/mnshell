@@ -6,7 +6,7 @@
 #    By: jyniemit <jyniemit@student.hive.fi>        +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2025/07/29 12:37:53 by jyniemit          #+#    #+#              #
-#    Updated: 2025/07/29 14:32:03 by jyniemit         ###   ########.fr        #
+#    Updated: 2025/08/25 15:25:59 by trupham          ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 MAKEFLAGS += --no-print-directory
@@ -23,12 +23,12 @@ TESTDIR = ./test/
 SRCDIR = src
 OBJDIR = obj
 
-SOURCES = \
-		  main.c	\
+SOURCES = main.c	\
 		  repl.c	\
-		  signals.c \
-		  arena.c \
-		  lexer.c \
+		  signals.c	\
+		  arena.c	\
+		  lexer.c	\
+		  parser.c	\
 
 OBJECTS = $(SOURCES:%.c=$(OBJDIR)/%.o)
 SRCFILES = $(addprefix $(SRCDIR)/, $(SOURCES))
