@@ -6,7 +6,7 @@
 /*   By: jyniemit <jyniemit@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/25 14:46:03 by jyniemit          #+#    #+#             */
-/*   Updated: 2025/08/25 16:49:14 by jyniemit         ###   ########.fr       */
+/*   Updated: 2025/08/27 12:38:08 by jyniemit         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,7 +37,7 @@ static void expand_env_capacity(t_shell *shell)
     int i;
 
     shell->env_capacity *= 2;
-    new_env = s_malloc(sizeof(char *) * (shell->env_capacity + 1));
+    new_env = arena_alloc(shell->arena, sizeof(char *) * (shell->env_capacity + 1));
     i = -1;
     while (++i < shell->env_count)
         new_env[i] = shell->heap_env[i];
@@ -62,7 +62,7 @@ void set_env_var(t_shell *shell, char *key, char *value)
         if (ft_strncmp(shell->heap_env[i], key, key_len) == 0
             && shell->heap_env[i][key_len] == '=')
         {
-            new_var = s_malloc(key_len + ft_strlen(value) + 2);
+            new_var = arena_alloc(shell->arena, key_len + ft_strlen(value) + 2);
             ft_strlcpy(new_var, key, key_len + 1);
             ft_strlcat(new_var, "=", key_len + 2);
             ft_strlcat(new_var, value, key_len + ft_strlen(value) + 2);
@@ -75,7 +75,7 @@ void set_env_var(t_shell *shell, char *key, char *value)
     if (shell->env_count >= shell->env_capacity - 1)
         expand_env_capacity(shell);
 
-    new_var = s_malloc(key_len + ft_strlen(value) + 2);
+    new_var = arena_alloc(shell->arena, key_len + ft_strlen(value) + 2);
     ft_strlcpy(new_var, key, key_len + 1);
     ft_strlcat(new_var, "=", key_len + 2);
     ft_strlcat(new_var, value, key_len + ft_strlen(value) + 2);
@@ -114,4 +114,15 @@ void unset_env_var(t_shell *shell, char *key)
             return;
         }
     }
+}
+void	print_env(t_shell *shell)
+{
+	int		i;
+
+	if (!shell)
+		return ;
+	i = -1;
+	while(++i < shell->env_count)
+		ft_printf("%s\n", shell->heap_env[i]);
+	return ;
 }

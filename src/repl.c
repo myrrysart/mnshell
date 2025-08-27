@@ -6,7 +6,7 @@
 /*   By: jyniemit <jyniemit@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/29 12:37:53 by jyniemit          #+#    #+#             */
-/*   Updated: 2025/08/26 17:11:00 by jyniemit         ###   ########.fr       */
+/*   Updated: 2025/08/27 12:34:07 by jyniemit         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -55,11 +55,9 @@ void	init_shell(int ac, char **av, char **env, t_shell *shell)
 	}
 }
 
-	/* TODO: parsing goes here. Currently just calling a printf to tell
-	 * what has been written on the command line*/
 static void	parse_and_execute(t_shell *shell)
 {
-	if (!(shell->state & EVALUATING))
+	if (!(shell->state & EVALUATING) || (shell->state & SHOULD_EXIT))
 		return ;
 	if (ft_strlen(shell->command_line) == 0)
 		return ;
