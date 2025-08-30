@@ -6,7 +6,7 @@
 #    By: jyniemit <jyniemit@student.hive.fi>        +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2025/07/29 12:37:53 by jyniemit          #+#    #+#              #
-#    Updated: 2025/08/27 12:54:15 by jyniemit         ###   ########.fr        #
+#    Updated: 2025/08/29 15:48:22 by jyniemit         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 MAKEFLAGS += --no-print-directory
@@ -77,4 +77,4 @@ test: all
 	@make -C $(TESTDIR)
 	@./test/test
 
-.PHONY: all clean fclean re debug
+.PHONY: all clean fclean re debug test

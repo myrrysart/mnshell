@@ -13,6 +13,7 @@ OBJDIR = ../obj/
 SRC = arena.c	\
 	  lexer.c	\
 	  parser.c	\
+	  environment.c \
 
 TEST = test.c	\
 	   munit.c	\

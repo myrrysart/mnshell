@@ -5,6 +5,9 @@
 #include "parser.h"
 #include "munit.h"
 
+// separated unit test files
+#include "test_environment.c"
+
 static MunitResult test_lexer_general(const MunitParameter params[], void* data)
 {
 	(void)params;
@@ -261,6 +264,7 @@ static MunitResult test_parser_syntax_check(const MunitParameter params[], void*
 	return MUNIT_OK;
 }
 
+
 static MunitTest test_suite_tests[] = {
 	{ "/test/arena", test_arena, NULL, NULL, MUNIT_TEST_OPTION_NONE, NULL, },
 	{ "/test/lexer_general", test_lexer_general, NULL, NULL, MUNIT_TEST_OPTION_NONE, NULL, },
@@ -269,6 +273,12 @@ static MunitTest test_suite_tests[] = {
 	{ "/test/lexer_dollar", test_lexer_dollar, NULL, NULL, MUNIT_TEST_OPTION_NONE, NULL, },
 	{ "/test/lexer_append", test_lexer_append, NULL, NULL, MUNIT_TEST_OPTION_NONE, NULL, },
 	{ "/test/parser_syntax_check", test_parser_syntax_check, NULL, NULL, MUNIT_TEST_OPTION_NONE, NULL, },
+	{ "/env/get_basic", test_get_env_var_basic, NULL, NULL, MUNIT_TEST_OPTION_NONE, NULL },
+	{ "/env/get_missing", test_get_env_var_missing, NULL, NULL, MUNIT_TEST_OPTION_NONE, NULL },
+	{ "/env/set_overwrite", test_set_env_var_overwrite, NULL, NULL, MUNIT_TEST_OPTION_NONE, NULL },
+	{ "/env/set_expand", test_set_env_var_expand, NULL, NULL, MUNIT_TEST_OPTION_NONE, NULL },
+	{ "/env/unset_basic", test_unset_env_var_basic, NULL, NULL, MUNIT_TEST_OPTION_NONE, NULL },
+	{ "/env/unset_missing", test_unset_env_var_missing, NULL, NULL, MUNIT_TEST_OPTION_NONE, NULL },
 	{ NULL, NULL, NULL, NULL, MUNIT_TEST_OPTION_NONE, NULL },
 };
 
