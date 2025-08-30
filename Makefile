@@ -6,7 +6,7 @@
 #    By: jyniemit <jyniemit@student.hive.fi>        +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2025/07/29 12:37:53 by jyniemit          #+#    #+#              #
-#    Updated: 2025/08/29 15:48:22 by jyniemit         ###   ########.fr        #
+#    Updated: 2025/08/30 18:30:13 by jyniemit         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 MAKEFLAGS += --no-print-directory
@@ -23,6 +23,7 @@ TESTDIR = ./test/
 SRCDIR = src
 OBJDIR = obj
 INCLUDEDIR = include
+ASMDIR = asm
 
 HEADERS = \
 		  minishell.h \
@@ -41,6 +42,9 @@ SOURCES = main.c	\
 		  lexer.c	\
 		  parser.c	\
 		  environment.c \
+		  execution.c \
+		  builtin_echo.c \
+		  builtin_exit.c \
 
 OBJECTS = $(SOURCES:%.c=$(OBJDIR)/%.o)
 SRCFILES = $(addprefix $(SRCDIR)/, $(SOURCES))
@@ -62,6 +66,7 @@ $(LIBFT):
 
 clean:
 	rm -rf $(OBJDIR)
+	rm -rf $(ASMDIR)
 	make -C $(LIBFTDIR) clean
 
 fclean: clean
@@ -77,4 +82,11 @@ test: all
 	@make -C $(TESTDIR)
 	@./test/test
 
-.PHONY: all clean fclean re debug test
+$(ASMDIR)/%.s: $(SRCDIR)/%.c $(INCLUDEFILES) | $(ASMDIR)
+	$(CC) $(CFLAGS) -S -O0 $(INCLUDES) -c $< -o $@
+
+$(ASMDIR):
+	mkdir -p $(ASMDIR)
+
+assembly: $(SOURCES:%.c=$(ASMDIR)/%.s)
+.PHONY: all clean fclean re debug test assembly
