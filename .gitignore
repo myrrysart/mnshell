@@ -60,6 +60,5 @@ dkms.conf
 
 *.vim
 test/test
-src/.environment.c.swp
-src/.main.c.swp
-src/.repl.c.swp
+*.swp
+minishell_tester
