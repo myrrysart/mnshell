@@ -6,7 +6,7 @@
 /*   By: jyniemit <jyniemit@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/29 12:37:53 by jyniemit          #+#    #+#             */
-/*   Updated: 2025/08/27 12:34:07 by jyniemit         ###   ########.fr       */
+/*   Updated: 2025/08/30 17:36:49 by jyniemit         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -55,17 +55,30 @@ void	init_shell(int ac, char **av, char **env, t_shell *shell)
 	}
 }
 
+static int tokens_to_argv(t_token *tokens, char **argv, int max_args)
+{
+    int argc = 0;
+    t_token *current = tokens;
+
+    while (current && argc < max_args - 1)
+    {
+        if (current->type == WORD)
+        {
+            argv[argc] = current->text;
+            argc++;
+        }
+        current = current->next;
+    }
+    argv[argc] = NULL;
+    return argc;
+}
+
 static void	parse_and_execute(t_shell *shell)
 {
 	if (!(shell->state & EVALUATING) || (shell->state & SHOULD_EXIT))
 		return ;
 	if (ft_strlen(shell->command_line) == 0)
 		return ;
-	if (ft_strncmp(shell->command_line, "exit", 5) == 0)
-	{
-		shell->state |= SHOULD_EXIT;
-		return ;
-	}
 	t_lexer l = build_lexer(shell->command_line);
 	t_token *t = build_token_list(&l);
 	if (!parser_is_syntax_correct(t))
@@ -73,17 +86,18 @@ static void	parse_and_execute(t_shell *shell)
 		ft_printf("[debug] Syntax Error\n");
 		return;
 	}
-	while (t)
-	{
-		if (t->type == INVALID)
-		{
-			ft_printf("[debug] Syntax Error\n");
-			return;
-		}
-		ft_printf("[token type: %d]: %s\n", t->type, t->text);
-		t = t->next;
-	}
-	shell->code = OK;
+	tokens_to_argv(t, shell->args, ARG_MAX);
+	shell->code = execute_command(shell);
+//	while (t)
+//	{
+//		if (t->type == INVALID)
+//		{
+//			ft_printf("[debug] Syntax Error\n");
+//			return;
+//		}
+//		ft_printf("[token type: %d]: %s\n", t->type, t->text);
+//		t = t->next;
+//	}
 	shell->state &= ~EVALUATING;
 }
 

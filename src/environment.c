@@ -6,7 +6,7 @@
 /*   By: jyniemit <jyniemit@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/25 14:46:03 by jyniemit          #+#    #+#             */
-/*   Updated: 2025/08/27 12:38:08 by jyniemit         ###   ########.fr       */
+/*   Updated: 2025/08/30 18:33:27 by jyniemit         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -115,14 +115,14 @@ void unset_env_var(t_shell *shell, char *key)
         }
     }
 }
-void	print_env(t_shell *shell)
+int	print_env(t_shell *shell)
 {
 	int		i;
 
 	if (!shell)
-		return ;
+		return (EXIT_BUILTIN_MISUSE);
 	i = -1;
 	while(++i < shell->env_count)
 		ft_printf("%s\n", shell->heap_env[i]);
-	return ;
+	return (OK);
 }

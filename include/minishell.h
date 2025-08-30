@@ -6,7 +6,7 @@
 /*   By: jyniemit <jyniemit@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/29 13:40:26 by jyniemit          #+#    #+#             */
-/*   Updated: 2025/08/27 12:35:21 by jyniemit         ###   ########.fr       */
+/*   Updated: 2025/08/30 18:33:57 by jyniemit         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -116,5 +116,10 @@ void							handle_signal(t_shell *shell, int sig);
 void							set_env_var(t_shell *shell, char *key, char *value);
 char							*get_env_var(t_shell *shell, char *key);
 void							unset_env_var(t_shell *shell, char *key);
-void							print_env(t_shell *shell);
+int								print_env(t_shell *shell);
+
+int								execute_command(t_shell *shell);
+int								builtin_echo(char **args);
+int								builtin_exit(t_shell *shell);
+char							*find_executable_path(char *cmd, char **env);
 #endif // MINISHELL_H
