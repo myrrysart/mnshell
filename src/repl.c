@@ -95,7 +95,20 @@ void	run_shell(t_shell *shell)
 	{
 		if (g_received_signal)
 			handle_signal(shell, g_received_signal);
-		line = readline("minishell$ ");
+		if (isatty(fileno(stdin)))
+            line = readline("minishell$ ");
+        else
+        {
+            char *raw_line;
+            raw_line = get_next_line(fileno(stdin));
+            if (!raw_line)
+            {
+                shell->state |= SHOULD_EXIT;
+                break;
+            }
+            line = ft_strtrim(raw_line, "\n");
+            free(raw_line);
+        }
 		if (!line)
 		{
 			write(STDOUT_FILENO, "exit\n", 5);
