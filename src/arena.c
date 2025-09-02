@@ -17,36 +17,36 @@
 #include <stdlib.h>
 
 /*@brief: initialize the memory arena with max size of capacity
-* @return: pointer to the arena
-*/
-t_arena *arena_init(size_t capacity)
+ * @return: pointer to the arena
+ */
+t_arena	*arena_init(size_t capacity)
 {
-	t_arena *arena;
-	
+	t_arena	*arena;
+
 	arena = ft_calloc(1, sizeof(t_arena));
 	if (!arena)
-		return NULL;
+		return (NULL);
 	arena->data = ft_calloc(capacity, sizeof(unsigned char));
 	if (!arena->data)
 	{
 		free(arena);
-		return NULL;
+		return (NULL);
 	}
 	arena->cursor = 0;
 	arena->capacity = capacity;
 	arena->next = NULL;
-	return arena;
+	return (arena);
 }
 
 /* @brief: allocate memory in the arena. if there is not enough space, move to
  * the next avaiable arena in the linked list
  * @params: the head arena, the size to be allocated
  * @return: pointer to the buffer in the arena
-*/
-void *arena_alloc(t_arena *arena, size_t size)
+ */
+void	*arena_alloc(t_arena *arena, size_t size)
 {
-	void *buf;
-	t_arena *next;
+	void	*buf;
+	t_arena	*next;
 
 	next = NULL;
 	while (arena->cursor + size > arena->capacity)
@@ -55,20 +55,20 @@ void *arena_alloc(t_arena *arena, size_t size)
 		{
 			next = arena_init(arena->capacity);
 			if (!next)
-				return NULL;
+				return (NULL);
 			arena->next = next;
 		}
 		arena = arena->next;
 	}
 	buf = &arena->data[arena->cursor];
 	arena->cursor += size;
-	return buf;
+	return (buf);
 }
 
-void arena_free(t_arena *arena)
+void	arena_free(t_arena *arena)
 {
-	t_arena *next;
-	t_arena *current;
+	t_arena	*next;
+	t_arena	*current;
 
 	current = arena;
 	next = NULL;
@@ -83,9 +83,9 @@ void arena_free(t_arena *arena)
 	arena = NULL;
 }
 
-void *s_malloc(uint64_t size)
+void	*s_malloc(uint64_t size)
 {
-	void *buf;
+	void	*buf;
 
 	buf = arena_alloc(get_static_arena(), size);
 	if (!buf)
@@ -94,33 +94,33 @@ void *s_malloc(uint64_t size)
 		ft_putendl_fd("failed to allocate memory arena", 2);
 		exit(EXIT_FAILURE);
 	}
-	return buf;
+	return (buf);
 }
 
-t_arena *get_static_arena()
+t_arena	*get_static_arena(void)
 {
-	static t_arena *arena;
+	static t_arena	*arena;
 
 	if (!arena)
 	{
 		arena = arena_init(ARENA_CAP);
 		if (!arena)
-			return NULL;
+			return (NULL);
 	}
-	return arena;
+	return (arena);
 }
 
-char *arena_strdup(t_arena *arena, const char *s)
+char	*arena_strdup(t_arena *arena, const char *s)
 {
-	size_t len;
-	char *dup;
+	size_t	len;
+	char	*dup;
 
 	if (!s)
-		return NULL;
+		return (NULL);
 	len = ft_strlen(s);
 	dup = arena_alloc(arena, len + 1);
 	if (!dup)
-		return NULL;
+		return (NULL);
 	ft_strlcpy(dup, s, len + 1);
-	return dup;
+	return (dup);
 }

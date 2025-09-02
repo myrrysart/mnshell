@@ -15,15 +15,15 @@
 static void	init_env(char **env, t_shell *shell)
 {
 	int	i;
-	
+
 	i = -1;
 	shell->original_env = env;
 	shell->env_count = 0;
 	while (env[shell->env_count])
 		shell->env_count++;
 	shell->env_capacity = shell->env_count * 2;
-	shell->heap_env = (char **)arena_alloc(shell->arena,
-				sizeof(char *) * (shell->env_capacity + 1));
+	shell->heap_env = (char **)arena_alloc(shell->arena, sizeof(char *)
+			* (shell->env_capacity + 1));
 	if (!shell->heap_env)
 		return ;
 	while (++i < shell->env_count)
@@ -55,74 +55,79 @@ void	init_shell(int ac, char **av, char **env, t_shell *shell)
 	}
 }
 
-static int tokens_to_argv(t_token *tokens, char **argv, int max_args)
+static int	tokens_to_argv(t_token *tokens, char **argv, int max_args)
 {
-    int argc = 0;
-    t_token *current = tokens;
+	int		argc;
+	t_token	*current;
 
-    while (current && argc < max_args - 1)
-    {
-        if (current->type == WORD)
-        {
-            argv[argc] = current->text;
-            argc++;
-        }
-        current = current->next;
-    }
-    argv[argc] = NULL;
-    return argc;
+	argc = 0;
+	current = tokens;
+	while (current && argc < max_args - 1)
+	{
+		if (current->type == WORD)
+		{
+			argv[argc] = current->text;
+			argc++;
+		}
+		current = current->next;
+	}
+	argv[argc] = NULL;
+	return (argc);
 }
 
 static void	parse_and_execute(t_shell *shell)
 {
+	t_lexer	l;
+	t_token	*t;
+
 	if (!(shell->state & EVALUATING) || (shell->state & SHOULD_EXIT))
 		return ;
 	if (ft_strlen(shell->command_line) == 0)
 		return ;
-	t_lexer l = build_lexer(shell->command_line);
-	t_token *t = build_token_list(&l);
+	l = build_lexer(shell->command_line);
+	t = build_token_list(&l);
 	if (!parser_is_syntax_correct(t))
 	{
 		ft_printf("[debug] Syntax Error\n");
-		return;
+		return ;
 	}
 	tokens_to_argv(t, shell->args, ARG_MAX);
 	shell->code = execute_command(shell);
-//	while (t)
-//	{
-//		if (t->type == INVALID)
-//		{
-//			ft_printf("[debug] Syntax Error\n");
-//			return;
-//		}
-//		ft_printf("[token type: %d]: %s\n", t->type, t->text);
-//		t = t->next;
-//	}
+	//	while (t)
+	//	{
+	//		if (t->type == INVALID)
+	//		{
+	//			ft_printf("[debug] Syntax Error\n");
+	//			return ;
+	//		}
+	//		ft_printf("[token type: %d]: %s\n", t->type, t->text);
+	//		t = t->next;
+	//	}
 	shell->state &= ~EVALUATING;
 }
 
 void	run_shell(t_shell *shell)
 {
 	char	*line;
+			char *raw_line;
 
 	while (!(shell->state & SHOULD_EXIT))
 	{
 		if (g_received_signal)
 			handle_signal(shell, g_received_signal);
 		if (isatty(fileno(stdin)))
-            line = readline("minishell$ ");
-        else
-        {
-            char *raw_line;
-            raw_line = get_next_line(fileno(stdin));
-            if (!raw_line)
-            {
-                shell->state |= SHOULD_EXIT;
-                break;
-            }
-            line = ft_strtrim(raw_line, "\n");
-            free(raw_line);
-        }
+			line = readline("minishell$ ");
+		else
+		{
+			raw_line = get_next_line(fileno(stdin));
+			if (!raw_line)
+			{
+				shell->state |= SHOULD_EXIT;
+				break ;
+			}
+			line = ft_strtrim(raw_line, "\n");
+			free(raw_line);
+		}
 		if (!line)
 		{
 			write(STDOUT_FILENO, "exit\n", 5);
