@@ -48,6 +48,7 @@ void	init_shell(int ac, char **av, char **env, t_shell *shell)
 		return ;
 	}
 	init_env(env, shell);
+	init_shell_env(shell, av);
 	if (!getcwd(shell->working_directory, PATH_MAX))
 	{
 		shell->code = EXIT_SHELLINITFAIL;
