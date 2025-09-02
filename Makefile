@@ -45,6 +45,7 @@ SOURCES = main.c	\
 		  execution.c \
 		  builtin_echo.c \
 		  builtin_exit.c \
+		  builtin_pwd.c \
 
 OBJECTS = $(SOURCES:%.c=$(OBJDIR)/%.o)
 SRCFILES = $(addprefix $(SRCDIR)/, $(SOURCES))

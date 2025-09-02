@@ -25,6 +25,8 @@ int	execute_command(t_shell *shell)
 		return builtin_exit(shell);
 //	else if (ft_strncmp(shell->args[0], "export", 7) == 0)
 //        return (set_env_var(shell->args,));
+	else if (ft_strncmp(shell->args[0], "cd", 3) == 0)
+		result = builtin_cd(shell);
 	else if (ft_strncmp(shell->args[0], "export", 7) == 0)
 		result = builtin_export(shell);
 	else if (ft_strncmp(shell->args[0], "unset", 6) == 0)
