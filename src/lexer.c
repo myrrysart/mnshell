@@ -186,19 +186,19 @@ t_token	get_next_token(t_lexer *l)
 
 	ft_bzero(&token, sizeof(t_token));
 	if (l->cursor >= l->content_len)
-		return token;
+		return (token);
 	trim_left(l);
 	if (l->content[l->cursor] == '\'')
-		return handle_squote(l);
+		return (handle_squote(l));
 	if (l->content[l->cursor] == '"')
-		return handle_dquote(l);
+		return (handle_dquote(l));
 	if (l->content[l->cursor] == '>' && l->content[l->cursor + 1] == '>')
-		return handle_append(l);
+		return (handle_append(l));
 	if (l->content[l->cursor] == '$')
-		return handle_dollar(l);
+		return (handle_dollar(l));
 	if (!is_operator(l->content[l->cursor]) && !is_quote(l->content[l->cursor]))
-		return handle_word(l);
-	return handle_other_token(l);
+		return (handle_word(l));
+	return (handle_other_token(l));
 }
 
 /*@brief: allocate a token node in the memory arena from a copy of token passed in
@@ -220,7 +220,7 @@ t_token	*build_token(t_token token)
 		i++;
 	}
 	new_token->text[i] = '\0';
-	return new_token;
+	return (new_token);
 }
 
 /*@brief: build a list of token from the lexer
@@ -235,16 +235,16 @@ t_token	*build_token_list(t_lexer *l)
 	head = build_token(get_next_token(l));
 	curr = head;
 	if (!head)
-		return NULL;
+		return (NULL);
 	while (l->cursor < l->content_len)
 	{
 		while (curr->next)
 			curr = curr->next;
 		new = build_token(get_next_token(l));
 		if (!new)
-			return NULL;
+			return (NULL);
 		curr->next = new;
 		new->prev = curr;
 	}
-	return head;
+	return (head);
 }

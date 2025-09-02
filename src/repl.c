@@ -110,7 +110,7 @@ static void	parse_and_execute(t_shell *shell)
 void	run_shell(t_shell *shell)
 {
 	char	*line;
-			char *raw_line;
+	char	*raw_line;
 
 	while (!(shell->state & SHOULD_EXIT))
 	{
