@@ -20,11 +20,11 @@ int	execute_command(t_shell *shell)
 		return (OK);
 	update_last_command(shell, shell->args[0]);
 	if (ft_strncmp(shell->args[0], "echo", 5) == 0)
-        return builtin_echo(shell->args);
+		result = builtin_echo(shell->args);
 	else if (ft_strncmp(shell->args[0], "exit", 5) == 0)
-		return builtin_exit(shell);
-//	else if (ft_strncmp(shell->args[0], "export", 7) == 0)
-//        return (set_env_var(shell->args,));
+		result = builtin_exit(shell);
+	else if (ft_strncmp(shell->args[0], "pwd", 4) == 0)
+		result = builtin_pwd(shell);
 	else if (ft_strncmp(shell->args[0], "cd", 3) == 0)
 		result = builtin_cd(shell);
 	else if (ft_strncmp(shell->args[0], "export", 7) == 0)

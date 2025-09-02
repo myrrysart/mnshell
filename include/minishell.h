@@ -118,11 +118,14 @@ char							*get_env_var(t_shell *shell, char *key);
 void							unset_env_var(t_shell *shell, char *key);
 int								print_env(t_shell *shell);
 void							init_shell_env(t_shell *shell, char **av);
+void							update_pwd_env(t_shell *shell, char *old_pwd, char *new_pwd);
 void							update_last_command(t_shell *shell, char *command);
 
 int								execute_command(t_shell *shell);
 int								builtin_echo(char **args);
 int								builtin_exit(t_shell *shell);
+int								builtin_pwd(t_shell *shell);
+int								builtin_cd(t_shell *shell);
 int								builtin_export(t_shell *shell);
 int								builtin_unset(t_shell *shell);
 char							*find_executable_path(char *cmd, char **env);
