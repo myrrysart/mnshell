@@ -13,10 +13,7 @@
 #ifndef LEXER_H
 #define LEXER_H
 
-#include <stddef.h>
-#include "libft.h"
-#include <ctype.h>
-#include <stdio.h>
+#include "arena.h"
 
 typedef enum {
 	END = 0,

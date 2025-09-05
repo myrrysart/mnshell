@@ -164,10 +164,11 @@ t_token	handle_dquote(t_lexer *l)
 	return (token);
 }
 
-t_token	handle_other_token(t_lexer *l)
+t_token handle_other_token(t_lexer *l)
 {
 	t_token	token;
 
+	token = (t_token){};
 	token.text_len = 1;
 	token.text = &l->content[l->cursor];
 	token.type = get_token_type(l->content[l->cursor]);

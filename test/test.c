@@ -1,9 +1,7 @@
-#include <stdbool.h>
 #define MUNIT_ENABLE_ASSERT_ALIASES
-#include "lexer.h"
 #include "arena.h"
-#include "parser.h"
 #include "munit.h"
+#include "parser.h"
 
 // separated unit test files
 #include "test_environment.c"
@@ -24,9 +22,19 @@ static MunitResult test_lexer_general(const MunitParameter params[], void* data)
 		assert_int(t->text_len, ==, 4);
 		t = t->next;
 		assert_string_equal(t->text, "hello");
+		munit_assert_ptr_null(t->next);
 		assert_int(t->type, ==, WORD);
 		assert_int(t->text_len, ==, 5);
 	}
+	// {
+	// 	char *str = "echo    ";
+	// 	t_lexer l = build_lexer(str);
+	// 	t_token *t = build_token_list(&l);
+	// 	assert_string_equal(t->text, "echo");
+	// 	munit_assert_ptr_null(t->next);
+	// 	assert_int(t->type, ==, WORD);
+	// 	assert_int(t->text_len, ==, 4);
+	// }
 	{
 		char *str = "echo hello | wc -l";
 		t_lexer l = build_lexer(str);
@@ -219,7 +227,7 @@ static MunitResult test_parser_syntax_check(const MunitParameter params[], void*
 		char *str = "| out";
 		t_lexer l = build_lexer(str);
 		t_token *t = build_token_list(&l);
-		assert_int(parser_is_syntax_correct(t), ==, true);
+		assert_int(parser_is_syntax_correct(t), ==, false);
 	}
 	{
 		char *str = "| |";
@@ -266,6 +274,75 @@ static MunitResult test_parser_syntax_check(const MunitParameter params[], void*
 	return MUNIT_OK;
 }
 
+static MunitResult test_ft_realloc(const MunitParameter params[], void* data)
+{
+	(void)params;
+	(void)data;
+	{
+		t_arena *arena = arena_init(ARENA_CAP);
+		char *str = arena_strdup(arena, "hi mom");
+		void *buf = ft_realloc(arena, &str, 6, 12);
+		assert_ptr_not_null(buf);
+	}
+	return MUNIT_OK;
+}
+
+static MunitResult test_dynamic_array()
+{
+	{
+		t_arena *arena = arena_init(ARENA_CAP);
+		t_da *arr = da_cmd_init(arena, 2);
+		munit_assert_int(arr->cap, ==, 2);
+		munit_assert_int(arr->count, ==, 0);
+		da_append(arena, arr, "hello");
+		da_append(arena, arr, "world");
+		da_append(arena, arr, "hi mom");
+		da_append(arena, arr, "hi mom");
+		da_append(arena, arr, "hi mom");
+		da_append(arena, arr, "hi mom");
+		da_append(arena, arr, "hi mom");
+		munit_assert_string_equal(arr->items[0], "hello");
+		munit_assert_string_equal(arr->items[1], "world");
+		munit_assert_string_equal(arr->items[2], "hi mom");
+		munit_assert_string_equal(arr->items[3], "hi mom");
+		munit_assert_string_equal(arr->items[4], "hi mom");
+		munit_assert_int(arr->cap, ==, 8);
+	}
+	return MUNIT_OK;
+}
+
+static MunitResult test_parser_cmd_build_one()
+{
+	char *str = "echo hello -n";
+	t_arena *arena = arena_init(ARENA_CAP);
+	t_lexer l = build_lexer(str);
+	t_token *t = build_token_list(&l);
+	t_cmd_table *cmd = parser_cmd_build_one(arena, t);
+	munit_assert_string_equal(cmd->cmd_da->items[0], "echo");
+	munit_assert_string_equal(cmd->cmd_da->items[1], "hello");
+	munit_assert_string_equal(cmd->cmd_da->items[2], "-n");
+	return MUNIT_OK;
+}
+
+static MunitResult test_parser_cmd_table()
+{
+	char *str = "echo hello | wc -l | grep he | echo hi";
+	t_arena *arena = arena_init(ARENA_CAP);
+	t_lexer l = build_lexer(str);
+	t_token *t = build_token_list(&l);
+	t_cmd_table *cmd_table = parser_cmd_build_many(arena, t);
+	munit_assert_string_equal(cmd_table->cmd_da->items[0], "echo");
+	munit_assert_string_equal(cmd_table->cmd_da->items[1], "hello");
+	munit_assert_null(cmd_table->cmd_da->items[2]);
+	munit_assert_string_equal(cmd_table->next->cmd_da->items[0], "wc");
+	munit_assert_string_equal(cmd_table->next->cmd_da->items[1], "-l");
+	munit_assert_string_equal(cmd_table->next->next->cmd_da->items[0], "grep");
+	munit_assert_string_equal(cmd_table->next->next->cmd_da->items[1], "he");
+	munit_assert_string_equal(cmd_table->next->next->next->cmd_da->items[0], "echo");
+	munit_assert_string_equal(cmd_table->next->next->next->cmd_da->items[1], "hi");
+	munit_assert_null(cmd_table->next->next->next->next);
+	return MUNIT_OK;
+}
 
 static MunitTest test_suite_tests[] = {
 	{ "/test/arena", test_arena, NULL, NULL, MUNIT_TEST_OPTION_NONE, NULL, },
@@ -281,6 +358,10 @@ static MunitTest test_suite_tests[] = {
 	{ "/env/set_expand", test_set_env_var_expand, NULL, NULL, MUNIT_TEST_OPTION_NONE, NULL },
 	{ "/env/unset_basic", test_unset_env_var_basic, NULL, NULL, MUNIT_TEST_OPTION_NONE, NULL },
 	{ "/env/unset_missing", test_unset_env_var_missing, NULL, NULL, MUNIT_TEST_OPTION_NONE, NULL },
+	{ "/test/ft_realloc", test_ft_realloc, NULL, NULL, MUNIT_TEST_OPTION_NONE, NULL, },
+	{ "/test/dynamic_array", test_dynamic_array, NULL, NULL, MUNIT_TEST_OPTION_NONE, NULL, },
+	{ "/test/parser_cmd_build_one", test_parser_cmd_build_one, NULL, NULL, MUNIT_TEST_OPTION_NONE, NULL, },
+	{ "/test/parser_cmd_table", test_parser_cmd_table, NULL, NULL, MUNIT_TEST_OPTION_NONE, NULL, },
 	{ NULL, NULL, NULL, NULL, MUNIT_TEST_OPTION_NONE, NULL },
 };
 
