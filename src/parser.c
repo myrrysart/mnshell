@@ -62,11 +62,22 @@ t_cmd_table *parser_cmd_build_one(t_arena *arena, t_token *token)
 	return new_cmd;
 }
 
+static bool parser_cmd_build_curr(t_arena *arena, t_cmd_table **curr, t_token *token)
+{
+	t_cmd_table *new_cmd;
+
+	new_cmd = parser_cmd_build_one(arena, token);
+	if (!new_cmd)
+		return false;
+	(*curr)->next = new_cmd;
+	new_cmd->prev = *curr;
+	return true;
+}
+
 t_cmd_table *parser_cmd_build_many(t_arena *arena, t_token *token)
 {
 	t_cmd_table *cmd_table_head;
 	t_cmd_table *curr;
-	t_cmd_table *new_cmd;
 	t_token *token_end;
 
 	if (!token)
@@ -86,20 +97,14 @@ t_cmd_table *parser_cmd_build_many(t_arena *arena, t_token *token)
 			token_end = token_end->next;
 		if (!token_end)
 		{
-			new_cmd = parser_cmd_build_one(arena, token->next);
-			if (!new_cmd)
+			if (!parser_cmd_build_curr(arena, &curr, token->next))
 				return NULL;
-			curr->next = new_cmd;
-			new_cmd->prev = curr;
 			break;
 		}
 		else if (token_end && token_end->type == PIPE)
 		{
-			new_cmd = parser_cmd_build_one(arena, token->next);
-			if (!new_cmd)
+			if (!parser_cmd_build_curr(arena, &curr, token->next))
 				return NULL;
-			curr->next = new_cmd;
-			new_cmd->prev = curr;
 			token = token_end;
 		}
 	}
