@@ -30,3 +30,6 @@ $(NAME): $(OBJECTS) $(TESTOBJ)
 
 %.o: %.c
 	cc $(CFLAGS) $(INCLUDES) -c $< -o $@
+
+clean:
+	rm *.o

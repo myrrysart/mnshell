@@ -8,6 +8,8 @@
 // separated unit test files
 #include "test_environment.c"
 
+#include "bash_comparison_test.c"
+
 static MunitResult test_lexer_general(const MunitParameter params[], void* data)
 {
 	(void)params;
@@ -292,5 +294,6 @@ static const MunitSuite test_suite = {
 
 int main(int argc, char **argv)
 {
+	bash_comparison();
 	return munit_suite_main(&test_suite, (void*) "lexer", argc, argv);
 }
