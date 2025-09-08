@@ -326,21 +326,34 @@ static MunitResult test_parser_cmd_build_one()
 
 static MunitResult test_parser_cmd_table()
 {
-	char *str = "echo hello | wc -l | grep he | echo hi";
-	t_arena *arena = arena_init(ARENA_CAP);
-	t_lexer l = build_lexer(str);
-	t_token *t = build_token_list(&l);
-	t_cmd_table *cmd_table = parser_cmd_build_many(arena, t);
-	munit_assert_string_equal(cmd_table->cmd_da->items[0], "echo");
-	munit_assert_string_equal(cmd_table->cmd_da->items[1], "hello");
-	munit_assert_null(cmd_table->cmd_da->items[2]);
-	munit_assert_string_equal(cmd_table->next->cmd_da->items[0], "wc");
-	munit_assert_string_equal(cmd_table->next->cmd_da->items[1], "-l");
-	munit_assert_string_equal(cmd_table->next->next->cmd_da->items[0], "grep");
-	munit_assert_string_equal(cmd_table->next->next->cmd_da->items[1], "he");
-	munit_assert_string_equal(cmd_table->next->next->next->cmd_da->items[0], "echo");
-	munit_assert_string_equal(cmd_table->next->next->next->cmd_da->items[1], "hi");
-	munit_assert_null(cmd_table->next->next->next->next);
+	{
+		char *str = "echo hello | wc -l | grep he | echo hi";
+		t_arena *arena = arena_init(ARENA_CAP);
+		t_lexer l = build_lexer(str);
+		t_token *t = build_token_list(&l);
+		t_cmd_table *cmd_table = parser_cmd_build_many(arena, t);
+		munit_assert_string_equal(cmd_table->cmd_da->items[0], "echo");
+		munit_assert_string_equal(cmd_table->cmd_da->items[1], "hello");
+		munit_assert_null(cmd_table->cmd_da->items[2]);
+		munit_assert_string_equal(cmd_table->next->cmd_da->items[0], "wc");
+		munit_assert_string_equal(cmd_table->next->cmd_da->items[1], "-l");
+		munit_assert_string_equal(cmd_table->next->next->cmd_da->items[0], "grep");
+		munit_assert_string_equal(cmd_table->next->next->cmd_da->items[1], "he");
+		munit_assert_string_equal(cmd_table->next->next->next->cmd_da->items[0], "echo");
+		munit_assert_string_equal(cmd_table->next->next->next->cmd_da->items[1], "hi");
+		munit_assert_null(cmd_table->next->next->next->next);
+	}
+	{
+		char *str = "echo 'hello'|ls -la";
+		t_arena *arena = arena_init(ARENA_CAP);
+		t_lexer l = build_lexer(str);
+		t_token *t = build_token_list(&l);
+		t_cmd_table *cmd_table = parser_cmd_build_many(arena, t);
+		munit_assert_string_equal(cmd_table->cmd_da->items[0], "echo");
+		munit_assert_string_equal(cmd_table->cmd_da->items[1], "'hello'");
+		munit_assert_string_equal(cmd_table->next->cmd_da->items[0], "ls");
+		munit_assert_string_equal(cmd_table->next->cmd_da->items[1], "-la");
+	}
 	return MUNIT_OK;
 }
 

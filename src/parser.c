@@ -74,20 +74,12 @@ static bool parser_cmd_build_curr(t_arena *arena, t_cmd_table **curr, t_token *t
 	return true;
 }
 
-t_cmd_table *parser_cmd_build_many(t_arena *arena, t_token *token)
+static bool parser_cmd_build_main(t_arena *arena, t_cmd_table *head, t_token *token)
 {
-	t_cmd_table *cmd_table_head;
-	t_cmd_table *curr;
 	t_token *token_end;
+	t_cmd_table *curr;
 
-	if (!token)
-		return NULL;
-	cmd_table_head = parser_cmd_build_one(arena, token);
-	if (!cmd_table_head)
-		return NULL;
-	while (token && token->type != PIPE)
-		token = token->next;
-	curr = cmd_table_head;
+	curr = head;
 	while (token && token->next)
 	{
 		token_end = token->next;
@@ -98,16 +90,32 @@ t_cmd_table *parser_cmd_build_many(t_arena *arena, t_token *token)
 		if (!token_end)
 		{
 			if (!parser_cmd_build_curr(arena, &curr, token->next))
-				return NULL;
+				return false;
 			break;
 		}
 		else if (token_end && token_end->type == PIPE)
 		{
 			if (!parser_cmd_build_curr(arena, &curr, token->next))
-				return NULL;
+				return false;
 			token = token_end;
 		}
 	}
+	return true;
+}
+
+t_cmd_table *parser_cmd_build_many(t_arena *arena, t_token *token)
+{
+	t_cmd_table *cmd_table_head;
+
+	if (!token)
+		return NULL;
+	cmd_table_head = parser_cmd_build_one(arena, token);
+	if (!cmd_table_head)
+		return NULL;
+	while (token && token->type != PIPE)
+		token = token->next;
+	if (!parser_cmd_build_main(arena, cmd_table_head, token))
+		return NULL;
 	return cmd_table_head;
 }
 
