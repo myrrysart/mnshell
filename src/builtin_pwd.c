@@ -6,7 +6,7 @@
 /*   By: jyniemit <jyniemit@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/02 15:42:05 by jyniemit          #+#    #+#             */
-/*   Updated: 2025/09/02 15:42:23 by jyniemit         ###   ########.fr       */
+/*   Updated: 2025/09/09 17:02:13 by jyniemit         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,7 +29,7 @@ int	builtin_pwd(t_shell *shell)
 			ft_printf("%s\n", shell->working_directory);
 		else
 		{
-			perror("pwd");
+			ft_printf("pwd: cannot determine current directory\n");
 			return (EXIT_GENERAL_ERROR);
 		}
 	}
