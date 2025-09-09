@@ -6,7 +6,7 @@
 /*   By: jyniemit <jyniemit@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/29 12:37:53 by jyniemit          #+#    #+#             */
-/*   Updated: 2025/08/30 17:36:49 by jyniemit         ###   ########.fr       */
+/*   Updated: 2025/09/09 17:04:56 by jyniemit         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -56,26 +56,6 @@ void	init_shell(int ac, char **av, char **env, t_shell *shell)
 	}
 }
 
-static int	tokens_to_argv(t_token *tokens, char **argv, int max_args)
-{
-	int		argc;
-	t_token	*current;
-
-	argc = 0;
-	current = tokens;
-	while (current && argc < max_args - 1)
-	{
-		if (current->type == WORD)
-		{
-			argv[argc] = current->text;
-			argc++;
-		}
-		current = current->next;
-	}
-	argv[argc] = NULL;
-	return (argc);
-}
-
 static void	parse_and_execute(t_shell *shell)
 {
 	t_lexer	l;
@@ -92,7 +72,6 @@ static void	parse_and_execute(t_shell *shell)
 		ft_printf("[debug] Syntax Error\n");
 		return ;
 	}
-	tokens_to_argv(t, shell->args, ARG_MAX);
 	shell->code = execute_command(shell);
 	//	while (t)
 	//	{
