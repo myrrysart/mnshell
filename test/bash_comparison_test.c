@@ -6,7 +6,7 @@
 /*   By: jyniemit <jyniemit@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/05 15:37:23 by jyniemit          #+#    #+#             */
-/*   Updated: 2025/09/05 17:25:01 by jyniemit         ###   ########.fr       */
+/*   Updated: 2025/09/09 11:41:24 by jyniemit         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,7 +27,7 @@ void	bash_comparison(void)
 	while (test_strings[++i])
 	{
 		char buffer[256];
-		sprintf(buffer, "./runner.sh \"%s\"", test_strings[i]);
+		sprintf(buffer, "./test/runner.sh \"%s\"", test_strings[i]);
 		system(buffer);
 	}
 }
