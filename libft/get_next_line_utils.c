@@ -6,36 +6,31 @@
 /*   By: jyniemit <jyniemit@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/20 14:55:35 by jyniemit          #+#    #+#             */
-/*   Updated: 2025/08/30 14:55:29 by jyniemit         ###   ########.fr       */
+/*   Updated: 2025/09/09 17:06:10 by jyniemit         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "libft.h"
 
-static char *gnl_substr(char const *s, unsigned int start, size_t len)
+char	*gnl_substr(char const *s, unsigned int start, size_t len)
 {
-    char *substr;
-    size_t i;
-    
-    if (!s)
-        return (NULL);
-        
-    substr = malloc(len + 1);
-    if (!substr)
-        return (NULL);
-        
-    i = 0;
-    while (i < len && s[start + i])
-    {
-        substr[i] = s[start + i];
-        i++;
-    }
-    substr[i] = '\0';
-    
-    return (substr);
+	char	*substr;
+	size_t	i;
+
+	if (!s)
+		return (NULL);
+	substr = (char *)malloc(sizeof(char) * (len + 1));
+	if (!substr)
+		return (NULL);
+	i = 0;
+	while (i < len && s[start + i])
+	{
+		substr[i] = s[start + i];
+		i++;
+	}
+	substr[i] = '\0';
+	return (substr);
 }
-
-
 
 char	*gnl_strdup(const char *s)
 {
@@ -47,7 +42,7 @@ char	*gnl_strdup(const char *s)
 		return (NULL);
 	while (s[len])
 		len++;
-	dup = (char *)malloc(len + 1);
+	dup = (char *)malloc(sizeof(char) * len + 1);
 	if (!dup)
 		return (NULL);
 	len = 0;
@@ -75,7 +70,20 @@ char	*gnl_strchr(const char *s, int c)
 	return (NULL);
 }
 
-char	*gnl_strjoin(char *s1, char *s2)
+static size_t	str_fill(char *dest, char *src, size_t start_i)
+{
+	size_t	i;
+
+	i = 0;
+	while (src && src[i])
+	{
+		dest[start_i + i] = src[i];
+		i++;
+	}
+	return (i);
+}
+
+char	*concat_buffer_to_remains(char *remains, char *buffer)
 {
 	char	*joined;
 	size_t	i;
@@ -83,59 +91,22 @@ char	*gnl_strjoin(char *s1, char *s2)
 
 	i = 0;
 	j = 0;
-	if (!s1 || !s2)
-		return (NULL);
-	while (s1[i])
+	while (remains && remains[i])
 		i++;
-	while (s2[j])
+	while (buffer && buffer[j])
 		j++;
-	joined = (char *)malloc(i + j + 1);
+	joined = (char *)malloc(sizeof(char) * (i + j + 1));
 	if (!joined)
+	{
+		free(remains);
 		return (NULL);
+	}
 	i = 0;
-	while (s1[i])
-	{
-		joined[i] = s1[i];
-		i++;
-	}
+	i = str_fill(joined, remains, i);
 	j = 0;
-	while (s2[j])
-	{
-		joined[i + j] = s2[j];
-		j++;
-	}
+	j = str_fill(joined, buffer, i);
 	joined[i + j] = '\0';
-	free(s1);
+	if (remains)
+		free(remains);
 	return (joined);
-}
-
-char *extract_line(char **remains)
-{
-    char *line;
-    char *newline_pos;
-    char *temp;
-    
-    if (!*remains || !**remains)
-    {
-        free(*remains);
-        *remains = NULL;
-        return (NULL);
-    }
-    
-    newline_pos = gnl_strchr(*remains, '\n');
-    if (newline_pos)
-    {
-        line = gnl_substr(*remains, 0, newline_pos - *remains + 1);
-        temp = gnl_strdup(newline_pos + 1);
-        free(*remains);
-        *remains = temp;
-    }
-    else
-    {
-        line = gnl_strdup(*remains);
-        free(*remains);
-        *remains = NULL;
-    }
-    
-    return (line);
 }
