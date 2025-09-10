@@ -6,7 +6,7 @@
 #    By: Jyniemit <jyniemit@student.hive.fi>        +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/10/30 15:03:53 by Jyniemit          #+#    #+#              #
-#    Updated: 2025/05/21 10:57:46 by jyniemit         ###   ########.fr        #
+#    Updated: 2025/08/30 14:54:23 by jyniemit         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -64,6 +64,8 @@ SRCS = ft_atoi.c		\
 		ft_lstnew_bonus.c \
 		ft_lstsize_bonus.c \
 		ft_isspace.c \
+		get_next_line.c \
+		get_next_line_utils.c \
 
 FLAGS = -Wall -Wextra -Werror
 OBJSDIR = ./build/

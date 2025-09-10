@@ -12,59 +12,59 @@
 
 #include "minishell.h"
 
-t_lexer build_lexer(char *content)
+t_lexer	build_lexer(char *content)
 {
-	t_lexer l;
+	t_lexer	l;
 
 	l.content = content;
 	l.content_len = ft_strlen(content);
 	l.cursor = 0;
 	l.line = 0;
-	return l;
+	return (l);
 }
 
-void trim_left(t_lexer *l)
+void	trim_left(t_lexer *l)
 {
 	while (ft_isspace(l->content[l->cursor]) && l->cursor < l->content_len)
 		l->cursor++;
 }
 
-t_token_type get_token_type(const char c)
+t_token_type	get_token_type(const char c)
 {
 	if (c == '$')
-		return DOLLAR;
+		return (DOLLAR);
 	if (c == '\'')
-		return SQUOTE;
+		return (SQUOTE);
 	if (c == '\"')
-		return DQUOTE;
+		return (DQUOTE);
 	if (c == '|')
-		return PIPE;
+		return (PIPE);
 	if (c == '>')
-		return REDIRECT_OUT;
+		return (REDIRECT_OUT);
 	if (c == '<')
-		return REDIRECT_IN;
-	return INVALID;
+		return (REDIRECT_IN);
+	return (INVALID);
 }
 
-bool is_operator(const char c)
+bool	is_operator(const char c)
 {
-	const char *operators;
-	int i;
+	const char	*operators;
+	int			i;
 
 	i = 0;
 	operators = "|>< \n\t";
 	while (operators[i])
 	{
 		if (c == operators[i])
-			return true;
+			return (true);
 		i++;
 	}
-	return false;
+	return (false);
 }
 
-t_token handle_append(t_lexer *l)
+t_token	handle_append(t_lexer *l)
 {
-	t_token token;
+	t_token	token;
 
 	token.text = &l->content[l->cursor];
 	token.type = APPEND;
@@ -72,12 +72,12 @@ t_token handle_append(t_lexer *l)
 	token.next = NULL;
 	token.prev = NULL;
 	l->cursor += 2;
-	return token;
+	return (token);
 }
 
-t_token handle_dollar(t_lexer *l)
+t_token	handle_dollar(t_lexer *l)
 {
-	t_token token;
+	t_token	token;
 
 	token.text = &l->content[l->cursor];
 	token.type = DOLLAR;
@@ -89,12 +89,12 @@ t_token handle_dollar(t_lexer *l)
 		token.text_len++;
 		l->cursor++;
 	}
-	return token;
+	return (token);
 }
 
-t_token handle_word(t_lexer *l)
+t_token	handle_word(t_lexer *l)
 {
-	t_token token;
+	t_token	token;
 
 	token.text_len = 0;
 	token.type = WORD;
@@ -106,17 +106,17 @@ t_token handle_word(t_lexer *l)
 		token.text_len++;
 		l->cursor++;
 	}
-	return token;
+	return (token);
 }
 
-bool is_quote(const char c)
+bool	is_quote(const char c)
 {
 	return (c == '\'' || c == '\"');
 }
 
-t_token handle_squote(t_lexer *l)
+t_token	handle_squote(t_lexer *l)
 {
-	t_token token;
+	t_token	token;
 
 	token.type = SQUOTE;
 	token.text = &l->content[l->cursor];
@@ -136,12 +136,12 @@ t_token handle_squote(t_lexer *l)
 	}
 	else
 		token.type = INVALID;
-	return token;
+	return (token);
 }
 
-t_token handle_dquote(t_lexer *l)
+t_token	handle_dquote(t_lexer *l)
 {
-	t_token token;
+	t_token	token;
 
 	token.type = DQUOTE;
 	token.text = &l->content[l->cursor];
@@ -161,12 +161,12 @@ t_token handle_dquote(t_lexer *l)
 	}
 	else
 		token.type = INVALID;
-	return token;
+	return (token);
 }
 
-t_token handle_other_token(t_lexer *l)
+t_token	handle_other_token(t_lexer *l)
 {
-	t_token token;
+	t_token	token;
 
 	token.text_len = 1;
 	token.text = &l->content[l->cursor];
@@ -174,40 +174,40 @@ t_token handle_other_token(t_lexer *l)
 	token.next = NULL;
 	token.prev = NULL;
 	l->cursor++;
-	return token;
+	return (token);
 }
 /*@brief: returning a token with a corresponding type, len and content
  * @param: pointer to the lexer structure. this funciton will modify the lexer
  * and moving the cursor forward
  */
-t_token get_next_token(t_lexer *l)
+t_token	get_next_token(t_lexer *l)
 {
-	t_token token;
+	t_token	token;
 
 	ft_bzero(&token, sizeof(t_token));
 	if (l->cursor >= l->content_len)
-		return token;
+		return (token);
 	trim_left(l);
 	if (l->content[l->cursor] == '\'')
-		return handle_squote(l);
+		return (handle_squote(l));
 	if (l->content[l->cursor] == '"')
-		return handle_dquote(l);
+		return (handle_dquote(l));
 	if (l->content[l->cursor] == '>' && l->content[l->cursor + 1] == '>')
-		return handle_append(l);
+		return (handle_append(l));
 	if (l->content[l->cursor] == '$')
-		return handle_dollar(l);
+		return (handle_dollar(l));
 	if (!is_operator(l->content[l->cursor]) && !is_quote(l->content[l->cursor]))
-		return handle_word(l);
-	return handle_other_token(l);
+		return (handle_word(l));
+	return (handle_other_token(l));
 }
 
 /*@brief: allocate a token node in the memory arena from a copy of token passed in
  *@return: pointer to the allocated token
  */
-t_token *build_token(t_token token)
+t_token	*build_token(t_token token)
 {
-	t_token *new_token;
-	size_t i;
+	t_token	*new_token;
+	size_t	i;
 
 	i = 0;
 	new_token = s_malloc(sizeof(t_token));
@@ -220,31 +220,31 @@ t_token *build_token(t_token token)
 		i++;
 	}
 	new_token->text[i] = '\0';
-	return new_token;
+	return (new_token);
 }
 
 /*@brief: build a list of token from the lexer
  *@return: the head of the token list
  */
-t_token *build_token_list(t_lexer *l)
+t_token	*build_token_list(t_lexer *l)
 {
-	t_token *head;
-	t_token *new;
-	t_token *curr;
+	t_token	*head;
+	t_token	*new;
+	t_token	*curr;
 
 	head = build_token(get_next_token(l));
 	curr = head;
 	if (!head)
-		return NULL;
+		return (NULL);
 	while (l->cursor < l->content_len)
 	{
 		while (curr->next)
 			curr = curr->next;
 		new = build_token(get_next_token(l));
 		if (!new)
-			return NULL;
+			return (NULL);
 		curr->next = new;
 		new->prev = curr;
 	}
-	return head;
+	return (head);
 }

@@ -6,7 +6,7 @@
 /*   By: Jyniemit <jyniemit@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/30 16:30:50 by Jyniemit          #+#    #+#             */
-/*   Updated: 2025/07/31 11:30:41 by trupham          ###   ########.fr       */
+/*   Updated: 2025/09/09 16:55:28 by jyniemit         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,6 +14,13 @@
 # define LIBFT_H
 # define HEXLOW "0123456789abcdef"
 # define HEXHIGH "0123456789ABCDEF"
+# ifndef GNL_BUFFER_SIZE
+#  define GNL_BUFFER_SIZE 128
+# endif
+
+# ifndef BUFFER_SIZE
+#  define BUFFER_SIZE 42
+# endif
 
 // malloc()
 # include <stdlib.h>
@@ -27,6 +34,12 @@
 # include <unistd.h>
 # include <stdbool.h>
 
+// get_next_line
+char	*get_next_line(int fd);
+char	*gnl_strdup(const char *s);
+char	*gnl_strchr(const char *s, int c);
+char	*concat_buffer_to_remains(char *remains, char *buffer);
+char	*gnl_substr(char const *s, unsigned int start, size_t len);
 // ft_printf
 int		ft_printf(const char *format, ...);
 int		handle_c(va_list args);
@@ -36,6 +49,14 @@ int		handle_d(va_list args);
 int		handle_p(va_list args);
 int		handle_hex_low(va_list args);
 int		handle_hex_up(va_list args);
+
+// get_next_line
+char	*get_next_line(int fd);
+char	*extract_line(char **remains);
+char	*gnl_strdup(const char *s);
+char	*gnl_strchr(const char *s, int c);
+char	*gnl_strjoin(char *s1, char *s2);
+
 
 // LIBFT functions:
 int		ft_atoi(const char *str);
