@@ -40,6 +40,7 @@ char	*gnl_strdup(const char *s);
 char	*gnl_strchr(const char *s, int c);
 char	*concat_buffer_to_remains(char *remains, char *buffer);
 char	*gnl_substr(char const *s, unsigned int start, size_t len);
+
 // ft_printf
 int		ft_printf(const char *format, ...);
 int		handle_c(va_list args);
@@ -49,14 +50,6 @@ int		handle_d(va_list args);
 int		handle_p(va_list args);
 int		handle_hex_low(va_list args);
 int		handle_hex_up(va_list args);
-
-// get_next_line
-char	*get_next_line(int fd);
-char	*extract_line(char **remains);
-char	*gnl_strdup(const char *s);
-char	*gnl_strchr(const char *s, int c);
-char	*gnl_strjoin(char *s1, char *s2);
-
 
 // LIBFT functions:
 int		ft_atoi(const char *str);
