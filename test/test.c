@@ -358,6 +358,23 @@ static MunitResult test_parser_cmd_table()
 	return MUNIT_OK;
 }
 
+#include "execution.h"
+static MunitResult test_exec_cmd_path(const MunitParameter params[], void* data)
+{
+	(void)params;
+	(void)data;
+	{
+		extern char **environ;
+		char *path = exec_get_binary_path("ls", environ);
+		assert_string_equal(path, "ls");
+		path = exec_get_binary_path("/usr/bin/cat", environ);
+		assert_string_equal(path, "/usr/bin/cat");
+		path = exec_get_binary_path("./minishell", environ);
+		assert_string_equal(path, "./minishell");
+	}
+	return MUNIT_OK;
+}
+
 static MunitTest test_suite_tests[] = {
 	{ "/test/arena", test_arena, NULL, NULL, MUNIT_TEST_OPTION_NONE, NULL, },
 	{ "/test/lexer_general", test_lexer_general, NULL, NULL, MUNIT_TEST_OPTION_NONE, NULL, },
@@ -376,6 +393,7 @@ static MunitTest test_suite_tests[] = {
 	{ "/test/dynamic_array", test_dynamic_array, NULL, NULL, MUNIT_TEST_OPTION_NONE, NULL, },
 	{ "/test/parser_cmd_build_one", test_parser_cmd_build_one, NULL, NULL, MUNIT_TEST_OPTION_NONE, NULL, },
 	{ "/test/parser_cmd_table", test_parser_cmd_table, NULL, NULL, MUNIT_TEST_OPTION_NONE, NULL, },
+	{ "/test/test_exec_cmd_path", test_exec_cmd_path, NULL, NULL, MUNIT_TEST_OPTION_NONE, NULL, },
 	{ NULL, NULL, NULL, NULL, MUNIT_TEST_OPTION_NONE, NULL },
 };
 
