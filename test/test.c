@@ -286,7 +286,7 @@ static MunitResult test_ft_realloc(const MunitParameter params[], void* data)
 	return MUNIT_OK;
 }
 
-static MunitResult test_dynamic_array()
+static MunitResult test_dynamic_array(const MunitParameter params[], void* data)
 {
 	{
 		t_arena *arena = arena_init(ARENA_CAP);
@@ -310,7 +310,7 @@ static MunitResult test_dynamic_array()
 	return MUNIT_OK;
 }
 
-static MunitResult test_parser_cmd_build_one()
+static MunitResult test_parser_cmd_build_one(const MunitParameter params[], void* data)
 {
 	char *str = "echo hello -n";
 	t_shell shell = {0};
@@ -324,7 +324,7 @@ static MunitResult test_parser_cmd_build_one()
 	return MUNIT_OK;
 }
 
-static MunitResult test_parser_cmd_table()
+static MunitResult test_parser_cmd_table(const MunitParameter params[], void* data)
 {
 	t_shell shell = {0};
 	{
@@ -366,7 +366,7 @@ static MunitResult test_exec_cmd_path(const MunitParameter params[], void* data)
 	{
 		extern char **environ;
 		char *path = exec_get_binary_path("ls", environ);
-		assert_string_equal(path, "ls");
+		assert_string_equal(path, "/usr/bin/ls");
 		path = exec_get_binary_path("/usr/bin/cat", environ);
 		assert_string_equal(path, "/usr/bin/cat");
 		path = exec_get_binary_path("./minishell", environ);
