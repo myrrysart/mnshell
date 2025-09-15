@@ -73,16 +73,6 @@ static void	parse_and_execute(t_shell *shell)
 		return ;
 	}
 	shell->code = execute_command(shell);
-	//	while (t)
-	//	{
-	//		if (t->type == INVALID)
-	//		{
-	//			ft_printf("[debug] Syntax Error\n");
-	//			return ;
-	//		}
-	//		ft_printf("[token type: %d]: %s\n", t->type, t->text);
-	//		t = t->next;
-	//	}
 	shell->state &= ~EVALUATING;
 }
 

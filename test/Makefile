@@ -14,6 +14,7 @@ SRC = arena.c	\
 	  lexer.c	\
 	  parser.c	\
 	  environment.c \
+	  execution_utils.c
 
 TEST = test.c	\
 	   munit.c	\
