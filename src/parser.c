@@ -45,7 +45,7 @@ bool	parser_is_syntax_correct(t_token *token)
 	return (true);
 }
 
-t_cmd_table *parser_cmd_build_one(t_arena *arena, t_token *token)
+t_cmd_table *parser_cmd_build_one(t_shell *shell, t_arena *arena, t_token *token)
 {
 	t_cmd_table *new_cmd;
 
@@ -105,7 +105,7 @@ static bool parser_cmd_build_curr(t_arena *arena, t_cmd_table **curr, t_token *t
 {
 	t_cmd_table *new_cmd;
 
-	new_cmd = parser_cmd_build_one(arena, token);
+	new_cmd = parser_cmd_build_one(t_shell *shell, arena, token);
 	if (!new_cmd)
 		return false;
 	(*curr)->next = new_cmd;
@@ -113,7 +113,7 @@ static bool parser_cmd_build_curr(t_arena *arena, t_cmd_table **curr, t_token *t
 	return true;
 }
 
-static bool parser_cmd_build_main(t_arena *arena, t_cmd_table *head, t_token *token)
+static bool parser_cmd_build_main(t_shell *shell, t_arena *arena, t_cmd_table *head, t_token *token)
 {
 	t_token *token_end;
 	t_cmd_table *curr;
@@ -128,13 +128,13 @@ static bool parser_cmd_build_main(t_arena *arena, t_cmd_table *head, t_token *to
 			token_end = token_end->next;
 		if (!token_end)
 		{
-			if (!parser_cmd_build_curr(arena, &curr, token->next))
+			if (!parser_cmd_build_curr(shell, arena, &curr, token->next))
 				return false;
 			break;
 		}
 		else if (token_end && token_end->type == PIPE)
 		{
-			if (!parser_cmd_build_curr(arena, &curr, token->next))
+			if (!parser_cmd_build_curr(shell, arena, &curr, token->next))
 				return false;
 			token = token_end;
 		}
@@ -142,18 +142,18 @@ static bool parser_cmd_build_main(t_arena *arena, t_cmd_table *head, t_token *to
 	return true;
 }
 
-t_cmd_table *parser_cmd_build_many(t_arena *arena, t_token *token)
+t_cmd_table *parser_cmd_build_many(t_shell *shell, t_arena *arena, t_token *token)
 {
 	t_cmd_table *cmd_table_head;
 
 	if (!token)
 		return NULL;
-	cmd_table_head = parser_cmd_build_one(arena, token);
+	cmd_table_head = parser_cmd_build_one(shell, arena, token);
 	if (!cmd_table_head)
 		return NULL;
 	while (token && token->type != PIPE)
 		token = token->next;
-	if (!parser_cmd_build_main(arena, cmd_table_head, token))
+	if (!parser_cmd_build_main(shell, arena, cmd_table_head, token))
 		return NULL;
 	return cmd_table_head;
 }

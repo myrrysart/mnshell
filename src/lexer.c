@@ -242,7 +242,7 @@ t_token	*build_token(t_token token)
 /*@brief: build a list of token from the lexer
  *@return: the head of the token list
  */
-t_token	*build_token_list(t_lexer *l)
+t_token	*build_token_list(t_shell *shell, t_lexer *l)
 {
 	t_token	*head;
 	t_token	*new;
