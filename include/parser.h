@@ -6,7 +6,7 @@
 /*   By: trupham <trupham@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/25 13:54:35 by trupham           #+#    #+#             */
-/*   Updated: 2025/08/25 14:09:52 by trupham          ###   ########.fr       */
+/*   Updated: 2025/09/15 14:51:45 by jyniemit         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,6 +35,7 @@ typedef struct s_cmd
 	e_cmd cmd_type;
 	int fd_in;
 	int fd_out;
+	char	*heredoc_delim;
 	struct s_cmd *next;
 	struct s_cmd *prev;
 } t_cmd_table;

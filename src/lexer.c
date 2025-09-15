@@ -6,7 +6,7 @@
 /*   By: trupham <trupham@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/31 10:45:01 by trupham           #+#    #+#             */
-/*   Updated: 2025/08/19 12:24:39 by jyniemit         ###   ########.fr       */
+/*   Updated: 2025/09/15 16:54:18 by jyniemit         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -68,6 +68,19 @@ t_token	handle_append(t_lexer *l)
 
 	token.text = &l->content[l->cursor];
 	token.type = APPEND;
+	token.text_len = 2;
+	token.next = NULL;
+	token.prev = NULL;
+	l->cursor += 2;
+	return (token);
+}
+
+t_token	handle_heredoc(t_lexer *l)
+{
+	t_token	token;
+
+	token.text = &l->content[l->cursor];
+	token.type = HEREDOC;
 	token.text_len = 2;
 	token.next = NULL;
 	token.prev = NULL;
@@ -195,6 +208,8 @@ t_token	get_next_token(t_lexer *l)
 		return (handle_dquote(l));
 	if (l->content[l->cursor] == '>' && l->content[l->cursor + 1] == '>')
 		return (handle_append(l));
+	if (l->content[l->cursor] == '<' && l->content[l->cursor + 1] == '<')
+		return (handle_heredoc(l));
 	if (l->content[l->cursor] == '$')
 		return (handle_dollar(l));
 	if (!is_operator(l->content[l->cursor]) && !is_quote(l->content[l->cursor]))
