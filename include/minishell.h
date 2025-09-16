@@ -6,7 +6,7 @@
 /*   By: jyniemit <jyniemit@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/29 13:40:26 by jyniemit          #+#    #+#             */
-/*   Updated: 2025/08/30 18:33:57 by jyniemit         ###   ########.fr       */
+/*   Updated: 2025/09/16 13:50:21 by jyniemit         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,11 +28,16 @@
 # include <stdint.h>
 // our own libraries
 # include "libft.h"
-# include "lexer.h"
 # include "arena.h"
-# include "parser.h"
+// parser libraries
+# include <stdbool.h>
+# include <stddef.h>
+# include <fcntl.h>
 # define MAX_PROCESSES 30587
 # define ARG_MAX 4096
+#ifndef DA_CAP
+#define DA_CAP 128
+#endif // DA_CAP
 
 extern volatile sig_atomic_t	g_received_signal;
 
@@ -86,6 +91,7 @@ typedef struct s_shell
 	int							output_fd;
 	int							error_fd;
 
+	int							pipe_index;
 	int							pipe_read_fd;
 	int							pipe_write_fd;
 
@@ -108,6 +114,64 @@ typedef struct s_shell
 	t_arena						*arena;
 }								t_shell;
 
+// lexer data
+typedef enum {
+	END = 0,
+	SQUOTE,
+	DQUOTE,
+	WORD,
+	HEREDOC,
+	REDIRECT_IN,
+	REDIRECT_OUT,
+	PIPE,
+	APPEND,
+	DOLLAR,
+	INVALID,
+} t_token_type ;
+
+typedef struct s_token
+{
+	t_token_type type;
+	size_t content_len;
+	char *content;
+	struct s_token *next;
+	struct s_token *prev;
+} t_token;
+
+typedef struct s_lexer
+{
+	char *content;
+	size_t content_len;
+	size_t cursor;
+	size_t line;
+} t_lexer;
+
+// parser data
+typedef enum {
+	BUILTINT,
+	EXTERNAL
+} e_cmd;
+
+typedef struct s_shell t_shell;
+
+typedef struct s_da
+{
+	char **items;
+	size_t count;
+	size_t cap;
+} t_da;
+
+typedef struct s_cmd
+{
+	t_da *cmd_da;
+	e_cmd cmd_type;
+	int fd_in;
+	int fd_out;
+	char	*heredoc_delim;
+	struct s_cmd *next;
+	struct s_cmd *prev;
+} t_cmd_table;
+
 void							init_signals(t_shell *shell);
 void							init_shell(int ac, char **av, char **env, t_shell *shell);
 void							run_shell(t_shell *shell);
@@ -129,4 +193,23 @@ int								builtin_cd(t_shell *shell);
 int								builtin_export(t_shell *shell);
 int								builtin_unset(t_shell *shell);
 char							*find_executable_path(char *cmd, char **env);
+
+
+// parser prototypes
+void							*ft_realloc(t_arena *arena, char **src, size_t src_size, size_t new_size);
+t_da							*da_cmd_init(t_arena *arena, size_t cap);
+void							parser_da_append(char **da, char *str);
+void							da_append(t_arena *arena, t_da *da, char *item);
+t_cmd_table						*parser_cmd_build_one(t_shell *shell, t_arena *arena, t_token *token);
+t_cmd_table						*parser_cmd_build_many(t_shell *shell, t_arena *arena, t_token *token);
+
+bool							parser_is_syntax_correct(t_token *token);
+
+// lexer prototypes
+t_token							*build_token_list(t_lexer *l);
+t_lexer							build_lexer(char *content);
+t_token							get_next_token(t_lexer *l);
+t_token							*build_token(t_token token);
+
+
 #endif // MINISHELL_H

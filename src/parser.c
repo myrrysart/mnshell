@@ -6,14 +6,11 @@
 /*   By: trupham <trupham@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/25 11:27:57 by trupham           #+#    #+#             */
-/*   Updated: 2025/08/25 15:50:59 by trupham          ###   ########.fr       */
+/*   Updated: 2025/09/16 13:26:09 by jyniemit         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "parser.h"
-#include "arena.h"
-#include "lexer.h"
-#include <stdio.h>
+#include "minishell.h"
 
 /* checking for PIPE, REDIRECTION and APPEND syntax
  */
@@ -27,14 +24,15 @@ bool	parser_is_syntax_correct(t_token *token)
 	while (last->next)
 		last = last->next;
 	if (last->type == PIPE || last->type == REDIRECT_OUT
-		|| last->type == REDIRECT_IN || last->type == APPEND)
+		|| last->type == REDIRECT_IN || last->type == APPEND
+		|| last->type == HEREDOC)
 		return (false);
 	while (token && token->next)
 	{
 		if (token->type == PIPE && token->next->type != WORD)
 			return false;
 		if ((token->type == REDIRECT_OUT || token->type == REDIRECT_IN
-		|| token->type == APPEND)
+		|| token->type == APPEND || token->type == HEREDOC)
 			&& token->next->type != WORD)
 			return false;
 		if (token->type == PIPE && !token->prev)
@@ -44,7 +42,7 @@ bool	parser_is_syntax_correct(t_token *token)
 	return (true);
 }
 
-t_cmd_table *parser_cmd_build_one(t_arena *arena, t_token *token)
+t_cmd_table *parser_cmd_build_one(t_shell *shell, t_arena *arena, t_token *token)
 {
 	t_cmd_table *new_cmd;
 
@@ -56,17 +54,55 @@ t_cmd_table *parser_cmd_build_one(t_arena *arena, t_token *token)
 		return NULL;
 	while (token && token->type != PIPE)
 	{
-		da_append(arena, new_cmd->cmd_da, token->text);
-		token = token->next;
+		if (token->type == REDIRECT_OUT)
+		{
+			new_cmd->fd_out = open(token->next->content, O_WRONLY | O_CREAT, 0644);
+			if (new_cmd->fd_out == -1)
+			{
+				shell->code = EXIT_REDIRECT_ERROR;
+				return (NULL);
+			}
+			token = token->next->next;
+		}
+		else if (token->type == REDIRECT_IN)
+		{
+			new_cmd->fd_in = open(token->next->content, O_RDONLY);
+			if (new_cmd->fd_in == -1)
+			{
+				shell->code = EXIT_REDIRECT_ERROR;
+				return (NULL);
+			}
+			token = token->next->next;
+		}
+		else if (token->type == APPEND)
+		{
+			new_cmd->fd_out = open(token->next->content, O_WRONLY | O_CREAT | O_APPEND, 0644);
+			if (new_cmd->fd_out == -1)
+			{
+				shell->code = EXIT_REDIRECT_ERROR;
+				return (NULL);
+			}
+			token = token->next->next;
+		}
+		else if (token->type == HEREDOC)
+		{
+			new_cmd->heredoc_delim = token->next->content; 
+			token = token->next->next;
+		}
+		else
+		{
+			da_append(arena, new_cmd->cmd_da, token->content);
+			token = token->next;
+		}
 	}
 	return new_cmd;
 }
 
-static bool parser_cmd_build_curr(t_arena *arena, t_cmd_table **curr, t_token *token)
+static bool parser_cmd_build_curr(t_shell *shell, t_arena *arena, t_cmd_table **curr, t_token *token)
 {
 	t_cmd_table *new_cmd;
 
-	new_cmd = parser_cmd_build_one(arena, token);
+	new_cmd = parser_cmd_build_one(shell, arena, token);
 	if (!new_cmd)
 		return false;
 	(*curr)->next = new_cmd;
@@ -74,7 +110,7 @@ static bool parser_cmd_build_curr(t_arena *arena, t_cmd_table **curr, t_token *t
 	return true;
 }
 
-static bool parser_cmd_build_main(t_arena *arena, t_cmd_table *head, t_token *token)
+static bool parser_cmd_build_main(t_shell *shell, t_arena *arena, t_cmd_table *head, t_token *token)
 {
 	t_token *token_end;
 	t_cmd_table *curr;
@@ -89,13 +125,13 @@ static bool parser_cmd_build_main(t_arena *arena, t_cmd_table *head, t_token *to
 			token_end = token_end->next;
 		if (!token_end)
 		{
-			if (!parser_cmd_build_curr(arena, &curr, token->next))
+			if (!parser_cmd_build_curr(shell, arena, &curr, token->next))
 				return false;
 			break;
 		}
 		else if (token_end && token_end->type == PIPE)
 		{
-			if (!parser_cmd_build_curr(arena, &curr, token->next))
+			if (!parser_cmd_build_curr(shell, arena, &curr, token->next))
 				return false;
 			token = token_end;
 		}
@@ -103,18 +139,18 @@ static bool parser_cmd_build_main(t_arena *arena, t_cmd_table *head, t_token *to
 	return true;
 }
 
-t_cmd_table *parser_cmd_build_many(t_arena *arena, t_token *token)
+t_cmd_table *parser_cmd_build_many(t_shell *shell, t_arena *arena, t_token *token)
 {
 	t_cmd_table *cmd_table_head;
 
 	if (!token)
 		return NULL;
-	cmd_table_head = parser_cmd_build_one(arena, token);
+	cmd_table_head = parser_cmd_build_one(shell, arena, token);
 	if (!cmd_table_head)
 		return NULL;
 	while (token && token->type != PIPE)
 		token = token->next;
-	if (!parser_cmd_build_main(arena, cmd_table_head, token))
+	if (!parser_cmd_build_main(shell, arena, cmd_table_head, token))
 		return NULL;
 	return cmd_table_head;
 }

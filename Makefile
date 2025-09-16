@@ -6,7 +6,7 @@
 #    By: jyniemit <jyniemit@student.hive.fi>        +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2025/07/29 12:37:53 by jyniemit          #+#    #+#              #
-#    Updated: 2025/09/09 11:40:31 by jyniemit         ###   ########.fr        #
+#    Updated: 2025/09/16 12:11:34 by jyniemit         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 MAKEFLAGS += --no-print-directory
@@ -27,12 +27,10 @@ ASMDIR = asm
 
 HEADERS = \
 		  minishell.h \
-		  lexer.h \
 		  arena.h \
 
 HEADERS = \
 		  minishell.h \
-		  lexer.h \
 		  arena.h \
 
 SOURCES = main.c	\
