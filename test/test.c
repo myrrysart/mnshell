@@ -1,7 +1,6 @@
 #define MUNIT_ENABLE_ASSERT_ALIASES
-#include "arena.h"
+#include "minishell.h"
 #include "munit.h"
-#include "parser.h"
 
 // separated unit test files
 #include "test_environment.c"
@@ -17,47 +16,47 @@ static MunitResult test_lexer_general(const MunitParameter params[], void* data)
 		char *str = "echo hello";
 		t_lexer l = build_lexer(str);
 		t_token *t = build_token_list(&l);
-		assert_string_equal(t->text, "echo");
+		assert_string_equal(t->content, "echo");
 		assert_int(t->type, ==, WORD);
-		assert_int(t->text_len, ==, 4);
+		assert_int(t->content_len, ==, 4);
 		t = t->next;
-		assert_string_equal(t->text, "hello");
+		assert_string_equal(t->content, "hello");
 		munit_assert_ptr_null(t->next);
 		assert_int(t->type, ==, WORD);
-		assert_int(t->text_len, ==, 5);
+		assert_int(t->content_len, ==, 5);
 	}
 	// {
 	// 	char *str = "echo    ";
 	// 	t_lexer l = build_lexer(str);
 	// 	t_token *t = build_token_list(&l);
-	// 	assert_string_equal(t->text, "echo");
+	// 	assert_string_equal(t->content, "echo");
 	// 	munit_assert_ptr_null(t->next);
 	// 	assert_int(t->type, ==, WORD);
-	// 	assert_int(t->text_len, ==, 4);
+	// 	assert_int(t->content_len, ==, 4);
 	// }
 	{
 		char *str = "echo hello | wc -l";
 		t_lexer l = build_lexer(str);
 		t_token *t = build_token_list(&l);
-		assert_string_equal(t->text, "echo");
+		assert_string_equal(t->content, "echo");
 		assert_int(t->type, ==, WORD);
-		assert_int(t->text_len, ==, 4);
+		assert_int(t->content_len, ==, 4);
 		t = t->next;
-		assert_string_equal(t->text, "hello");
+		assert_string_equal(t->content, "hello");
 		assert_int(t->type, ==, WORD);
-		assert_int(t->text_len, ==, 5);
+		assert_int(t->content_len, ==, 5);
 		t = t->next;
-		assert_string_equal(t->text, "|");
+		assert_string_equal(t->content, "|");
 		assert_int(t->type, ==, PIPE);
-		assert_int(t->text_len, ==, 1);
+		assert_int(t->content_len, ==, 1);
 		t = t->next;
-		assert_string_equal(t->text, "wc");
+		assert_string_equal(t->content, "wc");
 		assert_int(t->type, ==, WORD);
-		assert_int(t->text_len, ==, 2);
+		assert_int(t->content_len, ==, 2);
 		t = t->next;
-		assert_string_equal(t->text, "-l");
+		assert_string_equal(t->content, "-l");
 		assert_int(t->type, ==, WORD);
-		assert_int(t->text_len, ==, 2);
+		assert_int(t->content_len, ==, 2);
 	}
 	return MUNIT_OK;
 }
@@ -70,29 +69,29 @@ static MunitResult test_lexer_dquote(const MunitParameter params[], void* data)
 		char *str = "\" echo\"";
 		t_lexer l = build_lexer(str);
 		t_token *t = build_token_list(&l);
-		assert_string_equal(t->text, "\" echo\"");
+		assert_string_equal(t->content, "\" echo\"");
 		assert_int(t->type, ==, DQUOTE);
-		assert_int(t->text_len, ==, 7);
+		assert_int(t->content_len, ==, 7);
 	}
 	{
 		char *str = "\" echo";
 		t_lexer l = build_lexer(str);
 		t_token *t = build_token_list(&l);
-		assert_string_equal(t->text, "\" echo");
+		assert_string_equal(t->content, "\" echo");
 		assert_int(t->type, ==, INVALID);
-		assert_int(t->text_len, ==, 6);
+		assert_int(t->content_len, ==, 6);
 	}
 	{
 		char *str = "echo \" hello\"";
 		t_lexer l = build_lexer(str);
 		t_token *t = build_token_list(&l);
-		assert_string_equal(t->text, "echo");
+		assert_string_equal(t->content, "echo");
 		assert_int(t->type, ==, WORD);
-		assert_int(t->text_len, ==, 4);
+		assert_int(t->content_len, ==, 4);
 		t = t->next;
-		assert_string_equal(t->text, "\" hello\"");
+		assert_string_equal(t->content, "\" hello\"");
 		assert_int(t->type, ==, DQUOTE);
-		assert_int(t->text_len, ==, 8);
+		assert_int(t->content_len, ==, 8);
 	}
 	return MUNIT_OK;
 }
@@ -104,29 +103,29 @@ static MunitResult test_lexer_squote(const MunitParameter params[], void* data)
 		char *str = "' echo'";
 		t_lexer l = build_lexer(str);
 		t_token *t = build_token_list(&l);
-		assert_string_equal(t->text, "' echo'");
+		assert_string_equal(t->content, "' echo'");
 		assert_int(t->type, ==, SQUOTE);
-		assert_int(t->text_len, ==, 7);
+		assert_int(t->content_len, ==, 7);
 	}
 	{
 		char *str = "' echo";
 		t_lexer l = build_lexer(str);
 		t_token *t = build_token_list(&l);
-		assert_string_equal(t->text, "' echo");
+		assert_string_equal(t->content, "' echo");
 		assert_int(t->type, ==, INVALID);
-		assert_int(t->text_len, ==, 6);
+		assert_int(t->content_len, ==, 6);
 	}
 	{
 		char *str = "echo ' hello'";
 		t_lexer l = build_lexer(str);
 		t_token *t = build_token_list(&l);
-		assert_string_equal(t->text, "echo");
+		assert_string_equal(t->content, "echo");
 		assert_int(t->type, ==, WORD);
-		assert_int(t->text_len, ==, 4);
+		assert_int(t->content_len, ==, 4);
 		t = t->next;
-		assert_string_equal(t->text, "' hello'");
+		assert_string_equal(t->content, "' hello'");
 		assert_int(t->type, ==, SQUOTE);
-		assert_int(t->text_len, ==, 8);
+		assert_int(t->content_len, ==, 8);
 	}
 	return MUNIT_OK;
 }
@@ -139,17 +138,17 @@ static MunitResult test_lexer_dollar(const MunitParameter params[], void* data)
 		char *str = "$USER";
 		t_lexer l = build_lexer(str);
 		t_token *t = build_token_list(&l);
-		assert_string_equal(t->text, "$USER");
+		assert_string_equal(t->content, "$USER");
 		assert_int(t->type, ==, DOLLAR);
-		assert_int(t->text_len, ==, 5);
+		assert_int(t->content_len, ==, 5);
 	}
 	{
 		char *str = "$ ";
 		t_lexer l = build_lexer(str);
 		t_token *t = build_token_list(&l);
-		assert_string_equal(t->text, "$");
+		assert_string_equal(t->content, "$");
 		assert_int(t->type, ==, DOLLAR);
-		assert_int(t->text_len, ==, 1);
+		assert_int(t->content_len, ==, 1);
 	}
 	return MUNIT_OK;
 }
@@ -161,21 +160,21 @@ static MunitResult test_lexer_append(const MunitParameter params[], void* data)
 		char *str = "echo >> file";
 		t_lexer l = build_lexer(str);
 		t_token *t = build_token_list(&l);
-		assert_string_equal(t->text, "echo");
+		assert_string_equal(t->content, "echo");
 		assert_int(t->type, ==, WORD);
-		assert_int(t->text_len, ==, 4);
+		assert_int(t->content_len, ==, 4);
 		t = t->next;
-		assert_string_equal(t->text, ">>");
-		assert_string_equal(t->prev->text, "echo");
+		assert_string_equal(t->content, ">>");
+		assert_string_equal(t->prev->content, "echo");
 		assert_int(t->type, ==, APPEND);
 		assert_int(t->prev->type, ==, WORD);
-		assert_int(t->text_len, ==, 2);
+		assert_int(t->content_len, ==, 2);
 		t = t->next;
-		assert_string_equal(t->text, "file");
-		assert_string_equal(t->prev->text, ">>");
+		assert_string_equal(t->content, "file");
+		assert_string_equal(t->prev->content, ">>");
 		assert_int(t->type, ==, WORD);
 		assert_int(t->prev->type, ==, APPEND);
-		assert_int(t->text_len, ==, 4);
+		assert_int(t->content_len, ==, 4);
 	}
 	return MUNIT_OK;
 }
@@ -314,10 +313,11 @@ static MunitResult test_dynamic_array()
 static MunitResult test_parser_cmd_build_one()
 {
 	char *str = "echo hello -n";
+	t_shell shell = {0};
 	t_arena *arena = arena_init(ARENA_CAP);
 	t_lexer l = build_lexer(str);
 	t_token *t = build_token_list(&l);
-	t_cmd_table *cmd = parser_cmd_build_one(arena, t);
+	t_cmd_table *cmd = parser_cmd_build_one(&shell, arena, t);
 	munit_assert_string_equal(cmd->cmd_da->items[0], "echo");
 	munit_assert_string_equal(cmd->cmd_da->items[1], "hello");
 	munit_assert_string_equal(cmd->cmd_da->items[2], "-n");
@@ -326,12 +326,13 @@ static MunitResult test_parser_cmd_build_one()
 
 static MunitResult test_parser_cmd_table()
 {
+	t_shell shell = {0};
 	{
 		char *str = "echo hello | wc -l | grep he | echo hi";
 		t_arena *arena = arena_init(ARENA_CAP);
 		t_lexer l = build_lexer(str);
 		t_token *t = build_token_list(&l);
-		t_cmd_table *cmd_table = parser_cmd_build_many(arena, t);
+		t_cmd_table *cmd_table = parser_cmd_build_many(&shell, arena, t);
 		munit_assert_string_equal(cmd_table->cmd_da->items[0], "echo");
 		munit_assert_string_equal(cmd_table->cmd_da->items[1], "hello");
 		munit_assert_null(cmd_table->cmd_da->items[2]);
@@ -348,7 +349,7 @@ static MunitResult test_parser_cmd_table()
 		t_arena *arena = arena_init(ARENA_CAP);
 		t_lexer l = build_lexer(str);
 		t_token *t = build_token_list(&l);
-		t_cmd_table *cmd_table = parser_cmd_build_many(arena, t);
+		t_cmd_table *cmd_table = parser_cmd_build_many(&shell,arena, t);
 		munit_assert_string_equal(cmd_table->cmd_da->items[0], "echo");
 		munit_assert_string_equal(cmd_table->cmd_da->items[1], "'hello'");
 		munit_assert_string_equal(cmd_table->next->cmd_da->items[0], "ls");

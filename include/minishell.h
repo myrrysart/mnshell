@@ -92,8 +92,8 @@ typedef struct s_shell
 	int							error_fd;
 
 	int							pipe_index;
-	int							*pipe_read_fd;
-	int							*pipe_write_fd;
+	int							pipe_read_fd;
+	int							pipe_write_fd;
 
 	pid_t						process_id[MAX_PROCESSES];
 	int							process_exit_status[MAX_PROCESSES];
