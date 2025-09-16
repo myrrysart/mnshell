@@ -6,14 +6,11 @@
 /*   By: trupham <trupham@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/25 11:27:57 by trupham           #+#    #+#             */
-/*   Updated: 2025/09/15 16:42:22 by jyniemit         ###   ########.fr       */
+/*   Updated: 2025/09/16 13:26:09 by jyniemit         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "parser.h"
-#include "arena.h"
-#include "lexer.h"
-#include <stdio.h>
+#include "minishell.h"
 
 /* checking for PIPE, REDIRECTION and APPEND syntax
  */
