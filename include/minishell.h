@@ -6,7 +6,7 @@
 /*   By: jyniemit <jyniemit@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/29 13:40:26 by jyniemit          #+#    #+#             */
-/*   Updated: 2025/09/19 15:06:08 by trupham          ###   ########.fr       */
+/*   Updated: 2025/09/23 14:21:15 by jyniemit         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -176,6 +176,7 @@ typedef struct s_cmd
 	int fd_in;
 	int fd_out;
 	char	*heredoc_delim;
+	int heredoc_fd;
 	struct s_cmd *next;
 	struct s_cmd *prev;
 } t_cmd_table;
@@ -186,6 +187,8 @@ void							run_shell(t_shell *shell);
 void							handle_signal(t_shell *shell, int sig);
 
 void							set_env_var(t_shell *shell, char *key, char *value);
+
+int								read_heredoc(char *delim, int *fd, t_shell *shell);
 char							*get_env_var(t_shell *shell, char *key);
 void							unset_env_var(t_shell *shell, char *key);
 int								print_env(t_shell *shell);
