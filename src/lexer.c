@@ -6,7 +6,7 @@
 /*   By: trupham <trupham@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/31 10:45:01 by trupham           #+#    #+#             */
-/*   Updated: 2025/09/15 16:54:18 by jyniemit         ###   ########.fr       */
+/*   Updated: 2025/09/16 13:25:07 by jyniemit         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -66,9 +66,9 @@ t_token	handle_append(t_lexer *l)
 {
 	t_token	token;
 
-	token.text = &l->content[l->cursor];
+	token.content = &l->content[l->cursor];
 	token.type = APPEND;
-	token.text_len = 2;
+	token.content_len = 2;
 	token.next = NULL;
 	token.prev = NULL;
 	l->cursor += 2;
@@ -79,9 +79,9 @@ t_token	handle_heredoc(t_lexer *l)
 {
 	t_token	token;
 
-	token.text = &l->content[l->cursor];
+	token.content = &l->content[l->cursor];
 	token.type = HEREDOC;
-	token.text_len = 2;
+	token.content_len = 2;
 	token.next = NULL;
 	token.prev = NULL;
 	l->cursor += 2;
@@ -92,14 +92,14 @@ t_token	handle_dollar(t_lexer *l)
 {
 	t_token	token;
 
-	token.text = &l->content[l->cursor];
+	token.content = &l->content[l->cursor];
 	token.type = DOLLAR;
-	token.text_len = 0;
+	token.content_len = 0;
 	token.prev = NULL;
 	token.next = NULL;
 	while (!ft_isspace(l->content[l->cursor]) && l->cursor < l->content_len)
 	{
-		token.text_len++;
+		token.content_len++;
 		l->cursor++;
 	}
 	return (token);
@@ -109,14 +109,14 @@ t_token	handle_word(t_lexer *l)
 {
 	t_token	token;
 
-	token.text_len = 0;
+	token.content_len = 0;
 	token.type = WORD;
-	token.text = &l->content[l->cursor];
+	token.content = &l->content[l->cursor];
 	token.next = NULL;
 	token.prev = NULL;
 	while (!is_operator(l->content[l->cursor]) && l->cursor < l->content_len)
 	{
-		token.text_len++;
+		token.content_len++;
 		l->cursor++;
 	}
 	return (token);
@@ -132,19 +132,19 @@ t_token	handle_squote(t_lexer *l)
 	t_token	token;
 
 	token.type = SQUOTE;
-	token.text = &l->content[l->cursor];
+	token.content = &l->content[l->cursor];
 	l->cursor++;
-	token.text_len = 1;
+	token.content_len = 1;
 	token.prev = NULL;
 	token.next = NULL;
 	while (l->cursor < l->content_len && l->content[l->cursor] != '\'')
 	{
-		token.text_len++;
+		token.content_len++;
 		l->cursor++;
 	}
 	if (l->cursor < l->content_len && l->content[l->cursor] == '\'')
 	{
-		token.text_len++;
+		token.content_len++;
 		l->cursor++;
 	}
 	else
@@ -157,19 +157,19 @@ t_token	handle_dquote(t_lexer *l)
 	t_token	token;
 
 	token.type = DQUOTE;
-	token.text = &l->content[l->cursor];
+	token.content = &l->content[l->cursor];
 	l->cursor++;
-	token.text_len = 1;
+	token.content_len = 1;
 	token.prev = NULL;
 	token.next = NULL;
 	while (l->cursor < l->content_len && l->content[l->cursor] != '\"')
 	{
-		token.text_len++;
+		token.content_len++;
 		l->cursor++;
 	}
 	if (l->cursor < l->content_len && l->content[l->cursor] == '\"')
 	{
-		token.text_len++;
+		token.content_len++;
 		l->cursor++;
 	}
 	else
@@ -182,8 +182,8 @@ t_token handle_other_token(t_lexer *l)
 	t_token	token;
 
 	token = (t_token){};
-	token.text_len = 1;
-	token.text = &l->content[l->cursor];
+	token.content_len = 1;
+	token.content = &l->content[l->cursor];
 	token.type = get_token_type(l->content[l->cursor]);
 	token.next = NULL;
 	token.prev = NULL;
@@ -227,22 +227,22 @@ t_token	*build_token(t_token token)
 
 	i = 0;
 	new_token = s_malloc(sizeof(t_token));
-	new_token->text = s_malloc(token.text_len + 1);
-	new_token->text_len = token.text_len;
+	new_token->content = s_malloc(token.content_len + 1);
+	new_token->content_len = token.content_len;
 	new_token->type = token.type;
-	while (i < new_token->text_len && token.text[i])
+	while (i < new_token->content_len && token.content[i])
 	{
-		new_token->text[i] = token.text[i];
+		new_token->content[i] = token.content[i];
 		i++;
 	}
-	new_token->text[i] = '\0';
+	new_token->content[i] = '\0';
 	return (new_token);
 }
 
 /*@brief: build a list of token from the lexer
  *@return: the head of the token list
  */
-t_token	*build_token_list(t_shell *shell, t_lexer *l)
+t_token	*build_token_list(t_lexer *l)
 {
 	t_token	*head;
 	t_token	*new;
