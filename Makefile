@@ -6,7 +6,7 @@
 #    By: jyniemit <jyniemit@student.hive.fi>        +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2025/07/29 12:37:53 by jyniemit          #+#    #+#              #
-#    Updated: 2025/09/16 12:11:34 by jyniemit         ###   ########.fr        #
+#    Updated: 2025/09/16 16:39:20 by jyniemit         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 MAKEFLAGS += --no-print-directory
@@ -48,6 +48,7 @@ SOURCES = main.c	\
 		  builtin_cd.c \
 		  builtin_export.c \
 		  builtin_unset.c \
+		  heredoc.c \
 
 OBJECTS = $(SOURCES:%.c=$(OBJDIR)/%.o)
 SRCFILES = $(addprefix $(SRCDIR)/, $(SOURCES))

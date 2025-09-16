@@ -86,7 +86,12 @@ t_cmd_table *parser_cmd_build_one(t_shell *shell, t_arena *arena, t_token *token
 		}
 		else if (token->type == HEREDOC)
 		{
-			new_cmd->heredoc_delim = token->next->content; 
+			new_cmd->heredoc_delim = token->next->content;
+			if (read_heredoc(token->next->content, &new_cmd->heredoc_fd, shell) == -1)
+			{
+				shell->code = EXIT_FAILURE;
+				return (NULL);
+			} 
 			token = token->next->next;
 		}
 		else
