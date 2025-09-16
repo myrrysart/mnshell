@@ -289,6 +289,8 @@ static MunitResult test_ft_realloc(const MunitParameter params[], void* data)
 
 static MunitResult test_dynamic_array(const MunitParameter params[], void* data)
 {
+	(void)params;
+	(void)data;
 	{
 		t_arena *arena = arena_init(ARENA_CAP);
 		t_da *arr = da_cmd_init(arena, 2);
@@ -313,6 +315,8 @@ static MunitResult test_dynamic_array(const MunitParameter params[], void* data)
 
 static MunitResult test_parser_cmd_build_one(const MunitParameter params[], void* data)
 {
+	(void)params;
+	(void)data;
 	char *str = "echo hello -n";
 	t_arena *arena = arena_init(ARENA_CAP);
 	t_lexer l = build_lexer(str);
@@ -326,6 +330,8 @@ static MunitResult test_parser_cmd_build_one(const MunitParameter params[], void
 
 static MunitResult test_parser_cmd_table(const MunitParameter params[], void* data)
 {
+	(void)params;
+	(void)data;
 	{
 		char *str = "echo hello | wc -l | grep he | echo hi";
 		t_arena *arena = arena_init(ARENA_CAP);
