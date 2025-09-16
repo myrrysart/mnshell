@@ -287,8 +287,10 @@ static MunitResult test_ft_realloc(const MunitParameter params[], void* data)
 	return MUNIT_OK;
 }
 
-static MunitResult test_dynamic_array()
+static MunitResult test_dynamic_array(const MunitParameter params[], void* data)
 {
+	(void)params;
+	(void)data;
 	{
 		t_arena *arena = arena_init(ARENA_CAP);
 		t_da *arr = da_cmd_init(arena, 2);
@@ -311,8 +313,10 @@ static MunitResult test_dynamic_array()
 	return MUNIT_OK;
 }
 
-static MunitResult test_parser_cmd_build_one()
+static MunitResult test_parser_cmd_build_one(const MunitParameter params[], void* data)
 {
+	(void)params;
+	(void)data;
 	char *str = "echo hello -n";
 	t_arena *arena = arena_init(ARENA_CAP);
 	t_lexer l = build_lexer(str);
@@ -324,8 +328,10 @@ static MunitResult test_parser_cmd_build_one()
 	return MUNIT_OK;
 }
 
-static MunitResult test_parser_cmd_table()
+static MunitResult test_parser_cmd_table(const MunitParameter params[], void* data)
 {
+	(void)params;
+	(void)data;
 	{
 		char *str = "echo hello | wc -l | grep he | echo hi";
 		t_arena *arena = arena_init(ARENA_CAP);
@@ -357,6 +363,23 @@ static MunitResult test_parser_cmd_table()
 	return MUNIT_OK;
 }
 
+#include "execution.h"
+static MunitResult test_exec_cmd_path(const MunitParameter params[], void* data)
+{
+	(void)params;
+	(void)data;
+	{
+		extern char **environ;
+		char *path = exec_get_binary_path("ls", environ);
+		assert_string_equal(path, "/usr/bin/ls");
+		path = exec_get_binary_path("/usr/bin/cat", environ);
+		assert_string_equal(path, "/usr/bin/cat");
+		path = exec_get_binary_path("./minishell", environ);
+		assert_string_equal(path, "./minishell");
+	}
+	return MUNIT_OK;
+}
+
 static MunitTest test_suite_tests[] = {
 	{ "/test/arena", test_arena, NULL, NULL, MUNIT_TEST_OPTION_NONE, NULL, },
 	{ "/test/lexer_general", test_lexer_general, NULL, NULL, MUNIT_TEST_OPTION_NONE, NULL, },
@@ -375,6 +398,7 @@ static MunitTest test_suite_tests[] = {
 	{ "/test/dynamic_array", test_dynamic_array, NULL, NULL, MUNIT_TEST_OPTION_NONE, NULL, },
 	{ "/test/parser_cmd_build_one", test_parser_cmd_build_one, NULL, NULL, MUNIT_TEST_OPTION_NONE, NULL, },
 	{ "/test/parser_cmd_table", test_parser_cmd_table, NULL, NULL, MUNIT_TEST_OPTION_NONE, NULL, },
+	{ "/test/test_exec_cmd_path", test_exec_cmd_path, NULL, NULL, MUNIT_TEST_OPTION_NONE, NULL, },
 	{ NULL, NULL, NULL, NULL, MUNIT_TEST_OPTION_NONE, NULL },
 };
 
