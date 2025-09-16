@@ -6,7 +6,7 @@
 /*   By: jyniemit <jyniemit@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/29 13:40:26 by jyniemit          #+#    #+#             */
-/*   Updated: 2025/09/16 13:19:27 by jyniemit         ###   ########.fr       */
+/*   Updated: 2025/09/16 13:50:21 by jyniemit         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -91,8 +91,9 @@ typedef struct s_shell
 	int							output_fd;
 	int							error_fd;
 
-	int							pipe_read_fd;
-	int							pipe_write_fd;
+	int							pipe_index;
+	int							*pipe_read_fd;
+	int							*pipe_write_fd;
 
 	pid_t						process_id[MAX_PROCESSES];
 	int							process_exit_status[MAX_PROCESSES];
