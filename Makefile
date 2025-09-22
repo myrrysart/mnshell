@@ -48,7 +48,7 @@ SOURCES = main.c	\
 		  builtin_cd.c \
 		  builtin_export.c \
 		  builtin_unset.c \
-		  execution_utils.c
+		  execution_utils.c \
 		  exec_pipeline.c
 
 OBJECTS = $(SOURCES:%.c=$(OBJDIR)/%.o)

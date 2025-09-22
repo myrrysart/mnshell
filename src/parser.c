@@ -50,6 +50,7 @@ t_cmd_table *parser_cmd_build_one(t_shell *shell, t_token *token)
 	if (!new_cmd)
 		return NULL;
 	new_cmd->cmd_da = da_cmd_init(shell->arena, DA_CAP);
+	new_cmd->cmd_pos = MID;
 	if (!new_cmd->cmd_da)
 		return NULL;
 	while (token && token->type != PIPE)
@@ -91,7 +92,8 @@ t_cmd_table *parser_cmd_build_one(t_shell *shell, t_token *token)
 		}
 		else
 		{
-			da_append(shell->arena, new_cmd->cmd_da, token->content);
+			char *cmd = exec_copy_bin_path(shell, token->content);
+			da_append(shell->arena, new_cmd->cmd_da, cmd);
 			token = token->next;
 		}
 	}
@@ -148,10 +150,16 @@ t_cmd_table *parser_cmd_build_many(t_shell *shell, t_token *token)
 	cmd_table_head = parser_cmd_build_one(shell, token);
 	if (!cmd_table_head)
 		return NULL;
+	cmd_table_head->cmd_pos = FIRST;
 	while (token && token->type != PIPE)
 		token = token->next;
 	if (!parser_cmd_build_main(shell, cmd_table_head, token))
 		return NULL;
+	t_cmd_table *curr;
+	curr = cmd_table_head;
+	while (curr->next)
+		curr = curr->next;
+	curr->cmd_pos = LAST;
 	return cmd_table_head;
 }
 

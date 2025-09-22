@@ -77,8 +77,6 @@ char	*exec_get_binary_path(char *cmd, char **env)
 	char	**arr;
 	char	*full_cmd;
 
-	if (ft_strchr(cmd, '/'))
-		return (cmd);
 	path = ft_getenv(env, "PATH");
 	if (!path)
 		return (NULL);
@@ -97,9 +95,11 @@ char *exec_copy_bin_path(t_shell *shell, char *cmd)
 	char *bin_cmd;
 	char *arena_cmd;
 
+	if (ft_strchr(cmd, '/'))
+		return cmd;
 	bin_cmd = exec_get_binary_path(cmd, shell->heap_env);
 	if (!bin_cmd)
-		return NULL;
+		return cmd;
 	arena_cmd = arena_alloc(shell->arena, ft_strlen(bin_cmd));
 	if (!arena_cmd)
 		return NULL;

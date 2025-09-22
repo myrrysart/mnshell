@@ -42,6 +42,7 @@ void	init_shell(int ac, char **av, char **env, t_shell *shell)
 		shell->state |= SHOULD_EXIT;
 		return ;
 	}
+	shell->pipeline = arena_alloc(shell->arena, sizeof(*shell->pipeline));
 	init_env(env, shell);
 	init_shell_env(shell, av);
 	if (!getcwd(shell->working_directory, PATH_MAX))
@@ -67,7 +68,8 @@ static void	parse_and_execute(t_shell *shell)
 		ft_printf("[debug] Syntax Error\n");
 		return ;
 	}
-	shell->code = execute_command(shell);
+	shell->cmd = parser_cmd_build_many(shell, t);
+	pipeline(shell);
 	shell->state &= ~EVALUATING;
 }
 
