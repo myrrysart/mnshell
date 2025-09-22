@@ -321,7 +321,9 @@ static MunitResult test_parser_cmd_build_one(const MunitParameter params[], void
 	t_arena *arena = arena_init(ARENA_CAP);
 	t_lexer l = build_lexer(str);
 	t_token *t = build_token_list(&l);
-	t_cmd_table *cmd = parser_cmd_build_one(&shell, arena, t);
+	shell.arena = arena;
+	shell.token = t;
+	t_cmd_table *cmd = parser_cmd_build_one(&shell, t);
 	munit_assert_string_equal(cmd->cmd_da->items[0], "echo");
 	munit_assert_string_equal(cmd->cmd_da->items[1], "hello");
 	munit_assert_string_equal(cmd->cmd_da->items[2], "-n");
@@ -333,29 +335,32 @@ static MunitResult test_parser_cmd_table(const MunitParameter params[], void* da
 	t_shell shell = {0};
 	(void)params;
 	(void)data;
+	extern char **environ;
+	init_min_shell(&shell);
+	shell.heap_env = environ;
 	{
 		char *str = "echo hello | wc -l | grep he | echo hi";
-		t_arena *arena = arena_init(ARENA_CAP);
 		t_lexer l = build_lexer(str);
 		t_token *t = build_token_list(&l);
-		t_cmd_table *cmd_table = parser_cmd_build_many(&shell, arena, t);
-		munit_assert_string_equal(cmd_table->cmd_da->items[0], "echo");
-		munit_assert_string_equal(cmd_table->cmd_da->items[1], "hello");
-		munit_assert_null(cmd_table->cmd_da->items[2]);
-		munit_assert_string_equal(cmd_table->next->cmd_da->items[0], "wc");
-		munit_assert_string_equal(cmd_table->next->cmd_da->items[1], "-l");
-		munit_assert_string_equal(cmd_table->next->next->cmd_da->items[0], "grep");
-		munit_assert_string_equal(cmd_table->next->next->cmd_da->items[1], "he");
-		munit_assert_string_equal(cmd_table->next->next->next->cmd_da->items[0], "echo");
-		munit_assert_string_equal(cmd_table->next->next->next->cmd_da->items[1], "hi");
-		munit_assert_null(cmd_table->next->next->next->next);
+		shell.token = t;
+		t_cmd_table *cmd_table = parser_cmd_build_many(&shell, t);
+		assert_string_equal(cmd_table->cmd_da->items[0], "echo");
+		assert_string_equal(cmd_table->cmd_da->items[1], "hello");
+		assert_null(cmd_table->cmd_da->items[2]);
+		assert_string_equal(cmd_table->next->cmd_da->items[0], "wc");
+		assert_string_equal(cmd_table->next->cmd_da->items[1], "-l");
+		assert_string_equal(cmd_table->next->next->cmd_da->items[0], "grep");
+		assert_string_equal(cmd_table->next->next->cmd_da->items[1], "he");
+		assert_string_equal(cmd_table->next->next->next->cmd_da->items[0], "echo");
+		assert_string_equal(cmd_table->next->next->next->cmd_da->items[1], "hi");
+		assert_null(cmd_table->next->next->next->next);
 	}
 	{
 		char *str = "echo 'hello'|ls -la";
-		t_arena *arena = arena_init(ARENA_CAP);
 		t_lexer l = build_lexer(str);
 		t_token *t = build_token_list(&l);
-		t_cmd_table *cmd_table = parser_cmd_build_many(&shell,arena, t);
+		shell.token = t;
+		t_cmd_table *cmd_table = parser_cmd_build_many(&shell, t);
 		munit_assert_string_equal(cmd_table->cmd_da->items[0], "echo");
 		munit_assert_string_equal(cmd_table->cmd_da->items[1], "'hello'");
 		munit_assert_string_equal(cmd_table->next->cmd_da->items[0], "ls");
@@ -364,7 +369,6 @@ static MunitResult test_parser_cmd_table(const MunitParameter params[], void* da
 	return MUNIT_OK;
 }
 
-#include "execution.h"
 static MunitResult test_exec_cmd_path(const MunitParameter params[], void* data)
 {
 	(void)params;

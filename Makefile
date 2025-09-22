@@ -6,7 +6,7 @@
 #    By: jyniemit <jyniemit@student.hive.fi>        +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2025/07/29 12:37:53 by jyniemit          #+#    #+#              #
-#    Updated: 2025/09/16 12:11:34 by jyniemit         ###   ########.fr        #
+#    Updated: 2025/09/19 13:58:29 by trupham          ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 MAKEFLAGS += --no-print-directory
@@ -49,6 +49,7 @@ SOURCES = main.c	\
 		  builtin_export.c \
 		  builtin_unset.c \
 		  execution_utils.c
+		  exec_pipeline.c
 
 OBJECTS = $(SOURCES:%.c=$(OBJDIR)/%.o)
 SRCFILES = $(addprefix $(SRCDIR)/, $(SOURCES))
