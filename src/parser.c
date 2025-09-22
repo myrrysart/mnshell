@@ -6,7 +6,7 @@
 /*   By: trupham <trupham@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/25 11:27:57 by trupham           #+#    #+#             */
-/*   Updated: 2025/09/23 14:23:43 by jyniemit         ###   ########.fr       */
+/*   Updated: 2025/09/23 14:24:03 by jyniemit         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -89,9 +89,10 @@ t_cmd_table *parser_cmd_build_one(t_shell *shell, t_token *token)
 		}
 		else if (token->type == HEREDOC)
 		{
+			shell->heredoc_count++;
 			while (token->next->content[++i])
 				shell->heredoc_delim[shell->heredoc_count][i] = token->next->content[i];
-			new_cmd->heredoc_index = shell->heredoc_count++;
+			new_cmd->heredoc_index = shell->heredoc_count;
 			token = token->next->next;
 		}
 		else
