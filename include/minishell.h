@@ -6,7 +6,7 @@
 /*   By: jyniemit <jyniemit@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/29 13:40:26 by jyniemit          #+#    #+#             */
-/*   Updated: 2025/09/16 13:50:21 by jyniemit         ###   ########.fr       */
+/*   Updated: 2025/09/19 15:06:08 by trupham          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,12 +33,14 @@
 # include <stdbool.h>
 # include <stddef.h>
 # include <fcntl.h>
+# include <sys/wait.h>
 # define MAX_PROCESSES 30587
 # define ARG_MAX 4096
+# define WR 1
+# define RD 0
 #ifndef DA_CAP
 #define DA_CAP 128
 #endif // DA_CAP
-
 extern volatile sig_atomic_t	g_received_signal;
 
 typedef enum e_shell_code
@@ -77,24 +79,28 @@ enum e_shell_state
 	ENV_MODIFIED = (1u << 12)
 };
 
+typedef struct
+{
+	int pipe[2];
+	int tmp_fd;
+} t_pipe_line;
+
+typedef struct s_cmd t_cmd_table;
+typedef struct s_token t_token;
+
 typedef struct s_shell
 {
 	t_shell_state				state;
 	t_shell_code				code;
-	t_shell_code				last_code;
+	int							last_code;
 
 	char						command_line[ARG_MAX];
 	char						*args[ARG_MAX];
 	int							argc;
 
-	int							input_fd;
-	int							output_fd;
-	int							error_fd;
-
-	int							pipe_index;
-	int							pipe_read_fd;
-	int							pipe_write_fd;
-
+	t_token						*token;
+	t_cmd_table					*cmd;
+	t_pipe_line					*pipeline;
 	pid_t						process_id[MAX_PROCESSES];
 	int							process_exit_status[MAX_PROCESSES];
 
@@ -103,10 +109,6 @@ typedef struct s_shell
 	int							env_count;
 	int							env_capacity;
 	char						working_directory[PATH_MAX];
-
-	int							token_index[ARG_MAX];
-	int							token_types[ARG_MAX];
-	int							token_count;
 
 	struct sigaction			saved_sigint;
 	struct sigaction			saved_sigquit;
@@ -148,11 +150,16 @@ typedef struct s_lexer
 
 // parser data
 typedef enum {
-	BUILTINT,
+	BUILTIN,
 	EXTERNAL
-} e_cmd;
+} t_cmd_type;
 
-typedef struct s_shell t_shell;
+typedef enum
+{
+	FIRST,
+	MID,
+	LAST
+} t_cmd_pos;
 
 typedef struct s_da
 {
@@ -164,7 +171,8 @@ typedef struct s_da
 typedef struct s_cmd
 {
 	t_da *cmd_da;
-	e_cmd cmd_type;
+	t_cmd_type cmd_type;
+	t_cmd_pos cmd_pos;
 	int fd_in;
 	int fd_out;
 	char	*heredoc_delim;
@@ -194,15 +202,13 @@ int								builtin_export(t_shell *shell);
 int								builtin_unset(t_shell *shell);
 char							*find_executable_path(char *cmd, char **env);
 
-
 // parser prototypes
 void							*ft_realloc(t_arena *arena, char **src, size_t src_size, size_t new_size);
 t_da							*da_cmd_init(t_arena *arena, size_t cap);
 void							parser_da_append(char **da, char *str);
 void							da_append(t_arena *arena, t_da *da, char *item);
-t_cmd_table						*parser_cmd_build_one(t_shell *shell, t_arena *arena, t_token *token);
-t_cmd_table						*parser_cmd_build_many(t_shell *shell, t_arena *arena, t_token *token);
-
+t_cmd_table *parser_cmd_build_one(t_shell *shell, t_token *token);
+t_cmd_table *parser_cmd_build_many(t_shell *shell, t_token *token);
 bool							parser_is_syntax_correct(t_token *token);
 
 // lexer prototypes
@@ -214,5 +220,6 @@ t_token							*build_token(t_token token);
 //parser prototypes
 char	*exec_get_binary_path(char *cmd, char **env);
 char *exec_copy_bin_path(t_shell *shell, char *cmd);
+void pipeline(t_shell *shell);
 
 #endif // MINISHELL_H

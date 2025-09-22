@@ -6,7 +6,7 @@
 /*   By: jyniemit <jyniemit@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/29 12:37:53 by jyniemit          #+#    #+#             */
-/*   Updated: 2025/09/16 13:05:20 by jyniemit         ###   ########.fr       */
+/*   Updated: 2025/09/19 13:59:32 by trupham          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,11 +35,6 @@ void	init_shell(int ac, char **av, char **env, t_shell *shell)
 {
 	(void)ac;
 	(void)av;
-	shell->input_fd = STDIN_FILENO;
-	shell->output_fd = STDOUT_FILENO;
-	shell->error_fd = STDERR_FILENO;
-	shell->pipe_read_fd = -1;
-	shell->pipe_write_fd = -1;
 	shell->arena = arena_init(ARENA_CAP);
 	if (!shell->arena)
 	{
@@ -47,6 +42,7 @@ void	init_shell(int ac, char **av, char **env, t_shell *shell)
 		shell->state |= SHOULD_EXIT;
 		return ;
 	}
+	shell->pipeline = arena_alloc(shell->arena, sizeof(*shell->pipeline));
 	init_env(env, shell);
 	init_shell_env(shell, av);
 	if (!getcwd(shell->working_directory, PATH_MAX))
@@ -72,7 +68,8 @@ static void	parse_and_execute(t_shell *shell)
 		ft_printf("[debug] Syntax Error\n");
 		return ;
 	}
-	shell->code = execute_command(shell);
+	shell->cmd = parser_cmd_build_many(shell, t);
+	pipeline(shell);
 	shell->state &= ~EVALUATING;
 }
 

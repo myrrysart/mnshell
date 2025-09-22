@@ -16,7 +16,7 @@ void init_min_shell(t_shell *shell)
 MunitResult test_get_env_var_basic(const MunitParameter params[], void *data)
 {
 	(void)params; (void)data;
-	t_shell shell; init_min_shell(&shell);
+	t_shell shell = {0}; init_min_shell(&shell);
 	set_env_var(&shell, "USER", "jyry");
 	set_env_var(&shell, "HOME", "/somewhere/beyond");
 	char *v1 = get_env_var(&shell, "USER");

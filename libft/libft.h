@@ -6,7 +6,7 @@
 /*   By: Jyniemit <jyniemit@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/30 16:30:50 by Jyniemit          #+#    #+#             */
-/*   Updated: 2025/09/09 16:55:28 by jyniemit         ###   ########.fr       */
+/*   Updated: 2025/09/19 14:21:44 by trupham          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -89,6 +89,9 @@ int		ft_tolower(int c);
 int		ft_toupper(int c);
 void	ft_err_exit(char *message);
 
+#define LOG(message) log_debug(message, __FILE__, __LINE__)
+void log_debug(char *str, char *file, int line);
+
 /* linked list functions */
 typedef struct s_list
 {
@@ -106,6 +109,5 @@ void				ft_lstclear(t_list **lst, void (*del)(void *));
 void				ft_lstiter(t_list *lst, void (*f)(void *));
 t_list				*ft_lstmap(t_list *lst, void *(*f)(void *),
 						void (*del)(void *));
-
 
 #endif

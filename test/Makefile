@@ -2,7 +2,7 @@ MAKEFLAGS += --no-print-directory
 NAME = test
 
 CC = cc
-CFLAGS = -Wall -Wextra
+CFLAGS = -Wall -Wextra -g
 LIBFTDIR = ../libft/
 LIBFT = $(LIBFTDIR)libft.a
 INCLUDES = -I. -I../include -I$(LIBFTDIR)

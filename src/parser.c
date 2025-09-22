@@ -42,14 +42,15 @@ bool	parser_is_syntax_correct(t_token *token)
 	return (true);
 }
 
-t_cmd_table *parser_cmd_build_one(t_shell *shell, t_arena *arena, t_token *token)
+t_cmd_table *parser_cmd_build_one(t_shell *shell, t_token *token)
 {
 	t_cmd_table *new_cmd;
 
-	new_cmd = arena_alloc(arena, sizeof(*new_cmd));
+	new_cmd = arena_alloc(shell->arena, sizeof(*new_cmd));
 	if (!new_cmd)
 		return NULL;
-	new_cmd->cmd_da = da_cmd_init(arena, DA_CAP);
+	new_cmd->cmd_da = da_cmd_init(shell->arena, DA_CAP);
+	new_cmd->cmd_pos = MID;
 	if (!new_cmd->cmd_da)
 		return NULL;
 	while (token && token->type != PIPE)
@@ -91,18 +92,19 @@ t_cmd_table *parser_cmd_build_one(t_shell *shell, t_arena *arena, t_token *token
 		}
 		else
 		{
-			da_append(arena, new_cmd->cmd_da, token->content);
+			char *cmd = exec_copy_bin_path(shell, token->content);
+			da_append(shell->arena, new_cmd->cmd_da, cmd);
 			token = token->next;
 		}
 	}
 	return new_cmd;
 }
 
-static bool parser_cmd_build_curr(t_shell *shell, t_arena *arena, t_cmd_table **curr, t_token *token)
+static bool parser_cmd_build_curr(t_shell *shell, t_cmd_table **curr, t_token *token)
 {
 	t_cmd_table *new_cmd;
 
-	new_cmd = parser_cmd_build_one(shell, arena, token);
+	new_cmd = parser_cmd_build_one(shell, token);
 	if (!new_cmd)
 		return false;
 	(*curr)->next = new_cmd;
@@ -110,7 +112,7 @@ static bool parser_cmd_build_curr(t_shell *shell, t_arena *arena, t_cmd_table **
 	return true;
 }
 
-static bool parser_cmd_build_main(t_shell *shell, t_arena *arena, t_cmd_table *head, t_token *token)
+static bool parser_cmd_build_main(t_shell *shell, t_cmd_table *head, t_token *token)
 {
 	t_token *token_end;
 	t_cmd_table *curr;
@@ -125,13 +127,13 @@ static bool parser_cmd_build_main(t_shell *shell, t_arena *arena, t_cmd_table *h
 			token_end = token_end->next;
 		if (!token_end)
 		{
-			if (!parser_cmd_build_curr(shell, arena, &curr, token->next))
+			if (!parser_cmd_build_curr(shell, &curr, token->next))
 				return false;
 			break;
 		}
 		else if (token_end && token_end->type == PIPE)
 		{
-			if (!parser_cmd_build_curr(shell, arena, &curr, token->next))
+			if (!parser_cmd_build_curr(shell, &curr, token->next))
 				return false;
 			token = token_end;
 		}
@@ -139,19 +141,25 @@ static bool parser_cmd_build_main(t_shell *shell, t_arena *arena, t_cmd_table *h
 	return true;
 }
 
-t_cmd_table *parser_cmd_build_many(t_shell *shell, t_arena *arena, t_token *token)
+t_cmd_table *parser_cmd_build_many(t_shell *shell, t_token *token)
 {
 	t_cmd_table *cmd_table_head;
 
 	if (!token)
 		return NULL;
-	cmd_table_head = parser_cmd_build_one(shell, arena, token);
+	cmd_table_head = parser_cmd_build_one(shell, token);
 	if (!cmd_table_head)
 		return NULL;
+	cmd_table_head->cmd_pos = FIRST;
 	while (token && token->type != PIPE)
 		token = token->next;
-	if (!parser_cmd_build_main(shell, arena, cmd_table_head, token))
+	if (!parser_cmd_build_main(shell, cmd_table_head, token))
 		return NULL;
+	t_cmd_table *curr;
+	curr = cmd_table_head;
+	while (curr->next)
+		curr = curr->next;
+	curr->cmd_pos = LAST;
 	return cmd_table_head;
 }
 
