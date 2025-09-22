@@ -211,5 +211,8 @@ t_lexer							build_lexer(char *content);
 t_token							get_next_token(t_lexer *l);
 t_token							*build_token(t_token token);
 
+//parser prototypes
+char	*exec_get_binary_path(char *cmd, char **env);
+char *exec_copy_bin_path(t_shell *shell, char *cmd);
 
 #endif // MINISHELL_H
