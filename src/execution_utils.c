@@ -10,7 +10,9 @@
 /*                                                                            */
 /* ************************************************************************** */
 
+#include "arena.h"
 #include "libft.h"
+#include "minishell.h"
 
 static char	*ft_getenv(char **env, char *name)
 {
@@ -88,4 +90,20 @@ char	*exec_get_binary_path(char *cmd, char **env)
 	if (!full_cmd)
 		return (free_split(arr), free(full_cmd), NULL);
 	return (free_split(arr), full_cmd);
+}
+
+char *exec_copy_bin_path(t_shell *shell, char *cmd)
+{
+	char *bin_cmd;
+	char *arena_cmd;
+
+	bin_cmd = exec_get_binary_path(cmd, shell->heap_env);
+	if (!bin_cmd)
+		return NULL;
+	arena_cmd = arena_alloc(shell->arena, ft_strlen(bin_cmd));
+	if (!arena_cmd)
+		return NULL;
+	ft_memcpy(arena_cmd, bin_cmd, ft_strlen(bin_cmd));
+	free(bin_cmd);
+	return arena_cmd;
 }

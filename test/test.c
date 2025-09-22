@@ -330,12 +330,9 @@ static MunitResult test_parser_cmd_build_one(const MunitParameter params[], void
 
 static MunitResult test_parser_cmd_table(const MunitParameter params[], void* data)
 {
-<<<<<<< HEAD
 	t_shell shell = {0};
-=======
 	(void)params;
 	(void)data;
->>>>>>> b6fddaf (fix(cmd_path): update makefile and unit test)
 	{
 		char *str = "echo hello | wc -l | grep he | echo hi";
 		t_arena *arena = arena_init(ARENA_CAP);
@@ -384,6 +381,22 @@ static MunitResult test_exec_cmd_path(const MunitParameter params[], void* data)
 	return MUNIT_OK;
 }
 
+static MunitResult test_exec_copy_bin(const MunitParameter params[], void* data)
+{
+	(void)params;
+	(void)data;
+	{
+		t_shell shell = {0};
+		init_min_shell(&shell);
+		extern char** environ;
+		shell.heap_env = environ;
+		char *path = exec_copy_bin_path(&shell, "ls");
+		assert_string_equal(path, "/usr/bin/ls");
+		path = exec_copy_bin_path(&shell, "cat");
+		assert_string_equal(path, "/usr/bin/cat");
+	}
+	return MUNIT_OK;
+}
 static MunitTest test_suite_tests[] = {
 	{ "/test/arena", test_arena, NULL, NULL, MUNIT_TEST_OPTION_NONE, NULL, },
 	{ "/test/lexer_general", test_lexer_general, NULL, NULL, MUNIT_TEST_OPTION_NONE, NULL, },
@@ -403,6 +416,7 @@ static MunitTest test_suite_tests[] = {
 	{ "/test/parser_cmd_build_one", test_parser_cmd_build_one, NULL, NULL, MUNIT_TEST_OPTION_NONE, NULL, },
 	{ "/test/parser_cmd_table", test_parser_cmd_table, NULL, NULL, MUNIT_TEST_OPTION_NONE, NULL, },
 	{ "/test/test_exec_cmd_path", test_exec_cmd_path, NULL, NULL, MUNIT_TEST_OPTION_NONE, NULL, },
+	{ "/test/test_exec_copy_bin", test_exec_copy_bin, NULL, NULL, MUNIT_TEST_OPTION_NONE, NULL, },
 	{ NULL, NULL, NULL, NULL, MUNIT_TEST_OPTION_NONE, NULL },
 };
 
