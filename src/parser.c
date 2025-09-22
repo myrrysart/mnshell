@@ -6,7 +6,7 @@
 /*   By: trupham <trupham@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/25 11:27:57 by trupham           #+#    #+#             */
-/*   Updated: 2025/09/16 13:26:09 by jyniemit         ###   ########.fr       */
+/*   Updated: 2025/09/22 14:56:45 by jyniemit         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,7 +45,9 @@ bool	parser_is_syntax_correct(t_token *token)
 t_cmd_table *parser_cmd_build_one(t_shell *shell, t_arena *arena, t_token *token)
 {
 	t_cmd_table *new_cmd;
+	int			i;
 
+	i = -1;
 	new_cmd = arena_alloc(arena, sizeof(*new_cmd));
 	if (!new_cmd)
 		return NULL;
@@ -86,12 +88,9 @@ t_cmd_table *parser_cmd_build_one(t_shell *shell, t_arena *arena, t_token *token
 		}
 		else if (token->type == HEREDOC)
 		{
-			new_cmd->heredoc_delim = token->next->content;
-			if (read_heredoc(token->next->content, &new_cmd->heredoc_fd, shell) == -1)
-			{
-				shell->code = EXIT_FAILURE;
-				return (NULL);
-			} 
+			while (token->next->content[++i])
+				shell->heredoc_delim[shell->heredoc_count][i] = token->next->content[i];
+			new_cmd->heredoc_index = shell->heredoc_count++;
 			token = token->next->next;
 		}
 		else

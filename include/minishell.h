@@ -6,7 +6,7 @@
 /*   By: jyniemit <jyniemit@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/29 13:40:26 by jyniemit          #+#    #+#             */
-/*   Updated: 2025/09/16 16:17:25 by jyniemit         ###   ########.fr       */
+/*   Updated: 2025/09/22 14:50:29 by jyniemit         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,6 +35,8 @@
 # include <fcntl.h>
 # define MAX_PROCESSES 30587
 # define ARG_MAX 4096
+#define MAX_HEREDOC_SIZE 8192
+# define MAX_HEREDOCS 16
 #ifndef DA_CAP
 #define DA_CAP 128
 #endif // DA_CAP
@@ -108,6 +110,10 @@ typedef struct s_shell
 	int							token_types[ARG_MAX];
 	int							token_count;
 
+	char						heredoc_buffer[MAX_HEREDOCS][MAX_HEREDOC_SIZE];
+	char						heredoc_delim[MAX_HEREDOCS][256];
+	int							heredoc_len[MAX_HEREDOCS];
+	int							heredoc_count;
 	struct sigaction			saved_sigint;
 	struct sigaction			saved_sigquit;
 	struct sigaction			saved_sigterm;
@@ -168,7 +174,7 @@ typedef struct s_cmd
 	int fd_in;
 	int fd_out;
 	char	*heredoc_delim;
-	int heredoc_fd;
+	int		heredoc_index;
 	struct s_cmd *next;
 	struct s_cmd *prev;
 } t_cmd_table;
