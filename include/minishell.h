@@ -6,7 +6,7 @@
 /*   By: jyniemit <jyniemit@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/29 13:40:26 by jyniemit          #+#    #+#             */
-/*   Updated: 2025/09/23 14:21:15 by jyniemit         ###   ########.fr       */
+/*   Updated: 2025/09/23 14:22:50 by jyniemit         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,6 +38,8 @@
 # define ARG_MAX 4096
 # define WR 1
 # define RD 0
+#define MAX_HEREDOC_SIZE 8192
+# define MAX_HEREDOCS 16
 #ifndef DA_CAP
 #define DA_CAP 128
 #endif // DA_CAP
@@ -110,6 +112,10 @@ typedef struct s_shell
 	int							env_capacity;
 	char						working_directory[PATH_MAX];
 
+	char						heredoc_buffer[MAX_HEREDOCS][MAX_HEREDOC_SIZE];
+	char						heredoc_delim[MAX_HEREDOCS][256];
+	int							heredoc_len[MAX_HEREDOCS];
+	int							heredoc_count;
 	struct sigaction			saved_sigint;
 	struct sigaction			saved_sigquit;
 	struct sigaction			saved_sigterm;
@@ -176,7 +182,7 @@ typedef struct s_cmd
 	int fd_in;
 	int fd_out;
 	char	*heredoc_delim;
-	int heredoc_fd;
+	int		heredoc_index;
 	struct s_cmd *next;
 	struct s_cmd *prev;
 } t_cmd_table;
