@@ -6,7 +6,7 @@
 /*   By: jyniemit <jyniemit@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/29 13:40:26 by jyniemit          #+#    #+#             */
-/*   Updated: 2025/09/23 14:22:50 by jyniemit         ###   ########.fr       */
+/*   Updated: 2025/09/23 15:34:12 by jyniemit         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,7 +38,6 @@
 # define ARG_MAX 4096
 # define WR 1
 # define RD 0
-#define MAX_HEREDOC_SIZE 8192
 # define MAX_HEREDOCS 16
 #ifndef DA_CAP
 #define DA_CAP 128
@@ -59,7 +58,8 @@ typedef enum e_shell_code
 	EXIT_SHELLINITFAIL = 66,
 	EXIT_PARSE_ERROR = 67,
 	EXIT_REDIRECT_ERROR = 68,
-	EXIT_CAN_RETRY = 123
+	EXIT_CAN_RETRY = 123,
+	EXIT_HEREDOC_ERROR = 112,
 }								t_shell_code;
 
 typedef uint32_t t_shell_state;
@@ -112,10 +112,9 @@ typedef struct s_shell
 	int							env_capacity;
 	char						working_directory[PATH_MAX];
 
-	char						heredoc_buffer[MAX_HEREDOCS][MAX_HEREDOC_SIZE];
+	int							heredoc_index;
+	int							heredoc_fd;
 	char						heredoc_delim[MAX_HEREDOCS][256];
-	int							heredoc_len[MAX_HEREDOCS];
-	int							heredoc_count;
 	struct sigaction			saved_sigint;
 	struct sigaction			saved_sigquit;
 	struct sigaction			saved_sigterm;
@@ -194,7 +193,7 @@ void							handle_signal(t_shell *shell, int sig);
 
 void							set_env_var(t_shell *shell, char *key, char *value);
 
-int								read_heredoc(char *delim, int *fd, t_shell *shell);
+int								read_heredoc(t_shell *shell);
 char							*get_env_var(t_shell *shell, char *key);
 void							unset_env_var(t_shell *shell, char *key);
 int								print_env(t_shell *shell);

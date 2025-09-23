@@ -6,47 +6,44 @@
 /*   By: jyniemit <jyniemit@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/16 13:05:20 by jyniemit          #+#    #+#             */
-/*   Updated: 2025/09/22 15:00:22 by jyniemit         ###   ########.fr       */
+/*   Updated: 2025/09/23 17:59:39 by jyniemit         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-int		read_heredoc(t_shell *shell)
-{
-	char	*line;
-	int		interrupted;
-	int		read_fd;
 
-	shell->state |= IN_HEREDOC;
-	interrupted = 0;
-	g_received_signal = 0;
-	while (!interrupted)
+int read_heredoc(t_shell *shell)
+{
+    char tmp_name[32];
+    char *line;
+    char *delimiter;
+    int fd;
+	int	heredoc_index;
+
+	heredoc_index = shell->heredoc_index;
+	delimiter = shell->heredoc_delim[heredoc_index];
+    ft_strlcpy(tmp_name, "/tmp/ms_", sizeof(tmp_name));
+    tmp_name[8] = '0' + heredoc_index;
+    tmp_name[9] = '\0';
+    fd = open(tmp_name, O_CREAT | O_WRONLY | O_TRUNC, 0600);
+    if (fd == -1) return -1;
+    while ((line = readline("> "))) 
 	{
-		line = readline("> ");
-		if (g_received_signal == SIGINT)
-		{
-			interrupted = 1;
-			g_received_signal = 0;
-			break;
-		}
 		if (!line)
 			break;
-		if (ft_strncmp(line, shell->heredoc_delim[shell->, ft_strlen(line) + 1) == 0)
+        if (ft_strncmp(line, delimiter, ft_strlen(delimiter)) == 0
+            && ft_strlen(line) == ft_strlen(delimiter)) 
 		{
-			free(line);
-			break;
-		}
-		write(shell->heredoc_fd, line, ft_strlen(line));
-		write(shell->heredoc_fd, "\n", 1);
-		free(line);
-	}
-	shell->state &= ~IN_HEREDOC;
-	if (interrupted)
-	{
-		close(shell->heredoc_fd);
-		shell->heredoc_fd = -1;
-		return (-1);
-	}
-	return (0);
+            free(line);
+            break;
+        }
+        write(fd, line, ft_strlen(line));
+        write(fd, "\n", 1);
+        free(line);
+    }
+    close(fd);
+    fd = open(tmp_name, O_RDONLY);
+    unlink(tmp_name);
+    return fd;
 }
