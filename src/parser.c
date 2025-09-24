@@ -6,7 +6,7 @@
 /*   By: trupham <trupham@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/25 11:27:57 by trupham           #+#    #+#             */
-/*   Updated: 2025/09/16 13:26:09 by jyniemit         ###   ########.fr       */
+/*   Updated: 2025/09/23 18:31:04 by jyniemit         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,10 +45,14 @@ bool	parser_is_syntax_correct(t_token *token)
 t_cmd_table *parser_cmd_build_one(t_shell *shell, t_token *token)
 {
 	t_cmd_table *new_cmd;
+	int			i;
 
 	new_cmd = arena_alloc(shell->arena, sizeof(*new_cmd));
+	i = -1;
 	if (!new_cmd)
 		return NULL;
+	new_cmd->fd_in = STDIN_FILENO;
+	new_cmd->fd_out = STDOUT_FILENO;
 	new_cmd->cmd_da = da_cmd_init(shell->arena, DA_CAP);
 	new_cmd->cmd_pos = MID;
 	if (!new_cmd->cmd_da)
@@ -57,7 +61,7 @@ t_cmd_table *parser_cmd_build_one(t_shell *shell, t_token *token)
 	{
 		if (token->type == REDIRECT_OUT)
 		{
-			new_cmd->fd_out = open(token->next->content, O_WRONLY | O_CREAT, 0644);
+			new_cmd->fd_out = open(token->next->content, O_WRONLY | O_CREAT | O_TRUNC, 0644);
 			if (new_cmd->fd_out == -1)
 			{
 				shell->code = EXIT_REDIRECT_ERROR;
@@ -87,7 +91,17 @@ t_cmd_table *parser_cmd_build_one(t_shell *shell, t_token *token)
 		}
 		else if (token->type == HEREDOC)
 		{
-			new_cmd->heredoc_delim = token->next->content; 
+			shell->heredoc_index++;
+			while (token->next->content[++i] && i < 255)
+				shell->heredoc_delim[shell->heredoc_index][i] = token->next->content[i];
+			shell->heredoc_delim[shell->heredoc_index][i] = '\0';
+			new_cmd->fd_in = read_heredoc(shell);
+			if (new_cmd->fd_in == -1)
+			{
+				shell->code = EXIT_HEREDOC_ERROR;
+				return (NULL);
+			}
+			new_cmd->heredoc_index = shell->heredoc_index;
 			token = token->next->next;
 		}
 		else

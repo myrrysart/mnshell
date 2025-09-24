@@ -6,7 +6,7 @@
 /*   By: trupham <trupham@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/19 11:46:53 by trupham           #+#    #+#             */
-/*   Updated: 2025/09/19 14:15:50 by trupham          ###   ########.fr       */
+/*   Updated: 2025/09/23 18:12:26 by jyniemit         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,14 +53,43 @@ pid_t execute(t_cmd_table *cmd, t_pipe_line *pipeline, char **environ)
  */
 void pipeline(t_shell *shell)
 {
-	t_cmd_table *cmd;
-	pid_t child;
+    t_cmd_table *cmd = shell->cmd;
+    pid_t child;
+    int status;
 
-	cmd = shell->cmd;
-	while (cmd)
-	{
-		child = execute(cmd, shell->pipeline, shell->heap_env);
-		cmd = cmd->next;
-		waitpid(child, &shell->last_code, 0);
-	}
+    if (shell->state & HAS_PIPE) {
+		while (cmd)
+		{
+			child = execute(cmd, shell->pipeline, shell->heap_env);
+			cmd = cmd->next;
+			waitpid(child, &shell->last_code, 0);
+		}
+    } else {
+        child = fork();
+        if (child == 0) {
+            if (cmd->fd_in != STDIN_FILENO) {
+                dup2(cmd->fd_in, STDIN_FILENO);
+                close(cmd->fd_in);
+            }
+            if (cmd->fd_out != STDOUT_FILENO) {
+                dup2(cmd->fd_out, STDOUT_FILENO);
+                close(cmd->fd_out);
+            }
+
+            execve(cmd->cmd_da->items[0], cmd->cmd_da->items, shell->heap_env);
+            exit(127);
+        }
+        else if (child > 0) {
+            waitpid(child, &status, 0);
+            shell->last_code = status;
+            if (cmd->fd_in != STDIN_FILENO)
+                close(cmd->fd_in);
+            if (cmd->fd_out != STDOUT_FILENO)
+                close(cmd->fd_out);
+        }
+        else {
+            perror("fork");
+            shell->code = 1;
+        }
+    }
 }

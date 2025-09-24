@@ -6,7 +6,7 @@
 /*   By: jyniemit <jyniemit@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/29 12:37:53 by jyniemit          #+#    #+#             */
-/*   Updated: 2025/09/19 13:59:32 by trupham          ###   ########.fr       */
+/*   Updated: 2025/09/23 18:19:10 by jyniemit         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,6 +50,7 @@ void	init_shell(int ac, char **av, char **env, t_shell *shell)
 		shell->code = EXIT_SHELLINITFAIL;
 		shell->state |= SHOULD_EXIT;
 	}
+	shell->heredoc_index = -1;
 }
 
 static void	parse_and_execute(t_shell *shell)
@@ -69,7 +70,8 @@ static void	parse_and_execute(t_shell *shell)
 		return ;
 	}
 	shell->cmd = parser_cmd_build_many(shell, t);
-	pipeline(shell);
+	if(shell->cmd)
+		pipeline(shell);
 	shell->state &= ~EVALUATING;
 }
 
