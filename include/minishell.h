@@ -62,8 +62,7 @@ typedef enum e_shell_code
 	EXIT_HEREDOC_ERROR = 112,
 }								t_shell_code;
 
-typedef uint32_t t_shell_state;
-enum e_shell_state
+typedef enum e_shell_state
 {
 	SHELL_DEFAULT = 0,
 	EVALUATING = (1u << 0),
@@ -79,7 +78,7 @@ enum e_shell_state
 	HAS_BUILTIN = (1u << 10),
 	SUPPRESS_PROMPT = (1u << 11),
 	ENV_MODIFIED = (1u << 12)
-};
+} t_shell_state;
 
 typedef struct
 {
@@ -187,7 +186,7 @@ typedef struct s_cmd
 } t_cmd_table;
 
 void							init_signals(t_shell *shell);
-void							init_shell(int ac, char **av, char **env, t_shell *shell);
+void	init_shell(char **av, char **env, t_shell *shell);
 void							run_shell(t_shell *shell);
 void							handle_signal(t_shell *shell, int sig);
 

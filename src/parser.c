@@ -42,6 +42,10 @@ bool	parser_is_syntax_correct(t_token *token)
 	return (true);
 }
 
+/* @brief: main function to construct a single command struct
+ * @params: shell pointer and the token pointer containing command information
+ * @return: a command table pointer
+ */
 t_cmd_table *parser_cmd_build_one(t_shell *shell, t_token *token)
 {
 	t_cmd_table *new_cmd;
@@ -126,6 +130,14 @@ static bool parser_cmd_build_curr(t_shell *shell, t_cmd_table **curr, t_token *t
 	return true;
 }
 
+/* @brief: main loop that handles subsequents commands.
+ * first it skips the first token since it should be a PIPE.
+ * it then traverse the command table passed in as head to find the last command (curr).
+ * token_end denotes the end of the current command. token->next is the start of the current command.
+ * cmd_build_curr will build the current command given the start of the command.
+ * if token end is a PIPE, move the token pointer to the PIPE to prepare for the next pipe command.
+ * if token end is NULL (end of list), we terminate
+ */
 static bool parser_cmd_build_main(t_shell *shell, t_cmd_table *head, t_token *token)
 {
 	t_token *token_end;
@@ -155,9 +167,17 @@ static bool parser_cmd_build_main(t_shell *shell, t_cmd_table *head, t_token *to
 	return true;
 }
 
+/* @brief: entry to the parser
+ * first it builds the head of the command table then traverse the token list
+ * to PIPE which is the delimiter that separates different commands.
+ * it then performs the main loop inside the cmd_build_main function
+ * @params: shell pointer and token pointer
+ * @return: head of the linked list for command table
+ */
 t_cmd_table *parser_cmd_build_many(t_shell *shell, t_token *token)
 {
 	t_cmd_table *cmd_table_head;
+	t_cmd_table *curr;
 
 	if (!token)
 		return NULL;
@@ -169,7 +189,6 @@ t_cmd_table *parser_cmd_build_many(t_shell *shell, t_token *token)
 		token = token->next;
 	if (!parser_cmd_build_main(shell, cmd_table_head, token))
 		return NULL;
-	t_cmd_table *curr;
 	curr = cmd_table_head;
 	while (curr->next)
 		curr = curr->next;

@@ -12,7 +12,7 @@
 
 #include "minishell.h"
 
-pid_t execute(t_cmd_table *cmd, t_pipe_line *pipeline, char **environ)
+pid_t execute(t_cmd_table *cmd, t_pipe_line *pipeline, char **env)
 {
 	if (pipe(pipeline->pipe) < 0)
 		return -1;
@@ -41,7 +41,7 @@ pid_t execute(t_cmd_table *cmd, t_pipe_line *pipeline, char **environ)
 			dup2(pipeline->tmp_fd, STDIN_FILENO);
 			close(pipeline->tmp_fd);
 		}
-		execve(cmd->cmd_da->items[0], cmd->cmd_da->items, environ);
+		execve(cmd->cmd_da->items[0], cmd->cmd_da->items, env);
 	}
 	pipeline->tmp_fd = dup(pipeline->pipe[RD]);
 	close(pipeline->pipe[RD]);

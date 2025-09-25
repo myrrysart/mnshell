@@ -31,10 +31,8 @@ static void	init_env(char **env, t_shell *shell)
 	shell->heap_env[shell->env_count] = NULL;
 }
 
-void	init_shell(int ac, char **av, char **env, t_shell *shell)
+void	init_shell(char **av, char **env, t_shell *shell)
 {
-	(void)ac;
-	(void)av;
 	shell->arena = arena_init(ARENA_CAP);
 	if (!shell->arena)
 	{
@@ -52,6 +50,21 @@ void	init_shell(int ac, char **av, char **env, t_shell *shell)
 	}
 	shell->heredoc_index = -1;
 }
+void check_flag(t_shell *shell, t_token *t)
+{
+	while (t)
+	{
+		if (t->type == PIPE)
+			shell->state |= HAS_PIPE;
+		if (t->type == SQUOTE)
+			shell->state |= IN_SQUOTE;
+		if (t->type == DQUOTE)
+			shell->state |= IN_DQUOTE;
+		if (t->type == REDIRECT_IN)
+			shell->state |= HAS_INPUT_REDIR;
+		t = t->next;
+	}
+}
 
 static void	parse_and_execute(t_shell *shell)
 {
@@ -64,6 +77,7 @@ static void	parse_and_execute(t_shell *shell)
 		return ;
 	l = build_lexer(shell->command_line);
 	t = build_token_list(&l);
+	check_flag(shell, t);
 	if (!parser_is_syntax_correct(t))
 	{
 		ft_printf("[debug] Syntax Error\n");
@@ -72,6 +86,9 @@ static void	parse_and_execute(t_shell *shell)
 	shell->cmd = parser_cmd_build_many(shell, t);
 	if(shell->cmd)
 		pipeline(shell);
+	else // NOTE: handle no pipes
+		pipeline(shell);
+	shell->state &= ~HAS_PIPE;
 	shell->state &= ~EVALUATING;
 }
 
