@@ -22,5 +22,5 @@ void	ft_putendl_fd(char *s, int fd)
 
 void log_debug(char *str, char *file, int line)
 {
-	ft_printf("[\033[32mDEBUG\033[0m]%s:%d: %s", file, line, str);
+	ft_printf(GREEN"[DEBUG]"RESET"%s:%d: %s", file, line, str);
 }

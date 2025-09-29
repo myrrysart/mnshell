@@ -103,7 +103,7 @@ void	run_shell(t_shell *shell)
 		if (g_received_signal)
 			handle_signal(shell, g_received_signal);
 		if (isatty(fileno(stdin)))
-			line = readline("minishell$ ");
+			line = readline(PROMPT);
 		else
 		{
 			raw_line = get_next_line(fileno(stdin));

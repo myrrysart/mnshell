@@ -105,7 +105,6 @@ void exec_no_pipe(t_shell *shell)
 	}
 	else
 	{
-		LOG("[ BUILTIN ]\n");
 		builtin_select(shell, cmd);
 	}
 }

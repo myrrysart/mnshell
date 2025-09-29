@@ -90,6 +90,8 @@ int		ft_toupper(int c);
 void	ft_err_exit(char *message);
 
 #define LOG(message) log_debug(message, __FILE__, __LINE__)
+#define GREEN "\033[32m"
+#define RESET "\033[0m"
 void log_debug(char *str, char *file, int line);
 
 /* linked list functions */
