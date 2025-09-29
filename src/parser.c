@@ -184,6 +184,26 @@ t_cmd_table *parser_cmd_build_many(t_shell *shell, t_token *token)
 	cmd_table_head = parser_cmd_build_one(shell, token);
 	if (!cmd_table_head)
 		return NULL;
+	shell->state |= HAS_BUILTIN;
+	if (ft_strncmp(token->content, "echo", 5) == 0)
+		cmd_table_head->cmd_type = BUILTIN_ECHO;
+	else if (ft_strncmp(token->content, "cd", 3) == 0)
+		cmd_table_head->cmd_type = BUILTIN_CD;
+	else if (ft_strncmp(token->content, "exit", 5) == 0)
+		cmd_table_head->cmd_type = BUILTIN_EXIT;
+	else if (ft_strncmp(token->content, "pwd", 4) == 0)
+		cmd_table_head->cmd_type = BUILTIN_PWD;
+	else if (ft_strncmp(token->content, "export", 6) == 0)
+		cmd_table_head->cmd_type = BUILTIN_EXPORT;
+	else if (ft_strncmp(token->content, "unset", 6) == 0)
+		cmd_table_head->cmd_type = BUILTIN_UNSET;
+	else if (ft_strncmp(token->content, "env", 6) == 0)
+		cmd_table_head->cmd_type = BUILTIN_ENV;
+	else
+	{
+		cmd_table_head->cmd_type = EXTERNAL;
+		shell->state &= ~HAS_BUILTIN;
+	}
 	cmd_table_head->cmd_pos = FIRST;
 	while (token && token->type != PIPE)
 		token = token->next;

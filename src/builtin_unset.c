@@ -12,16 +12,23 @@
 
 #include "minishell.h"
 
-int	builtin_unset(t_shell *shell)
+void	builtin_unset(t_shell *shell, t_cmd_table *cmd)
 {
 	int	i;
 
+	(void)cmd;
 	if (!shell)
-		return (EXIT_BUILTIN_MISUSE);
-	if (!shell->args[1])
-		return (OK);
+	{
+		shell->code = EXIT_BUILTIN_MISUSE;
+		return;
+	}
+	if (!cmd->cmd_da->items[1])
+	{
+		shell->code = OK;
+		return;
+	}
 	i = 0;
-	while (shell->args[++i])
-		unset_env_var(shell, shell->args[i]);
-	return (OK);
+	while (cmd->cmd_da->items[++i])
+		unset_env_var(shell, cmd->cmd_da->items[i]);
+	shell->code = OK;
 }

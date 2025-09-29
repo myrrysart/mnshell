@@ -12,15 +12,15 @@
 
 #include "minishell.h"
 
-int	builtin_exit(t_shell *shell)
+void	builtin_exit(t_shell *shell, t_cmd_table *cmd)
 {
-	if (shell->args[2])
+	if (cmd->cmd_da->items[2])
 	{
 		ft_printf("Exit: too many arguments.\n");
-		return (EXIT_GENERAL_ERROR);
+		shell->code = EXIT_GENERAL_ERROR;
+		return;
 	}
 	shell->state |= SHOULD_EXIT;
-	if (shell->args[1])
-		return (ft_atoi(shell->args[1]));
-	return (OK);
+	if (cmd->cmd_da->items[1])
+		shell->code = ft_atoi(cmd->cmd_da->items[1]);
 }

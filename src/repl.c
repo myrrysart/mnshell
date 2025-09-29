@@ -50,6 +50,7 @@ void	init_shell(char **av, char **env, t_shell *shell)
 	}
 	shell->heredoc_index = -1;
 }
+
 void check_flag(t_shell *shell, t_token *t)
 {
 	while (t)
@@ -84,10 +85,10 @@ static void	parse_and_execute(t_shell *shell)
 		return ;
 	}
 	shell->cmd = parser_cmd_build_many(shell, t);
-	if(shell->cmd)
-		pipeline(shell);
-	else // NOTE: handle no pipes
-		pipeline(shell);
+	if(shell->cmd && shell->state & HAS_PIPE)
+		exec_pipe(shell);
+	else
+		exec_no_pipe(shell);
 	shell->state &= ~HAS_PIPE;
 	shell->state &= ~EVALUATING;
 }

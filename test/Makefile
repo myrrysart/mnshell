@@ -1,7 +1,7 @@
 MAKEFLAGS += --no-print-directory
 NAME = test
 
-CC = cc
+CC = cc -lreadline
 CFLAGS = -Wall -Wextra -g
 LIBFTDIR = ../libft/
 LIBFT = $(LIBFTDIR)libft.a
@@ -14,7 +14,8 @@ SRC = arena.c	\
 	  lexer.c	\
 	  parser.c	\
 	  environment.c \
-	  execution_utils.c
+	  execution_utils.c \
+	  heredoc.c \
 
 TEST = test.c	\
 	   munit.c	\
@@ -30,7 +31,7 @@ $(NAME): $(OBJECTS) $(TESTOBJ)
 	$(CC) $(OBJECTS) $(TESTOBJ) $(LIBFT) -o $(NAME)
 
 %.o: %.c
-	cc $(CFLAGS) $(INCLUDES) -c $< -o $@
+	$(CC) $(CFLAGS) $(INCLUDES) -c $< -o $@
 
 clean:
 	rm *.o

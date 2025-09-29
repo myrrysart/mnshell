@@ -63,21 +63,26 @@ static int	process_export_arg(t_shell *shell, char *arg)
 	return (OK);
 }
 
-int	builtin_export(t_shell *shell)
+void	builtin_export(t_shell *shell, t_cmd_table *cmd)
 {
 	int	i;
-	int	result;
 
 	if (!shell)
-		return (EXIT_BUILTIN_MISUSE);
-	if (!shell->args[1])
-		return (print_env(shell));
-	i = 0;
-	result = OK;
-	while (shell->args[++i])
 	{
-		if (process_export_arg(shell, shell->args[i]) != OK)
-			result = EXIT_GENERAL_ERROR;
+		shell->code = EXIT_BUILTIN_MISUSE;
+		return;
 	}
-	return (result);
+	if (!cmd->cmd_da->items[1])
+	{
+		builtin_env(shell, cmd);
+		return;
+	}
+	i = 0;
+	shell->code = OK;
+	while (cmd->cmd_da->items[++i])
+	{
+		if (process_export_arg(shell, cmd->cmd_da->items[i]) != OK)
+			shell->code = EXIT_GENERAL_ERROR;
+	}
+	
 }

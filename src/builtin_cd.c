@@ -12,37 +12,44 @@
 
 #include "minishell.h"
 
-int	builtin_cd(t_shell *shell)
+void	builtin_cd(t_shell *shell, t_cmd_table *cmd)
 {
 	char	*path;
 	char	*home;
 	char	old_pwd[PATH_MAX];
 	char	new_pwd[PATH_MAX];
 
+	(void)cmd;
 	if (!shell)
-		return (EXIT_BUILTIN_MISUSE);
-	if (shell->args[2])
+	{
+		shell->code = EXIT_BUILTIN_MISUSE;
+		return;
+	}
+	if (cmd->cmd_da->items[2])
 	{
 		ft_printf("cd: too many arguments\n");
-		return (EXIT_GENERAL_ERROR);
+		shell->code = EXIT_GENERAL_ERROR;
+		return;
 	}
 	ft_strlcpy(old_pwd, shell->working_directory, PATH_MAX);
-	if (!shell->args[1])
+	if (!cmd->cmd_da->items[1])
 	{
 		home = get_env_var(shell, "HOME");
 		if (!home)
 		{
 			ft_printf("cd: HOME not set\n");
-			return (EXIT_GENERAL_ERROR);
+			shell->code = EXIT_GENERAL_ERROR;
+			return;
 		}
 		path = home;
 	}
 	else
-		path = shell->args[1];
+		path = cmd->cmd_da->items[1];
 	if (chdir(path) != 0)
 	{
 		ft_printf("cd: %s: No such file or directory\n", path);
-		return (EXIT_GENERAL_ERROR);
+		shell->code = EXIT_GENERAL_ERROR;
+		return;
 	}
 	if (getcwd(new_pwd, PATH_MAX))
 	{
@@ -52,7 +59,8 @@ int	builtin_cd(t_shell *shell)
 	else
 	{
 		ft_printf("cd: error retrieving current directory\n");
-		return (EXIT_GENERAL_ERROR);
+		shell->code = EXIT_GENERAL_ERROR;
+		return;
 	}
-	return (OK);
+	shell->code = OK;
 }

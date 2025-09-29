@@ -12,12 +12,16 @@
 
 #include "minishell.h"
 
-int	builtin_pwd(t_shell *shell)
+void	builtin_pwd(t_shell *shell, t_cmd_table *cmd)
 {
 	char	current_dir[PATH_MAX];
 
+	(void)cmd;
 	if (!shell)
-		return (EXIT_BUILTIN_MISUSE);
+	{
+		shell->code = EXIT_BUILTIN_MISUSE;
+		return;
+	}
 	if (getcwd(current_dir, PATH_MAX))
 	{
 		ft_printf("%s\n", current_dir);
@@ -30,8 +34,9 @@ int	builtin_pwd(t_shell *shell)
 		else
 		{
 			ft_printf("pwd: cannot determine current directory\n");
-			return (EXIT_GENERAL_ERROR);
+			shell->code = EXIT_GENERAL_ERROR;
+			return;
 		}
 	}
-	return (OK);
+	shell->code = OK;
 }

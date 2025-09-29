@@ -109,14 +109,19 @@ void	unset_env_var(t_shell *shell, char *key)
 		}
 	}
 }
-int	print_env(t_shell *shell)
+
+void	builtin_env(t_shell *shell, t_cmd_table *cmd)
 {
 	int	i;
 
+	(void)cmd;
 	if (!shell)
-		return (EXIT_BUILTIN_MISUSE);
+	{
+		shell->code = EXIT_BUILTIN_MISUSE;
+		return;
+	}
 	i = -1;
 	while (++i < shell->env_count)
 		ft_printf("%s\n", shell->heap_env[i]);
-	return (OK);
+	shell->code = OK;
 }
