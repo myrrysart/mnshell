@@ -12,6 +12,7 @@
 
 #ifndef MINISHELL_H
 # define MINISHELL_H
+# define PROMPT GREEN"minishell$ "RESET
 
 // PATH_MAX
 # include <limits.h>
@@ -227,6 +228,7 @@ void							da_append(t_arena *arena, t_da *da, char *item);
 t_cmd_table						*parser_cmd_build_one(t_shell *shell, t_token *token);
 t_cmd_table						*parser_cmd_build_many(t_shell *shell, t_token *token);
 bool							parser_is_syntax_correct(t_token *token);
+void parser_cmd_type(t_shell *shell, t_cmd_table *cmd, t_token *token);
 
 // lexer prototypes
 t_token							*build_token_list(t_lexer *l);
@@ -234,7 +236,7 @@ t_lexer							build_lexer(char *content);
 t_token							get_next_token(t_lexer *l);
 t_token							*build_token(t_token token);
 
-//parser prototypes
+//exec prototypes
 char	*exec_get_binary_path(char *cmd, char **env);
 char *exec_copy_bin_path(t_shell *shell, char *cmd);
 void exec_pipe(t_shell *shell);

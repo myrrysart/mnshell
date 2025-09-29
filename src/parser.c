@@ -58,9 +58,10 @@ t_cmd_table *parser_cmd_build_one(t_shell *shell, t_token *token)
 	new_cmd->fd_in = STDIN_FILENO;
 	new_cmd->fd_out = STDOUT_FILENO;
 	new_cmd->cmd_da = da_cmd_init(shell->arena, DA_CAP);
-	new_cmd->cmd_pos = MID;
 	if (!new_cmd->cmd_da)
 		return NULL;
+	new_cmd->cmd_pos = MID;
+	parser_cmd_type(shell, new_cmd, token);
 	while (token && token->type != PIPE)
 	{
 		if (token->type == REDIRECT_OUT)
@@ -167,6 +168,30 @@ static bool parser_cmd_build_main(t_shell *shell, t_cmd_table *head, t_token *to
 	return true;
 }
 
+void parser_cmd_type(t_shell *shell, t_cmd_table *cmd, t_token *token)
+{
+	shell->state |= HAS_BUILTIN;
+	if (ft_strncmp(token->content, "echo", 5) == 0)
+		cmd->cmd_type = BUILTIN_ECHO;
+	else if (ft_strncmp(token->content, "cd", 3) == 0)
+		cmd->cmd_type = BUILTIN_CD;
+	else if (ft_strncmp(token->content, "exit", 5) == 0)
+		cmd->cmd_type = BUILTIN_EXIT;
+	else if (ft_strncmp(token->content, "pwd", 4) == 0)
+		cmd->cmd_type = BUILTIN_PWD;
+	else if (ft_strncmp(token->content, "export", 6) == 0)
+		cmd->cmd_type = BUILTIN_EXPORT;
+	else if (ft_strncmp(token->content, "unset", 6) == 0)
+		cmd->cmd_type = BUILTIN_UNSET;
+	else if (ft_strncmp(token->content, "env", 6) == 0)
+		cmd->cmd_type = BUILTIN_ENV;
+	else
+	{
+		cmd->cmd_type = EXTERNAL;
+		shell->state &= ~HAS_BUILTIN;
+	}
+}
+
 /* @brief: entry to the parser
  * first it builds the head of the command table then traverse the token list
  * to PIPE which is the delimiter that separates different commands.
@@ -184,26 +209,7 @@ t_cmd_table *parser_cmd_build_many(t_shell *shell, t_token *token)
 	cmd_table_head = parser_cmd_build_one(shell, token);
 	if (!cmd_table_head)
 		return NULL;
-	shell->state |= HAS_BUILTIN;
-	if (ft_strncmp(token->content, "echo", 5) == 0)
-		cmd_table_head->cmd_type = BUILTIN_ECHO;
-	else if (ft_strncmp(token->content, "cd", 3) == 0)
-		cmd_table_head->cmd_type = BUILTIN_CD;
-	else if (ft_strncmp(token->content, "exit", 5) == 0)
-		cmd_table_head->cmd_type = BUILTIN_EXIT;
-	else if (ft_strncmp(token->content, "pwd", 4) == 0)
-		cmd_table_head->cmd_type = BUILTIN_PWD;
-	else if (ft_strncmp(token->content, "export", 6) == 0)
-		cmd_table_head->cmd_type = BUILTIN_EXPORT;
-	else if (ft_strncmp(token->content, "unset", 6) == 0)
-		cmd_table_head->cmd_type = BUILTIN_UNSET;
-	else if (ft_strncmp(token->content, "env", 6) == 0)
-		cmd_table_head->cmd_type = BUILTIN_ENV;
-	else
-	{
-		cmd_table_head->cmd_type = EXTERNAL;
-		shell->state &= ~HAS_BUILTIN;
-	}
+	parser_cmd_type(shell, cmd_table_head, token);
 	cmd_table_head->cmd_pos = FIRST;
 	while (token && token->type != PIPE)
 		token = token->next;
