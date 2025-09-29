@@ -62,8 +62,7 @@ typedef enum e_shell_code
 	EXIT_HEREDOC_ERROR = 112,
 }								t_shell_code;
 
-typedef uint32_t t_shell_state;
-enum e_shell_state
+typedef enum e_shell_state
 {
 	SHELL_DEFAULT = 0,
 	EVALUATING = (1u << 0),
@@ -79,7 +78,7 @@ enum e_shell_state
 	HAS_BUILTIN = (1u << 10),
 	SUPPRESS_PROMPT = (1u << 11),
 	ENV_MODIFIED = (1u << 12)
-};
+} t_shell_state;
 
 typedef struct
 {
@@ -153,11 +152,22 @@ typedef struct s_lexer
 	size_t line;
 } t_lexer;
 
+typedef void (*builtin)(t_shell *shell, t_cmd_table *cmd);
+
 // parser data
-typedef enum {
-	BUILTIN,
-	EXTERNAL
-} t_cmd_type;
+typedef enum
+{
+	BUILTIN_CD,
+	BUILTIN_ECHO,
+	BUILTIN_EXIT,
+	BUILTIN_PWD,
+	BUILTIN_EXPORT,
+	BUILTIN_UNSET,
+	BUILTIN_ENV,
+	BUILTIN_COUNT,
+	EXTERNAL,
+}
+t_cmd_type;
 
 typedef enum
 {
@@ -187,7 +197,7 @@ typedef struct s_cmd
 } t_cmd_table;
 
 void							init_signals(t_shell *shell);
-void							init_shell(int ac, char **av, char **env, t_shell *shell);
+void							init_shell(char **av, char **env, t_shell *shell);
 void							run_shell(t_shell *shell);
 void							handle_signal(t_shell *shell, int sig);
 
@@ -196,18 +206,17 @@ void							set_env_var(t_shell *shell, char *key, char *value);
 int								read_heredoc(t_shell *shell);
 char							*get_env_var(t_shell *shell, char *key);
 void							unset_env_var(t_shell *shell, char *key);
-int								print_env(t_shell *shell);
 void							init_shell_env(t_shell *shell, char **av);
 void							update_pwd_env(t_shell *shell, char *old_pwd, char *new_pwd);
 void							update_last_command(t_shell *shell, char *command);
 
-int								execute_command(t_shell *shell);
-int								builtin_echo(char **args);
-int								builtin_exit(t_shell *shell);
-int								builtin_pwd(t_shell *shell);
-int								builtin_cd(t_shell *shell);
-int								builtin_export(t_shell *shell);
-int								builtin_unset(t_shell *shell);
+void								builtin_env(t_shell *shell, t_cmd_table *cmd);
+void								builtin_echo(t_shell *shell, t_cmd_table *cmd);
+void								builtin_exit(t_shell *shell, t_cmd_table *cmd) ;
+void								builtin_pwd(t_shell *shell, t_cmd_table *cmd);
+void								builtin_cd(t_shell *shell, t_cmd_table *cmd);
+void								builtin_export(t_shell *shell, t_cmd_table *cmd);
+void								builtin_unset(t_shell *shell, t_cmd_table *cmd);
 char							*find_executable_path(char *cmd, char **env);
 
 // parser prototypes
@@ -215,8 +224,8 @@ void							*ft_realloc(t_arena *arena, char **src, size_t src_size, size_t new_s
 t_da							*da_cmd_init(t_arena *arena, size_t cap);
 void							parser_da_append(char **da, char *str);
 void							da_append(t_arena *arena, t_da *da, char *item);
-t_cmd_table *parser_cmd_build_one(t_shell *shell, t_token *token);
-t_cmd_table *parser_cmd_build_many(t_shell *shell, t_token *token);
+t_cmd_table						*parser_cmd_build_one(t_shell *shell, t_token *token);
+t_cmd_table						*parser_cmd_build_many(t_shell *shell, t_token *token);
 bool							parser_is_syntax_correct(t_token *token);
 
 // lexer prototypes
@@ -228,6 +237,9 @@ t_token							*build_token(t_token token);
 //parser prototypes
 char	*exec_get_binary_path(char *cmd, char **env);
 char *exec_copy_bin_path(t_shell *shell, char *cmd);
-void pipeline(t_shell *shell);
+void exec_pipe(t_shell *shell);
+void exec_no_pipe(t_shell *shell);
 
+//execution
+void	builtin_select(t_shell *shell, t_cmd_table *cmd);
 #endif // MINISHELL_H

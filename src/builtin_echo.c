@@ -12,18 +12,18 @@
 
 #include "minishell.h"
 
-int	builtin_echo(char **args)
+void	builtin_echo(t_shell *shell, t_cmd_table *cmd)
 {
 	int	i;
 
 	i = 1;
-	while (args[i])
+	while (cmd->cmd_da->items[i])
 	{
-		ft_printf("%s", args[i]);
-		if (args[i + 1])
+		ft_printf("%s", cmd->cmd_da->items[i]);
+		if (cmd->cmd_da->items[i + 1])
 			ft_printf(" ");
 		i++;
 	}
 	ft_printf("\n");
-	return (OK);
+	shell->code  = OK;
 }

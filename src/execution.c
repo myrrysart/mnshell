@@ -12,28 +12,17 @@
 
 #include "minishell.h"
 
-int	execute_command(t_shell *shell)
+void	builtin_select(t_shell *shell, t_cmd_table *cmd)
 {
-	int	result;
+	const builtin	builtin_table[BUILTIN_COUNT] = {
+		builtin_cd,
+		builtin_echo,
+		builtin_exit,
+		builtin_pwd,
+		builtin_export,
+		builtin_unset,
+		builtin_env,
+	};
 
-	if (!shell->args[0])
-		return (OK);
-	update_last_command(shell, shell->args[0]);
-	if (ft_strncmp(shell->args[0], "echo", 5) == 0)
-		result = builtin_echo(shell->args);
-	else if (ft_strncmp(shell->args[0], "exit", 5) == 0)
-		result = builtin_exit(shell);
-	else if (ft_strncmp(shell->args[0], "pwd", 4) == 0)
-		result = builtin_pwd(shell);
-	else if (ft_strncmp(shell->args[0], "cd", 3) == 0)
-		result = builtin_cd(shell);
-	else if (ft_strncmp(shell->args[0], "export", 7) == 0)
-		result = builtin_export(shell);
-	else if (ft_strncmp(shell->args[0], "unset", 6) == 0)
-		result = builtin_unset(shell);
-	else if (ft_strncmp(shell->args[0], "env", 4) == 0)
-		result = print_env(shell);
-	else
-		result = EXIT_CMD_NOT_FOUND;
-	return (result);
+	builtin_table[cmd->cmd_type](shell, cmd);
 }

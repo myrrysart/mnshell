@@ -16,8 +16,9 @@ int	main(int ac, char **av, char **env)
 {
 	t_shell	shell;
 
+	(void)ac;
 	shell = (t_shell){};
-	init_shell(ac, av, env, &shell);
+	init_shell(av, env, &shell);
 	init_signals(&shell);
 	run_shell(&shell);
 	arena_free(shell.arena);
