@@ -10,6 +10,7 @@
 /*                                                                            */
 /* ************************************************************************** */
 
+#include "arena.h"
 #include "minishell.h"
 
 t_lexer	build_lexer(char *content)
@@ -220,14 +221,18 @@ t_token	get_next_token(t_lexer *l)
 /*@brief: allocate a token node in the memory arena from a copy of token passed in
  *@return: pointer to the allocated token
  */
-t_token	*build_token(t_token token)
+t_token	*build_token(t_arena *arena, t_token token)
 {
 	t_token	*new_token;
 	size_t	i;
 
 	i = 0;
-	new_token = s_malloc(sizeof(t_token));
-	new_token->content = s_malloc(token.content_len + 1);
+	new_token = arena_alloc(arena, sizeof(t_token));
+	if (!new_token)
+		return NULL;
+	new_token->content = arena_alloc(arena, token.content_len + 1);
+	if (!new_token->content)
+		return NULL;
 	new_token->content_len = token.content_len;
 	new_token->type = token.type;
 	while (i < new_token->content_len && token.content[i])
@@ -242,13 +247,13 @@ t_token	*build_token(t_token token)
 /*@brief: build a list of token from the lexer
  *@return: the head of the token list
  */
-t_token	*build_token_list(t_lexer *l)
+t_token	*build_token_list(t_arena *arena, t_lexer *l)
 {
 	t_token	*head;
 	t_token	*new;
 	t_token	*curr;
 
-	head = build_token(get_next_token(l));
+	head = build_token(arena, get_next_token(l));
 	curr = head;
 	if (!head)
 		return (NULL);
@@ -256,7 +261,7 @@ t_token	*build_token_list(t_lexer *l)
 	{
 		while (curr->next)
 			curr = curr->next;
-		new = build_token(get_next_token(l));
+		new = build_token(arena, get_next_token(l));
 		if (!new)
 			return (NULL);
 		curr->next = new;

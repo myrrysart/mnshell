@@ -231,10 +231,10 @@ bool							parser_is_syntax_correct(t_token *token);
 void parser_cmd_type(t_shell *shell, t_cmd_table *cmd, t_token *token);
 
 // lexer prototypes
-t_token							*build_token_list(t_lexer *l);
+t_token							*build_token_list(t_arena *arena, t_lexer *l);
 t_lexer							build_lexer(char *content);
 t_token							get_next_token(t_lexer *l);
-t_token							*build_token(t_token token);
+t_token							*build_token(t_arena *arena, t_token token);
 
 //exec prototypes
 char	*exec_get_binary_path(char *cmd, char **env);

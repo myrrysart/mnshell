@@ -53,7 +53,7 @@ void	init_shell(char **av, char **env, t_shell *shell)
 
 void check_flag(t_shell *shell, t_token *t)
 {
-	while (t)
+	while (t && t->next)
 	{
 		if (t->type == PIPE)
 			shell->state |= HAS_PIPE;
@@ -77,7 +77,7 @@ static void	parse_and_execute(t_shell *shell)
 	if (ft_strlen(shell->command_line) == 0)
 		return ;
 	l = build_lexer(shell->command_line);
-	t = build_token_list(&l);
+	t = build_token_list(shell->arena, &l);
 	check_flag(shell, t);
 	if (!parser_is_syntax_correct(t))
 	{

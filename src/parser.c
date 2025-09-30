@@ -112,7 +112,8 @@ t_cmd_table *parser_cmd_build_one(t_shell *shell, t_token *token)
 		else
 		{
 			char *cmd = exec_copy_bin_path(shell, token->content);
-			da_append(shell->arena, new_cmd->cmd_da, cmd);
+			if (cmd)
+				da_append(shell->arena, new_cmd->cmd_da, cmd);
 			token = token->next;
 		}
 	}
