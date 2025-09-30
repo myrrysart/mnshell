@@ -95,6 +95,8 @@ char *exec_copy_bin_path(t_shell *shell, char *cmd)
 	char *bin_cmd;
 	char *arena_cmd;
 
+	if (ft_strlen(cmd) <= 0)
+		return NULL;
 	if (ft_strchr(cmd, '/'))
 		return cmd;
 	bin_cmd = exec_get_binary_path(cmd, shell->heap_env);
