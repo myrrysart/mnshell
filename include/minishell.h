@@ -6,7 +6,7 @@
 /*   By: jyniemit <jyniemit@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/29 13:40:26 by jyniemit          #+#    #+#             */
-/*   Updated: 2025/10/01 14:42:42 by jyniemit         ###   ########.fr       */
+/*   Updated: 2025/10/01 15:05:35 by jyniemit         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -195,7 +195,6 @@ typedef struct s_cmd
 	int fd_out;
 	char	*heredoc_delim;
 	int		heredoc_index;
-	bool	should_expand;
 	struct s_cmd *next;
 	struct s_cmd *prev;
 } t_cmd_table;
