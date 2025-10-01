@@ -6,7 +6,7 @@
 /*   By: jyniemit <jyniemit@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/29 13:40:26 by jyniemit          #+#    #+#             */
-/*   Updated: 2025/10/01 14:32:32 by jyniemit         ###   ########.fr       */
+/*   Updated: 2025/10/01 14:42:42 by jyniemit         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -81,7 +81,7 @@ typedef enum e_shell_state
 	SUPPRESS_PROMPT = (1u << 11),
 	ENV_MODIFIED = (1u << 12), 
 	HEREDOC_EXPAND = (1u << 13),
-};
+}								t_shell_state;
 
 typedef struct
 {
