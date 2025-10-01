@@ -6,7 +6,7 @@
 /*   By: jyniemit <jyniemit@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/25 14:46:03 by jyniemit          #+#    #+#             */
-/*   Updated: 2025/08/30 18:33:27 by jyniemit         ###   ########.fr       */
+/*   Updated: 2025/09/24 19:31:42 by jyniemit         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,6 +28,16 @@ char	*get_env_var(t_shell *shell, char *key)
 			return (&shell->heap_env[i][len + 1]);
 	}
 	return (NULL);
+}
+
+char *expand_dollar_variable(t_shell *shell, const char *var_name)
+{
+    if (ft_strncmp(var_name, "?", 1) == 0)
+        return ft_itoa(shell->last_code);
+    char *value = get_env_var(shell, (char *)var_name);
+    if (value)
+        return arena_strdup(shell->arena, value);
+    return arena_strdup(shell->arena, "");
 }
 
 static void	expand_env_capacity(t_shell *shell)

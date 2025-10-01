@@ -6,7 +6,7 @@
 /*   By: jyniemit <jyniemit@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/29 13:40:26 by jyniemit          #+#    #+#             */
-/*   Updated: 2025/09/23 15:34:12 by jyniemit         ###   ########.fr       */
+/*   Updated: 2025/10/01 14:32:32 by jyniemit         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -79,8 +79,9 @@ typedef enum e_shell_state
 	HAS_OUTPUT_REDIR = (1u << 9),
 	HAS_BUILTIN = (1u << 10),
 	SUPPRESS_PROMPT = (1u << 11),
-	ENV_MODIFIED = (1u << 12)
-} t_shell_state;
+	ENV_MODIFIED = (1u << 12), 
+	HEREDOC_EXPAND = (1u << 13),
+};
 
 typedef struct
 {
@@ -194,6 +195,7 @@ typedef struct s_cmd
 	int fd_out;
 	char	*heredoc_delim;
 	int		heredoc_index;
+	bool	should_expand;
 	struct s_cmd *next;
 	struct s_cmd *prev;
 } t_cmd_table;
@@ -204,6 +206,8 @@ void							run_shell(t_shell *shell);
 void							handle_signal(t_shell *shell, int sig);
 
 void							set_env_var(t_shell *shell, char *key, char *value);
+
+char							*expand_dollar_variable(t_shell *shell, const char *var_name);
 
 int								read_heredoc(t_shell *shell);
 char							*get_env_var(t_shell *shell, char *key);
@@ -232,10 +236,10 @@ bool							parser_is_syntax_correct(t_token *token);
 void parser_cmd_type(t_shell *shell, t_cmd_table *cmd, t_token *token);
 
 // lexer prototypes
-t_token							*build_token_list(t_arena *arena, t_lexer *l);
-t_lexer							build_lexer(char *content);
-t_token							get_next_token(t_lexer *l);
 t_token							*build_token(t_arena *arena, t_token token);
+t_token							*build_token_list(t_shell *shell, t_lexer *l);
+t_lexer							build_lexer(char *content);
+t_token							get_next_token(t_shell *shell, t_lexer *l);
 
 //exec prototypes
 char	*exec_get_binary_path(char *cmd, char **env);

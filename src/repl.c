@@ -6,7 +6,7 @@
 /*   By: jyniemit <jyniemit@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/29 12:37:53 by jyniemit          #+#    #+#             */
-/*   Updated: 2025/09/23 18:19:10 by jyniemit         ###   ########.fr       */
+/*   Updated: 2025/10/01 14:34:51 by jyniemit         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -77,7 +77,7 @@ static void	parse_and_execute(t_shell *shell)
 	if (ft_strlen(shell->command_line) == 0)
 		return ;
 	l = build_lexer(shell->command_line);
-	t = build_token_list(shell->arena, &l);
+	t = build_token_list(shell, &l);
 	check_flag(shell, t);
 	if (!parser_is_syntax_correct(t))
 	{

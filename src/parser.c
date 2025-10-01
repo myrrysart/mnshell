@@ -6,7 +6,7 @@
 /*   By: trupham <trupham@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/25 11:27:57 by trupham           #+#    #+#             */
-/*   Updated: 2025/09/23 18:31:04 by jyniemit         ###   ########.fr       */
+/*   Updated: 2025/10/01 13:59:52 by jyniemit         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -60,13 +60,37 @@ bool	parser_is_syntax_correct(t_token *token)
 			return false;
 		if ((token->type == REDIRECT_OUT || token->type == REDIRECT_IN
 		|| token->type == APPEND || token->type == HEREDOC)
-			&& token->next->type != WORD)
+			&& (token->next->type != WORD && token->next->type != SQUOTE 
+			&& token->next->type != DQUOTE))
 			return false;
 		if (token->type == PIPE && !token->prev)
 			return false;
 		token = token->next;
 	}
 	return (true);
+}
+static void strip_delimiter(t_shell *shell, t_token *token)
+{
+	int	i;
+	int	j;
+
+	i = 0;
+	j = 0;
+	shell->state &= ~HEREDOC_EXPAND;
+	while (token->next->content[i] && j < 255)
+	{
+		if (token->next->content[i] == '\'' || token->next->content[i] == '\"')
+		{
+			i++;
+			shell->state |= HEREDOC_EXPAND;
+		}
+		else
+		{
+			shell->heredoc_delim[shell->heredoc_index][j] = token->next->content[i];
+			j++;
+			i++;
+		}
+	}
 }
 
 /* @brief: main function to construct a single command struct
@@ -124,9 +148,8 @@ t_cmd_table *parser_cmd_build_one(t_shell *shell, t_token *token)
 		else if (token->type == HEREDOC)
 		{
 			shell->heredoc_index++;
-			while (token->next->content[++i] && i < 255)
-				shell->heredoc_delim[shell->heredoc_index][i] = token->next->content[i];
-			shell->heredoc_delim[shell->heredoc_index][i] = '\0';
+			i = -1;
+			strip_delimiter(shell, token);
 			new_cmd->fd_in = read_heredoc(shell);
 			if (new_cmd->fd_in == -1)
 			{
@@ -151,6 +174,8 @@ t_cmd_table *parser_cmd_build_one(t_shell *shell, t_token *token)
 	}
 	return new_cmd;
 }
+
+
 
 static bool parser_cmd_build_curr(t_shell *shell, t_cmd_table **curr, t_token *token)
 {
