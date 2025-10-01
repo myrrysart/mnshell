@@ -6,7 +6,7 @@
 /*   By: trupham <trupham@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/25 11:27:57 by trupham           #+#    #+#             */
-/*   Updated: 2025/10/01 13:59:52 by jyniemit         ###   ########.fr       */
+/*   Updated: 2025/10/01 14:55:51 by jyniemit         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -76,13 +76,13 @@ static void strip_delimiter(t_shell *shell, t_token *token)
 
 	i = 0;
 	j = 0;
-	shell->state &= ~HEREDOC_EXPAND;
+	shell->state |= HEREDOC_EXPAND;
 	while (token->next->content[i] && j < 255)
 	{
 		if (token->next->content[i] == '\'' || token->next->content[i] == '\"')
 		{
 			i++;
-			shell->state |= HEREDOC_EXPAND;
+			shell->state &= ~HEREDOC_EXPAND;
 		}
 		else
 		{

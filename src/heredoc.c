@@ -6,7 +6,7 @@
 /*   By: jyniemit <jyniemit@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/16 13:05:20 by jyniemit          #+#    #+#             */
-/*   Updated: 2025/10/01 13:43:46 by jyniemit         ###   ########.fr       */
+/*   Updated: 2025/10/01 14:56:26 by jyniemit         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -107,7 +107,7 @@ int read_heredoc(t_shell *shell)
             free(line);
             break;
         }
-		if (!(shell->state & HEREDOC_EXPAND))
+		if (shell->state & HEREDOC_EXPAND)
         {
 			processed_line = expand_heredoc_line(shell, line);
 			write(fd, processed_line, ft_strlen(processed_line));
