@@ -10,6 +10,7 @@
 /*                                                                            */
 /* ************************************************************************** */
 
+#include "libft.h"
 #include "minishell.h"
 
 static bool parser_is_quote_count_correct(t_token *token)
@@ -134,6 +135,11 @@ t_cmd_table *parser_cmd_build_one(t_shell *shell, t_token *token)
 			}
 			new_cmd->heredoc_index = shell->heredoc_index;
 			token = token->next->next;
+		}
+		else if (ft_strchr(token->content, '\'') || ft_strchr(token->content, '"'))
+		{
+			da_append(shell->arena, new_cmd->cmd_da, ft_strtrim(token->content, "'\""));
+			token = token->next;
 		}
 		else
 		{
