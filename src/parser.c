@@ -10,7 +10,34 @@
 /*                                                                            */
 /* ************************************************************************** */
 
+#include "libft.h"
 #include "minishell.h"
+
+static bool parser_is_quote_count_correct(t_token *token)
+{
+	int i;
+	size_t count_squote;
+	size_t count_dquote;
+
+	count_squote = 0;
+	count_dquote = 0;
+	while (token)
+	{
+		i = 0;
+		while (token->content[i])
+		{
+			if (token->content[i] == '\"')
+				count_dquote++;
+			if (token->content[i] == '\'')
+				count_squote++;
+			i++;
+		}
+		token = token->next;
+	}
+	if (count_dquote % 2 != 0 || count_squote % 2 != 0)
+		return false;
+	return true;
+}
 
 /* checking for PIPE, REDIRECTION and APPEND syntax
  */
@@ -18,8 +45,8 @@ bool	parser_is_syntax_correct(t_token *token)
 {
 	t_token	*last;
 
-	if (!token)
-		return (false);
+	if (!token || !parser_is_quote_count_correct(token))
+		return false;
 	last = token;
 	while (last->next)
 		last = last->next;
@@ -108,6 +135,11 @@ t_cmd_table *parser_cmd_build_one(t_shell *shell, t_token *token)
 			}
 			new_cmd->heredoc_index = shell->heredoc_index;
 			token = token->next->next;
+		}
+		else if (ft_strchr(token->content, '\'') || ft_strchr(token->content, '"'))
+		{
+			da_append(shell->arena, new_cmd->cmd_da, ft_strtrim(token->content, "'\""));
+			token = token->next;
 		}
 		else
 		{
