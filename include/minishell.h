@@ -16,6 +16,7 @@
 
 // PATH_MAX
 # include <limits.h>
+# include <errno.h>
 // STDIN_FILENO, STDOUT_FILENO, STDERR_FILENO
 # include <unistd.h>
 // readline

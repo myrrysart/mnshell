@@ -12,14 +12,40 @@
 
 #include "minishell.h"
 
+static bool parser_is_quote_count_correct(t_token *token)
+{
+	int i;
+	size_t count_squote;
+	size_t count_dquote;
+
+	count_squote = 0;
+	count_dquote = 0;
+	while (token)
+	{
+		i = 0;
+		while (token->content[i])
+		{
+			if (token->content[i] == '\"')
+				count_dquote++;
+			if (token->content[i] == '\'')
+				count_squote++;
+			i++;
+		}
+		token = token->next;
+	}
+	if (count_dquote % 2 != 0 || count_squote % 2 != 0)
+		return false;
+	return true;
+}
+
 /* checking for PIPE, REDIRECTION and APPEND syntax
  */
 bool	parser_is_syntax_correct(t_token *token)
 {
 	t_token	*last;
 
-	if (!token)
-		return (false);
+	if (!token || !parser_is_quote_count_correct(token))
+		return false;
 	last = token;
 	while (last->next)
 		last = last->next;

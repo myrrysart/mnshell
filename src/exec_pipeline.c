@@ -88,7 +88,7 @@ void exec_no_pipe(t_shell *shell)
 				close(cmd->fd_out);
 			}
 			execve(cmd->cmd_da->items[0], cmd->cmd_da->items, shell->heap_env);
-			exit(127);
+			exit(errno);
 		}
 		else if (child > 0) {
 			waitpid(child, &status, 0);
@@ -100,7 +100,7 @@ void exec_no_pipe(t_shell *shell)
 		}
 		else {
 			perror("fork");
-			shell->code = 1;
+			shell->code = errno;
 		}
 	}
 	else
