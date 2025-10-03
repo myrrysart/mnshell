@@ -6,7 +6,7 @@
 /*   By: jyniemit <jyniemit@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/29 12:37:53 by jyniemit          #+#    #+#             */
-/*   Updated: 2025/09/23 18:19:10 by jyniemit         ###   ########.fr       */
+/*   Updated: 2025/10/03 12:55:00 by jyniemit         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,7 @@
 
 static void	init_env(char **env, t_shell *shell)
 {
-	int	i;
+	int i;
 
 	i = -1;
 	shell->original_env = env;
@@ -70,14 +70,14 @@ void check_flag(t_shell *shell, t_token *t)
 static void	parse_and_execute(t_shell *shell)
 {
 	t_lexer	l;
-	t_token	*t;
+	t_token *t;
 
 	if (!(shell->state & EVALUATING) || (shell->state & SHOULD_EXIT))
 		return ;
 	if (ft_strlen(shell->command_line) == 0)
 		return ;
 	l = build_lexer(shell->command_line);
-	t = build_token_list(shell->arena, &l);
+	t = build_token_list(shell, &l);
 	check_flag(shell, t);
 	if (!parser_is_syntax_correct(t))
 	{
@@ -85,7 +85,13 @@ static void	parse_and_execute(t_shell *shell)
 		return ;
 	}
 	shell->cmd = parser_cmd_build_many(shell, t);
-	if(shell->cmd && shell->state & HAS_PIPE)
+	if (!shell->cmd)
+	{
+		shell->state &= ~HAS_PIPE;
+		shell->state &= ~EVALUATING;
+		return ;
+	}
+	if (shell->cmd && shell->state & HAS_PIPE)
 		exec_pipe(shell);
 	else
 		exec_no_pipe(shell);
@@ -95,8 +101,8 @@ static void	parse_and_execute(t_shell *shell)
 
 void	run_shell(t_shell *shell)
 {
-	char	*line;
-	char	*raw_line;
+	char *line;
+	char *raw_line;
 
 	while (!(shell->state & SHOULD_EXIT))
 	{
@@ -127,8 +133,10 @@ void	run_shell(t_shell *shell)
 			ft_strlcpy(shell->command_line, line, ARG_MAX - 1);
 			shell->command_line[ARG_MAX - 1] = '\0';
 			shell->state |= EVALUATING;
+			shell_begin_frame(shell);
+			parse_and_execute(shell);
+			shell_end_frame(shell);
 		}
-		parse_and_execute(shell);
 		free(line);
 	}
 }

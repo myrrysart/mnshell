@@ -6,7 +6,7 @@
 /*   By: trupham <trupham@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/31 10:45:01 by trupham           #+#    #+#             */
-/*   Updated: 2025/09/16 13:25:07 by jyniemit         ###   ########.fr       */
+/*   Updated: 2025/10/01 14:34:01 by jyniemit         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -89,20 +89,39 @@ t_token	handle_heredoc(t_lexer *l)
 	return (token);
 }
 
-t_token	handle_dollar(t_lexer *l)
+t_token	handle_dollar(t_shell *shell, t_lexer *l)
 {
 	t_token	token;
+	size_t	var_start;
+	size_t	var_len;
+	char	*var_name;
+	char	*expanded_value;
 
-	token.content = &l->content[l->cursor];
-	token.type = DOLLAR;
-	token.content_len = 0;
-	token.prev = NULL;
-	token.next = NULL;
-	while (!ft_isspace(l->content[l->cursor]) && l->cursor < l->content_len)
+	l->cursor++;
+	var_start = l->cursor;
+	var_len = 0;
+	if (l->content[l->cursor] == '?')
 	{
-		token.content_len++;
+		var_len = 1;
 		l->cursor++;
 	}
+	else
+	{
+		while (l->cursor < l->content_len && (ft_isalnum(l->content[l->cursor])
+				|| l->content[l->cursor] == '_'))
+		{
+			var_len++;
+			l->cursor++;
+		}
+	}
+	var_name = arena_alloc(sh_work_arena(shell), var_len + 1);
+	ft_strlcpy(var_name, &l->content[var_start], var_len + 1);
+	expanded_value = expand_dollar_variable(shell, var_name);
+	token.type = WORD;
+	token.content = expanded_value;
+	token.content_len = ft_strlen(expanded_value);
+	token.prev = NULL;
+	token.next = NULL;
 	return (token);
 }
 
@@ -195,7 +214,7 @@ t_token handle_other_token(t_lexer *l)
  * @param: pointer to the lexer structure. this funciton will modify the lexer
  * and moving the cursor forward
  */
-t_token	get_next_token(t_lexer *l)
+t_token	get_next_token(t_shell *shell, t_lexer *l)
 {
 	t_token	token;
 
@@ -212,7 +231,7 @@ t_token	get_next_token(t_lexer *l)
 	if (l->content[l->cursor] == '<' && l->content[l->cursor + 1] == '<')
 		return (handle_heredoc(l));
 	if (l->content[l->cursor] == '$')
-		return (handle_dollar(l));
+		return (handle_dollar(shell, l));
 	if (!is_operator(l->content[l->cursor]) && !is_quote(l->content[l->cursor]))
 		return (handle_word(l));
 	return (handle_other_token(l));
@@ -247,13 +266,13 @@ t_token	*build_token(t_arena *arena, t_token token)
 /*@brief: build a list of token from the lexer
  *@return: the head of the token list
  */
-t_token	*build_token_list(t_arena *arena, t_lexer *l)
+t_token	*build_token_list(t_shell *shell, t_lexer *l)
 {
 	t_token	*head;
 	t_token	*new;
 	t_token	*curr;
 
-	head = build_token(arena, get_next_token(l));
+	head = build_token(sh_work_arena(shell), get_next_token(shell, l));
 	curr = head;
 	if (!head)
 		return (NULL);
@@ -261,7 +280,7 @@ t_token	*build_token_list(t_arena *arena, t_lexer *l)
 	{
 		while (curr->next)
 			curr = curr->next;
-		new = build_token(arena, get_next_token(l));
+		new = build_token(sh_work_arena(shell), get_next_token(shell, l));
 		if (!new)
 			return (NULL);
 		curr->next = new;

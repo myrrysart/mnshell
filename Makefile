@@ -5,10 +5,11 @@
 #                                                     +:+ +:+         +:+      #
 #    By: jyniemit <jyniemit@student.hive.fi>        +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
-#    Created: 2025/07/29 12:37:53 by jyniemit          #+#    #+#              #
-#    Updated: 2025/09/23 14:25:11 by jyniemit         ###   ########.fr        #
+#    Created: 2025/10/03 12:12:38 by jyniemit          #+#    #+#              #
+#    Updated: 2025/10/03 12:12:41 by jyniemit         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
+
 MAKEFLAGS += --no-print-directory
 NAME = minishell
 
@@ -26,31 +27,28 @@ INCLUDEDIR = include
 ASMDIR = asm
 
 HEADERS = \
-		  minishell.h \
-		  arena.h \
+	  minishell.h \
+	  arena.h \
 
-HEADERS = \
-		  minishell.h \
-		  arena.h \
-
-SOURCES = main.c	\
-		  repl.c	\
-		  signals.c	\
-		  arena.c	\
-		  lexer.c	\
-		  parser.c	\
-		  environment.c \
-		  shell_environment.c \
-		  execution.c \
-		  builtin_echo.c \
-		  builtin_exit.c \
-		  builtin_pwd.c \
-		  builtin_cd.c \
-		  builtin_export.c \
-		  builtin_unset.c \
-		  execution_utils.c \
-		  exec_pipeline.c \
-		  heredoc.c \
+SOURCES = main.c \
+	repl.c \
+	signals.c \
+	arena.c \
+	lexer.c \
+	parser.c \
+	environment.c \
+	shell_environment.c \
+	execution.c \
+	builtin_echo.c \
+	builtin_exit.c \
+	builtin_pwd.c \
+	builtin_cd.c \
+	builtin_export.c \
+	builtin_unset.c \
+	execution_utils.c \
+	exec_pipeline.c \
+	heredoc.c \
+	arena_frame.c \
 
 OBJECTS = $(SOURCES:%.c=$(OBJDIR)/%.o)
 SRCFILES = $(addprefix $(SRCDIR)/, $(SOURCES))

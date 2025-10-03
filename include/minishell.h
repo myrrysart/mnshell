@@ -6,7 +6,7 @@
 /*   By: jyniemit <jyniemit@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/29 13:40:26 by jyniemit          #+#    #+#             */
-/*   Updated: 2025/09/23 15:34:12 by jyniemit         ###   ########.fr       */
+/*   Updated: 2025/10/03 12:08:14 by jyniemit         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,6 +41,7 @@
 # define WR 1
 # define RD 0
 # define MAX_HEREDOCS 16
+# define HEREDOC_INTERRUPTED (-2)
 #ifndef DA_CAP
 #define DA_CAP 128
 #endif // DA_CAP
@@ -62,7 +63,7 @@ typedef enum e_shell_code
 	EXIT_REDIRECT_ERROR = 68,
 	EXIT_CAN_RETRY = 123,
 	EXIT_HEREDOC_ERROR = 112,
-}								t_shell_code;
+}							t_shell_code;
 
 typedef enum e_shell_state
 {
@@ -79,8 +80,9 @@ typedef enum e_shell_state
 	HAS_OUTPUT_REDIR = (1u << 9),
 	HAS_BUILTIN = (1u << 10),
 	SUPPRESS_PROMPT = (1u << 11),
-	ENV_MODIFIED = (1u << 12)
-} t_shell_state;
+	ENV_MODIFIED = (1u << 12), 
+	HEREDOC_EXPAND = (1u << 13),
+}							t_shell_state;
 
 typedef struct
 {
@@ -119,7 +121,10 @@ typedef struct s_shell
 	struct sigaction			saved_sigint;
 	struct sigaction			saved_sigquit;
 	struct sigaction			saved_sigterm;
+
 	t_arena						*arena;
+	t_arena						*frame_arena;
+	t_arena						*active_arena;
 }								t_shell;
 
 // lexer data
@@ -203,7 +208,14 @@ void							init_shell(char **av, char **env, t_shell *shell);
 void							run_shell(t_shell *shell);
 void							handle_signal(t_shell *shell, int sig);
 
+// frame arena helpers
+void							shell_begin_frame(t_shell *shell);
+void							shell_end_frame(t_shell *shell);
+t_arena*						sh_work_arena(t_shell *shell);
+
 void							set_env_var(t_shell *shell, char *key, char *value);
+
+char							*expand_dollar_variable(t_shell *shell, const char *var_name);
 
 int								read_heredoc(t_shell *shell);
 char							*get_env_var(t_shell *shell, char *key);
@@ -212,13 +224,13 @@ void							init_shell_env(t_shell *shell, char **av);
 void							update_pwd_env(t_shell *shell, char *old_pwd, char *new_pwd);
 void							update_last_command(t_shell *shell, char *command);
 
-void								builtin_env(t_shell *shell, t_cmd_table *cmd);
-void								builtin_echo(t_shell *shell, t_cmd_table *cmd);
-void								builtin_exit(t_shell *shell, t_cmd_table *cmd) ;
-void								builtin_pwd(t_shell *shell, t_cmd_table *cmd);
-void								builtin_cd(t_shell *shell, t_cmd_table *cmd);
-void								builtin_export(t_shell *shell, t_cmd_table *cmd);
-void								builtin_unset(t_shell *shell, t_cmd_table *cmd);
+void							builtin_env(t_shell *shell, t_cmd_table *cmd);
+void							builtin_echo(t_shell *shell, t_cmd_table *cmd);
+void							builtin_exit(t_shell *shell, t_cmd_table *cmd) ;
+void							builtin_pwd(t_shell *shell, t_cmd_table *cmd);
+void							builtin_cd(t_shell *shell, t_cmd_table *cmd);
+void							builtin_export(t_shell *shell, t_cmd_table *cmd);
+void							builtin_unset(t_shell *shell, t_cmd_table *cmd);
 char							*find_executable_path(char *cmd, char **env);
 
 // parser prototypes
@@ -229,13 +241,13 @@ void							da_append(t_arena *arena, t_da *da, char *item);
 t_cmd_table						*parser_cmd_build_one(t_shell *shell, t_token *token);
 t_cmd_table						*parser_cmd_build_many(t_shell *shell, t_token *token);
 bool							parser_is_syntax_correct(t_token *token);
-void parser_cmd_type(t_shell *shell, t_cmd_table *cmd, t_token *token);
+void							parser_cmd_type(t_shell *shell, t_cmd_table *cmd, t_token *token);
 
 // lexer prototypes
-t_token							*build_token_list(t_arena *arena, t_lexer *l);
-t_lexer							build_lexer(char *content);
-t_token							get_next_token(t_lexer *l);
 t_token							*build_token(t_arena *arena, t_token token);
+t_token							*build_token_list(t_shell *shell, t_lexer *l);
+t_lexer							build_lexer(char *content);
+t_token							get_next_token(t_shell *shell, t_lexer *l);
 
 //exec prototypes
 char	*exec_get_binary_path(char *cmd, char **env);
