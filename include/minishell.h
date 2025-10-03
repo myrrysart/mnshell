@@ -80,8 +80,9 @@ typedef enum e_shell_state
 	HAS_OUTPUT_REDIR = (1u << 9),
 	HAS_BUILTIN = (1u << 10),
 	SUPPRESS_PROMPT = (1u << 11),
-	ENV_MODIFIED = (1u << 12), 
+	ENV_MODIFIED = (1u << 12),
 	HEREDOC_EXPAND = (1u << 13),
+	HAS_QUOTE = (1u << 14)
 }							t_shell_state;
 
 typedef struct
