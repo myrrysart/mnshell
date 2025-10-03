@@ -6,7 +6,7 @@
 /*   By: trupham <trupham@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/25 11:27:57 by trupham           #+#    #+#             */
-/*   Updated: 2025/10/01 14:55:51 by jyniemit         ###   ########.fr       */
+/*   Updated: 2025/10/02 17:27:27 by jyniemit         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -102,13 +102,13 @@ t_cmd_table *parser_cmd_build_one(t_shell *shell, t_token *token)
 	t_cmd_table *new_cmd;
 	int			i;
 
-	new_cmd = arena_alloc(shell->arena, sizeof(*new_cmd));
+	new_cmd = arena_alloc(sh_work_arena(shell), sizeof(*new_cmd));
 	i = -1;
 	if (!new_cmd)
 		return NULL;
 	new_cmd->fd_in = STDIN_FILENO;
 	new_cmd->fd_out = STDOUT_FILENO;
-	new_cmd->cmd_da = da_cmd_init(shell->arena, DA_CAP);
+	new_cmd->cmd_da = da_cmd_init(sh_work_arena(shell), DA_CAP);
 	if (!new_cmd->cmd_da)
 		return NULL;
 	new_cmd->cmd_pos = MID;
@@ -151,10 +151,14 @@ t_cmd_table *parser_cmd_build_one(t_shell *shell, t_token *token)
 			i = -1;
 			strip_delimiter(shell, token);
 			new_cmd->fd_in = read_heredoc(shell);
-			if (new_cmd->fd_in == -1)
-			{
+			if (new_cmd->fd_in == HEREDOC_INTERRUPTED) {
+				shell->heredoc_index--;
+				return NULL;
+			}
+			if (new_cmd->fd_in < 0) {
+				shell->heredoc_index--;
 				shell->code = EXIT_HEREDOC_ERROR;
-				return (NULL);
+				return NULL;
 			}
 			new_cmd->heredoc_index = shell->heredoc_index;
 			token = token->next->next;
@@ -168,7 +172,7 @@ t_cmd_table *parser_cmd_build_one(t_shell *shell, t_token *token)
 		{
 			char *cmd = exec_copy_bin_path(shell, token->content);
 			if (cmd)
-				da_append(shell->arena, new_cmd->cmd_da, cmd);
+				da_append(sh_work_arena(shell), new_cmd->cmd_da, cmd);
 			token = token->next;
 		}
 	}
