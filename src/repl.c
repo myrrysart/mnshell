@@ -53,18 +53,23 @@ void	init_shell(char **av, char **env, t_shell *shell)
 
 void check_flag(t_shell *shell, t_token *t)
 {
-	while (t && t->next)
+	while (t)
 	{
 		if (t->type == PIPE)
 			shell->state |= HAS_PIPE;
-		if (t->type == SQUOTE)
-			shell->state |= IN_SQUOTE;
-		if (t->type == DQUOTE)
-			shell->state |= IN_DQUOTE;
+		if (t->type == SQUOTE || t->type == DQUOTE)
+			shell->state |= HAS_QUOTE;
 		if (t->type == REDIRECT_IN)
 			shell->state |= HAS_INPUT_REDIR;
 		t = t->next;
 	}
+}
+
+static void reset_flags(t_shell *shell)
+{
+	shell->state &= ~HAS_PIPE;
+	shell->state &= ~EVALUATING;
+	shell->state &= ~HAS_QUOTE;
 }
 
 static void	parse_and_execute(t_shell *shell)
@@ -95,8 +100,7 @@ static void	parse_and_execute(t_shell *shell)
 		exec_pipe(shell);
 	else
 		exec_no_pipe(shell);
-	shell->state &= ~HAS_PIPE;
-	shell->state &= ~EVALUATING;
+	reset_flags(shell);
 }
 
 void	run_shell(t_shell *shell)
