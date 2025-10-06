@@ -6,7 +6,7 @@
 #    By: jyniemit <jyniemit@student.hive.fi>        +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2025/10/03 12:12:38 by jyniemit          #+#    #+#              #
-#    Updated: 2025/10/06 15:42:38 by trupham          ###   ########.fr        #
+#    Updated: 2025/10/06 17:06:45 by trupham          ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -41,8 +41,9 @@ SOURCES = \
 	builtin_unset.c \
 	environment.c \
 	exec_pipeline.c \
-	execution.c \
-	execution_utils.c \
+	exec_others.c \
+	exec_utils.c \
+	exec_pipeline_prep.c \
 	heredoc.c \
 	lexer.c \
 	lexer_handle.c \
