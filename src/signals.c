@@ -6,7 +6,7 @@
 /*   By: jyniemit <jyniemit@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/29 14:30:38 by jyniemit          #+#    #+#             */
-/*   Updated: 2025/10/02 16:09:01 by jyniemit         ###   ########.fr       */
+/*   Updated: 2025/10/06 13:21:45 by jyniemit         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,61 +27,21 @@ void	signal_handler(int sig)
 	}
 }
 
-void setup_child_signals(void)
+int	waitpid_retry(pid_t pid, int *st)
 {
-    signal(SIGINT, SIG_DFL);
-    signal(SIGQUIT, SIG_DFL);
-    signal(SIGTERM, SIG_DFL);
+	int	i;
+
+	i = waitpid(pid, st, 0);
+	while ((i == -1 && errno == EINTR))
+		i = waitpid(pid, st, 0);
+	return (i);
 }
 
-static void heredoc_sigint(int sig)
+void	handle_signal(t_shell *shell, int sig)
 {
 	if (sig == SIGINT)
-	{
-		g_received_signal = SIGINT;
-		write(STDOUT_FILENO, "\n", 1);
-	}
-}
-
-void setup_heredoc_signals(void)
-{
-	struct sigaction sa;
-
-	sigemptyset(&sa.sa_mask);
-	sa.sa_flags = 0;
-	sa.sa_handler = heredoc_sigint;
-	sigaction(SIGINT, &sa, NULL);
-	signal(SIGQUIT, SIG_IGN);
-	signal(SIGTERM, SIG_DFL);
-}
-void	init_signals(t_shell *shell)
-{
-	struct sigaction	sa;
-
-	sigemptyset(&sa.sa_mask);
-	sa.sa_flags = SA_RESTART;
-	sa.sa_handler = signal_handler;
-	sigaction(SIGINT, &sa, &shell->saved_sigint);
-	sa.sa_handler = SIG_IGN;
-	sa.sa_flags = 0;
-	sigaction(SIGQUIT, &sa, &shell->saved_sigquit);
-	sa.sa_handler = signal_handler;
-	sa.sa_flags = SA_RESTART;
-	sigaction(SIGTERM, &sa, &shell->saved_sigterm);
-}
-
-int waitpid_retry(pid_t pid, int *st)
-{
-    int	i;
-    while ((i = waitpid(pid, st, 0)) == -1 && errno == EINTR)
-        ;
-    return (i);
-}
-void    handle_signal(t_shell *shell, int sig)
-{
-    if (sig == SIGINT)
-        shell->code = EXIT_SIGINT;
-    else if (sig == SIGTERM)
-        shell->code = EXIT_SIGTERM;
-    g_received_signal = 0;
+		shell->code = EXIT_SIGINT;
+	else if (sig == SIGTERM)
+		shell->code = EXIT_SIGTERM;
+	g_received_signal = 0;
 }

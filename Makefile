@@ -6,7 +6,7 @@
 #    By: jyniemit <jyniemit@student.hive.fi>        +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2025/10/03 12:12:38 by jyniemit          #+#    #+#              #
-#    Updated: 2025/10/06 12:09:19 by trupham          ###   ########.fr        #
+#    Updated: 2025/10/06 13:19:34 by jyniemit         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -54,6 +54,7 @@ SOURCES = \
 	repl.c \
 	shell_environment.c \
 	signals.c \
+	signal_setups.c \
 
 OBJECTS = $(SOURCES:%.c=$(OBJDIR)/%.o)
 SRCFILES = $(addprefix $(SRCDIR)/, $(SOURCES))
