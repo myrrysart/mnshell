@@ -6,7 +6,7 @@
 /*   By: trupham <trupham@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/31 10:45:01 by trupham           #+#    #+#             */
-/*   Updated: 2025/10/01 14:34:01 by jyniemit         ###   ########.fr       */
+/*   Updated: 2025/10/06 12:06:46 by trupham          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,192 +24,6 @@ t_lexer	build_lexer(char *content)
 	return (l);
 }
 
-void	trim_left(t_lexer *l)
-{
-	while (ft_isspace(l->content[l->cursor]) && l->cursor < l->content_len)
-		l->cursor++;
-}
-
-t_token_type	get_token_type(const char c)
-{
-	if (c == '$')
-		return (DOLLAR);
-	if (c == '\'')
-		return (SQUOTE);
-	if (c == '\"')
-		return (DQUOTE);
-	if (c == '|')
-		return (PIPE);
-	if (c == '>')
-		return (REDIRECT_OUT);
-	if (c == '<')
-		return (REDIRECT_IN);
-	return (INVALID);
-}
-
-bool	is_operator(const char c)
-{
-	const char	*operators;
-	int			i;
-
-	i = 0;
-	operators = "\'\"|>< \n\t";
-	while (operators[i])
-	{
-		if (c == operators[i])
-			return (true);
-		i++;
-	}
-	return (false);
-}
-
-t_token	handle_append(t_lexer *l)
-{
-	t_token	token;
-
-	token.content = &l->content[l->cursor];
-	token.type = APPEND;
-	token.content_len = 2;
-	token.next = NULL;
-	token.prev = NULL;
-	l->cursor += 2;
-	return (token);
-}
-
-t_token	handle_heredoc(t_lexer *l)
-{
-	t_token	token;
-
-	token.content = &l->content[l->cursor];
-	token.type = HEREDOC;
-	token.content_len = 2;
-	token.next = NULL;
-	token.prev = NULL;
-	l->cursor += 2;
-	return (token);
-}
-
-t_token	handle_dollar(t_shell *shell, t_lexer *l)
-{
-	t_token	token;
-	size_t	var_start;
-	size_t	var_len;
-	char	*var_name;
-	char	*expanded_value;
-
-	l->cursor++;
-	var_start = l->cursor;
-	var_len = 0;
-	if (l->content[l->cursor] == '?')
-	{
-		var_len = 1;
-		l->cursor++;
-	}
-	else
-	{
-		while (l->cursor < l->content_len && (ft_isalnum(l->content[l->cursor])
-				|| l->content[l->cursor] == '_'))
-		{
-			var_len++;
-			l->cursor++;
-		}
-	}
-	var_name = arena_alloc(sh_work_arena(shell), var_len + 1);
-	ft_strlcpy(var_name, &l->content[var_start], var_len + 1);
-	expanded_value = expand_dollar_variable(shell, var_name);
-	token.type = WORD;
-	token.content = expanded_value;
-	token.content_len = ft_strlen(expanded_value);
-	token.prev = NULL;
-	token.next = NULL;
-	return (token);
-}
-
-t_token	handle_word(t_lexer *l)
-{
-	t_token	token;
-
-	token.content_len = 0;
-	token.type = WORD;
-	token.content = &l->content[l->cursor];
-	token.next = NULL;
-	token.prev = NULL;
-	while (!is_operator(l->content[l->cursor]) && l->cursor < l->content_len)
-	{
-		token.content_len++;
-		l->cursor++;
-	}
-	return (token);
-}
-
-bool	is_quote(const char c)
-{
-	return (c == '\'' || c == '\"');
-}
-
-t_token	handle_squote(t_lexer *l)
-{
-	t_token	token;
-
-	token.type = SQUOTE;
-	token.content = &l->content[l->cursor];
-	l->cursor++;
-	token.content_len = 1;
-	token.prev = NULL;
-	token.next = NULL;
-	while (l->cursor < l->content_len && l->content[l->cursor] != '\'')
-	{
-		token.content_len++;
-		l->cursor++;
-	}
-	if (l->cursor < l->content_len && l->content[l->cursor] == '\'')
-	{
-		token.content_len++;
-		l->cursor++;
-	}
-	else
-		token.type = INVALID;
-	return (token);
-}
-
-t_token	handle_dquote(t_lexer *l)
-{
-	t_token	token;
-
-	token.type = DQUOTE;
-	token.content = &l->content[l->cursor];
-	l->cursor++;
-	token.content_len = 1;
-	token.prev = NULL;
-	token.next = NULL;
-	while (l->cursor < l->content_len && l->content[l->cursor] != '\"')
-	{
-		token.content_len++;
-		l->cursor++;
-	}
-	if (l->cursor < l->content_len && l->content[l->cursor] == '\"')
-	{
-		token.content_len++;
-		l->cursor++;
-	}
-	else
-		token.type = INVALID;
-	return (token);
-}
-
-t_token handle_other_token(t_lexer *l)
-{
-	t_token	token;
-
-	token = (t_token){};
-	token.content_len = 1;
-	token.content = &l->content[l->cursor];
-	token.type = get_token_type(l->content[l->cursor]);
-	token.next = NULL;
-	token.prev = NULL;
-	l->cursor++;
-	return (token);
-}
 /*@brief: returning a token with a corresponding type, len and content
  * @param: pointer to the lexer structure. this funciton will modify the lexer
  * and moving the cursor forward
@@ -223,21 +37,22 @@ t_token	get_next_token(t_shell *shell, t_lexer *l)
 		return (token);
 	trim_left(l);
 	if (l->content[l->cursor] == '\'')
-		return (handle_squote(l));
+		return (lexer_handle_squote(l));
 	if (l->content[l->cursor] == '"')
-		return (handle_dquote(l));
+		return (lexer_handle_dquote(l));
 	if (l->content[l->cursor] == '>' && l->content[l->cursor + 1] == '>')
-		return (handle_append(l));
+		return (lexer_handle_append(l));
 	if (l->content[l->cursor] == '<' && l->content[l->cursor + 1] == '<')
-		return (handle_heredoc(l));
+		return (lexer_handle_heredoc(l));
 	if (l->content[l->cursor] == '$')
-		return (handle_dollar(shell, l));
+		return (lexer_handle_dollar(shell, l));
 	if (!is_operator(l->content[l->cursor]) && !is_quote(l->content[l->cursor]))
-		return (handle_word(l));
-	return (handle_other_token(l));
+		return (lexer_handle_word(l));
+	return (lexer_handle_other_token(l));
 }
 
-/*@brief: allocate a token node in the memory arena from a copy of token passed in
+/*@brief: allocate a token node in the memory arena
+ * from a copy of token passed in
  *@return: pointer to the allocated token
  */
 t_token	*build_token(t_arena *arena, t_token token)
@@ -248,10 +63,10 @@ t_token	*build_token(t_arena *arena, t_token token)
 	i = 0;
 	new_token = arena_alloc(arena, sizeof(t_token));
 	if (!new_token)
-		return NULL;
+		return (NULL);
 	new_token->content = arena_alloc(arena, token.content_len + 1);
 	if (!new_token->content)
-		return NULL;
+		return (NULL);
 	new_token->content_len = token.content_len;
 	new_token->type = token.type;
 	while (i < new_token->content_len && token.content[i])

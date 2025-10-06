@@ -6,7 +6,7 @@
 #    By: jyniemit <jyniemit@student.hive.fi>        +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2025/10/03 12:12:38 by jyniemit          #+#    #+#              #
-#    Updated: 2025/10/03 12:12:41 by jyniemit         ###   ########.fr        #
+#    Updated: 2025/10/06 12:09:19 by trupham          ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -30,25 +30,30 @@ HEADERS = \
 	  minishell.h \
 	  arena.h \
 
-SOURCES = main.c \
-	repl.c \
-	signals.c \
+SOURCES = \
 	arena.c \
-	lexer.c \
-	parser.c \
-	environment.c \
-	shell_environment.c \
-	execution.c \
+	arena_frame.c \
+	builtin_cd.c \
 	builtin_echo.c \
 	builtin_exit.c \
-	builtin_pwd.c \
-	builtin_cd.c \
 	builtin_export.c \
+	builtin_pwd.c \
 	builtin_unset.c \
-	execution_utils.c \
+	environment.c \
 	exec_pipeline.c \
+	execution.c \
+	execution_utils.c \
 	heredoc.c \
-	arena_frame.c \
+	lexer.c \
+	lexer_handle.c \
+	lexer_handle_quote.c \
+	lexer_handle_dollar.c \
+	lexer_utils.c \
+	main.c \
+	parser.c \
+	repl.c \
+	shell_environment.c \
+	signals.c \
 
 OBJECTS = $(SOURCES:%.c=$(OBJDIR)/%.o)
 SRCFILES = $(addprefix $(SRCDIR)/, $(SOURCES))

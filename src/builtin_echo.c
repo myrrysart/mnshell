@@ -34,10 +34,8 @@ void	builtin_echo(t_shell *shell, t_cmd_table *cmd)
 			i++;
 			continue;
 		}
-		if (!(shell->state & HAS_QUOTE) && cmd->cmd_da->items[i + 1])
+		if (cmd->cmd_da->items[i + 1])
 			ft_printf(" ");
-		else if (shell->state & HAS_QUOTE)
-			ft_printf("");
 		i++;
 	}
 	if (print_nl)
