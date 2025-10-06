@@ -6,7 +6,7 @@
 /*   By: jyniemit <jyniemit@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/02 15:41:44 by jyniemit          #+#    #+#             */
-/*   Updated: 2025/09/02 15:42:23 by jyniemit         ###   ########.fr       */
+/*   Updated: 2025/10/03 18:58:59 by jyniemit         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,11 +20,6 @@ void	builtin_cd(t_shell *shell, t_cmd_table *cmd)
 	char	new_pwd[PATH_MAX];
 
 	(void)cmd;
-	if (!shell)
-	{
-		shell->code = EXIT_BUILTIN_MISUSE;
-		return;
-	}
 	if (cmd->cmd_da->items[2])
 	{
 		ft_printf("cd: too many arguments\n");
