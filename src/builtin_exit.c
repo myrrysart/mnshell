@@ -18,7 +18,7 @@ void	builtin_exit(t_shell *shell, t_cmd_table *cmd)
 	{
 		ft_printf("Exit: too many arguments.\n");
 		shell->code = EXIT_GENERAL_ERROR;
-		return;
+		return ;
 	}
 	shell->state |= SHOULD_EXIT;
 	if (cmd->cmd_da->items[1])

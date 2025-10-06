@@ -20,12 +20,12 @@ void	builtin_unset(t_shell *shell, t_cmd_table *cmd)
 	if (!shell)
 	{
 		shell->code = EXIT_BUILTIN_MISUSE;
-		return;
+		return ;
 	}
 	if (!cmd->cmd_da->items[1])
 	{
 		shell->code = OK;
-		return;
+		return ;
 	}
 	i = 0;
 	while (cmd->cmd_da->items[++i])
