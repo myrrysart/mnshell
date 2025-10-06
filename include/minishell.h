@@ -6,35 +6,35 @@
 /*   By: jyniemit <jyniemit@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/29 13:40:26 by jyniemit          #+#    #+#             */
-/*   Updated: 2025/10/03 12:08:14 by jyniemit         ###   ########.fr       */
+/*   Updated: 2025/10/06 11:56:03 by trupham          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef MINISHELL_H
 # define MINISHELL_H
-# define PROMPT GREEN"minishell$ "RESET
+# define PROMPT GREEN "minishell$ " RESET
 
 // PATH_MAX
-# include <limits.h>
 # include <errno.h>
+# include <limits.h>
 // STDIN_FILENO, STDOUT_FILENO, STDERR_FILENO
 # include <unistd.h>
 // readline
-# include <stdio.h>
-# include <stdlib.h>
 # include <readline/history.h>
 # include <readline/readline.h>
+# include <stdio.h>
+# include <stdlib.h>
 // sigaction & signals
 # include <signal.h>
 // uint typedefinitions
 # include <stdint.h>
 // our own libraries
-# include "libft.h"
 # include "arena.h"
+# include "libft.h"
 // parser libraries
+# include <fcntl.h>
 # include <stdbool.h>
 # include <stddef.h>
-# include <fcntl.h>
 # include <sys/wait.h>
 # define MAX_PROCESSES 30587
 # define ARG_MAX 4096
@@ -42,9 +42,9 @@
 # define RD 0
 # define MAX_HEREDOCS 16
 # define HEREDOC_INTERRUPTED (-2)
-#ifndef DA_CAP
-#define DA_CAP 128
-#endif // DA_CAP
+# ifndef DA_CAP
+#  define DA_CAP 128
+# endif // DA_CAP
 extern volatile sig_atomic_t	g_received_signal;
 
 typedef enum e_shell_code
@@ -63,7 +63,7 @@ typedef enum e_shell_code
 	EXIT_REDIRECT_ERROR = 68,
 	EXIT_CAN_RETRY = 123,
 	EXIT_HEREDOC_ERROR = 112,
-}							t_shell_code;
+}								t_shell_code;
 
 typedef enum e_shell_state
 {
@@ -83,16 +83,16 @@ typedef enum e_shell_state
 	ENV_MODIFIED = (1u << 12),
 	HEREDOC_EXPAND = (1u << 13),
 	HAS_QUOTE = (1u << 14)
-}							t_shell_state;
+}								t_shell_state;
 
 typedef struct
 {
-	int pipe[2];
-	int tmp_fd;
-} t_pipe_line;
+	int							pipe[2];
+	int							tmp_fd;
+}								t_pipe_line;
 
-typedef struct s_cmd t_cmd_table;
-typedef struct s_token t_token;
+typedef struct s_cmd			t_cmd_table;
+typedef struct s_token			t_token;
 
 typedef struct s_shell
 {
@@ -129,7 +129,8 @@ typedef struct s_shell
 }								t_shell;
 
 // lexer data
-typedef enum {
+typedef enum
+{
 	END = 0,
 	SQUOTE,
 	DQUOTE,
@@ -141,26 +142,26 @@ typedef enum {
 	APPEND,
 	DOLLAR,
 	INVALID,
-} t_token_type ;
+}								t_token_type;
 
 typedef struct s_token
 {
-	t_token_type type;
-	size_t content_len;
-	char *content;
-	struct s_token *next;
-	struct s_token *prev;
-} t_token;
+	t_token_type				type;
+	size_t						content_len;
+	char						*content;
+	struct s_token				*next;
+	struct s_token				*prev;
+}								t_token;
 
 typedef struct s_lexer
 {
-	char *content;
-	size_t content_len;
-	size_t cursor;
-	size_t line;
-} t_lexer;
+	char						*content;
+	size_t						content_len;
+	size_t						cursor;
+	size_t						line;
+}								t_lexer;
 
-typedef void (*builtin)(t_shell *shell, t_cmd_table *cmd);
+typedef void					(*builtin)(t_shell *shell, t_cmd_table *cmd);
 
 // parser data
 typedef enum
@@ -174,88 +175,109 @@ typedef enum
 	BUILTIN_ENV,
 	BUILTIN_COUNT,
 	EXTERNAL,
-}
-t_cmd_type;
+}								t_cmd_type;
 
 typedef enum
 {
 	FIRST,
 	MID,
 	LAST
-} t_cmd_pos;
+}								t_cmd_pos;
 
 typedef struct s_da
 {
-	char **items;
-	size_t count;
-	size_t cap;
-} t_da;
+	char						**items;
+	size_t						count;
+	size_t						cap;
+}								t_da;
 
 typedef struct s_cmd
 {
-	t_da *cmd_da;
-	t_cmd_type cmd_type;
-	t_cmd_pos cmd_pos;
-	int fd_in;
-	int fd_out;
-	char	*heredoc_delim;
-	int		heredoc_index;
-	struct s_cmd *next;
-	struct s_cmd *prev;
-} t_cmd_table;
+	t_da						*cmd_da;
+	t_cmd_type					cmd_type;
+	t_cmd_pos					cmd_pos;
+	int							fd_in;
+	int							fd_out;
+	char						*heredoc_delim;
+	int							heredoc_index;
+	struct s_cmd				*next;
+	struct s_cmd				*prev;
+}								t_cmd_table;
 
 void							init_signals(t_shell *shell);
-void							init_shell(char **av, char **env, t_shell *shell);
+void							init_shell(char **av, char **env,
+									t_shell *shell);
 void							run_shell(t_shell *shell);
 void							handle_signal(t_shell *shell, int sig);
 
 // frame arena helpers
 void							shell_begin_frame(t_shell *shell);
 void							shell_end_frame(t_shell *shell);
-t_arena*						sh_work_arena(t_shell *shell);
+t_arena							*sh_work_arena(t_shell *shell);
 
-void							set_env_var(t_shell *shell, char *key, char *value);
+void							set_env_var(t_shell *shell, char *key,
+									char *value);
 
-char							*expand_dollar_variable(t_shell *shell, const char *var_name);
+char							*expand_dollar_variable(t_shell *shell,
+									const char *var_name);
 
 int								read_heredoc(t_shell *shell);
 char							*get_env_var(t_shell *shell, char *key);
 void							unset_env_var(t_shell *shell, char *key);
 void							init_shell_env(t_shell *shell, char **av);
-void							update_pwd_env(t_shell *shell, char *old_pwd, char *new_pwd);
-void							update_last_command(t_shell *shell, char *command);
+void							update_pwd_env(t_shell *shell, char *old_pwd,
+									char *new_pwd);
+void							update_last_command(t_shell *shell,
+									char *command);
 
 void							builtin_env(t_shell *shell, t_cmd_table *cmd);
 void							builtin_echo(t_shell *shell, t_cmd_table *cmd);
-void							builtin_exit(t_shell *shell, t_cmd_table *cmd) ;
+void							builtin_exit(t_shell *shell, t_cmd_table *cmd);
 void							builtin_pwd(t_shell *shell, t_cmd_table *cmd);
 void							builtin_cd(t_shell *shell, t_cmd_table *cmd);
-void							builtin_export(t_shell *shell, t_cmd_table *cmd);
+void							builtin_export(t_shell *shell,
+									t_cmd_table *cmd);
 void							builtin_unset(t_shell *shell, t_cmd_table *cmd);
 char							*find_executable_path(char *cmd, char **env);
 
 // parser prototypes
-void							*ft_realloc(t_arena *arena, char **src, size_t src_size, size_t new_size);
+void							*ft_realloc(t_arena *arena, char **src,
+									size_t src_size, size_t new_size);
 t_da							*da_cmd_init(t_arena *arena, size_t cap);
 void							parser_da_append(char **da, char *str);
 void							da_append(t_arena *arena, t_da *da, char *item);
-t_cmd_table						*parser_cmd_build_one(t_shell *shell, t_token *token);
-t_cmd_table						*parser_cmd_build_many(t_shell *shell, t_token *token);
+t_cmd_table						*parser_cmd_build_one(t_shell *shell,
+									t_token *token);
+t_cmd_table						*parser_cmd_build_many(t_shell *shell,
+									t_token *token);
 bool							parser_is_syntax_correct(t_token *token);
-void							parser_cmd_type(t_shell *shell, t_cmd_table *cmd, t_token *token);
+void							parser_cmd_type(t_shell *shell,
+									t_cmd_table *cmd, t_token *token);
 
 // lexer prototypes
 t_token							*build_token(t_arena *arena, t_token token);
 t_token							*build_token_list(t_shell *shell, t_lexer *l);
 t_lexer							build_lexer(char *content);
 t_token							get_next_token(t_shell *shell, t_lexer *l);
+t_token_type					get_token_type(const char c);
+bool							is_operator(const char c);
+void							trim_left(t_lexer *l);
+t_token							lexer_handle_append(t_lexer *l);
+t_token							lexer_handle_heredoc(t_lexer *l);
+t_token							lexer_handle_dollar(t_shell *shell, t_lexer *l);
+t_token							lexer_handle_word(t_lexer *l);
+t_token							lexer_handle_squote(t_lexer *l);
+t_token							lexer_handle_dquote(t_lexer *l);
+t_token							lexer_handle_other_token(t_lexer *l);
+bool							is_quote(const char c);
 
-//exec prototypes
-char	*exec_get_binary_path(char *cmd, char **env);
-char *exec_copy_bin_path(t_shell *shell, char *cmd);
-void exec_pipe(t_shell *shell);
-void exec_no_pipe(t_shell *shell);
+// exec prototypes
+char							*exec_get_binary_path(char *cmd, char **env);
+char							*exec_copy_bin_path(t_shell *shell, char *cmd);
+void							exec_pipe(t_shell *shell);
+void							exec_no_pipe(t_shell *shell);
 
-//execution
-void	builtin_select(t_shell *shell, t_cmd_table *cmd);
+// execution
+void							builtin_select(t_shell *shell,
+									t_cmd_table *cmd);
 #endif // MINISHELL_H
