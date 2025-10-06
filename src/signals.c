@@ -6,35 +6,11 @@
 /*   By: jyniemit <jyniemit@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/29 14:30:38 by jyniemit          #+#    #+#             */
-/*   Updated: 2025/10/06 13:27:15 by jyniemit         ###   ########.fr       */
+/*   Updated: 2025/10/06 13:30:23 by jyniemit         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
-#include <errno.h>
-
-volatile sig_atomic_t	g_received_signal = 0;
-
-void	signal_handler(int sig)
-{
-	g_received_signal = sig;
-	if (sig == SIGINT)
-	{
-		write(STDOUT_FILENO, "\n", 1);
-		rl_on_new_line();
-		rl_replace_line("", 0);
-		rl_redisplay();
-	}
-}
-
-static void heredoc_sigint(int sig)
-{
-	if (sig == SIGINT)
-	{
-		g_received_signal = SIGINT;
-		write(STDOUT_FILENO, "\n", 1);
-	}
-}
 
 int	waitpid_retry(pid_t pid, int *st)
 {
