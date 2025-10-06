@@ -6,7 +6,7 @@
 /*   By: jyniemit <jyniemit@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/29 12:37:53 by jyniemit          #+#    #+#             */
-/*   Updated: 2025/10/03 12:55:00 by jyniemit         ###   ########.fr       */
+/*   Updated: 2025/10/06 13:54:10 by jyniemit         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,7 @@
 
 static void	init_env(char **env, t_shell *shell)
 {
-	int i;
+	int	i;
 
 	i = -1;
 	shell->original_env = env;
@@ -51,7 +51,7 @@ void	init_shell(char **av, char **env, t_shell *shell)
 	shell->heredoc_index = -1;
 }
 
-void check_flag(t_shell *shell, t_token *t)
+void	check_flag(t_shell *shell, t_token *t)
 {
 	while (t)
 	{
@@ -65,7 +65,7 @@ void check_flag(t_shell *shell, t_token *t)
 	}
 }
 
-static void reset_flags(t_shell *shell)
+static void	reset_flags(t_shell *shell)
 {
 	shell->state &= ~HAS_PIPE;
 	shell->state &= ~EVALUATING;
@@ -75,7 +75,7 @@ static void reset_flags(t_shell *shell)
 static void	parse_and_execute(t_shell *shell)
 {
 	t_lexer	l;
-	t_token *t;
+	t_token	*t;
 
 	if (!(shell->state & EVALUATING) || (shell->state & SHOULD_EXIT))
 		return ;
@@ -91,11 +91,9 @@ static void	parse_and_execute(t_shell *shell)
 	}
 	shell->cmd = parser_cmd_build_many(shell, t);
 	if (!shell->cmd)
-	{
-		shell->state &= ~HAS_PIPE;
-		shell->state &= ~EVALUATING;
+		shell->state &= ~(HAS_PIPE | EVALUATING);
+	if (!shell->cmd)
 		return ;
-	}
 	if (shell->cmd && shell->state & HAS_PIPE)
 		exec_pipe(shell);
 	else
@@ -105,26 +103,13 @@ static void	parse_and_execute(t_shell *shell)
 
 void	run_shell(t_shell *shell)
 {
-	char *line;
-	char *raw_line;
+	char	*line;
 
 	while (!(shell->state & SHOULD_EXIT))
 	{
 		if (g_received_signal)
 			handle_signal(shell, g_received_signal);
-		if (isatty(fileno(stdin)))
-			line = readline(PROMPT);
-		else
-		{
-			raw_line = get_next_line(fileno(stdin));
-			if (!raw_line)
-			{
-				shell->state |= SHOULD_EXIT;
-				break ;
-			}
-			line = ft_strtrim(raw_line, "\n");
-			free(raw_line);
-		}
+		line = readline(PROMPT);
 		if (!line)
 		{
 			write(STDOUT_FILENO, "exit\n", 5);
