@@ -23,12 +23,12 @@ void	builtin_pwd(t_shell *shell, t_cmd_table *cmd)
 		ft_strlcpy(shell->working_directory, current_dir, PATH_MAX);
 	}
 	else if (shell->working_directory[0])
-			ft_printf("%s\n", shell->working_directory);
+		ft_printf("%s\n", shell->working_directory);
 	else
 	{
 		ft_printf("pwd: cannot determine current directory\n");
 		shell->code = EXIT_GENERAL_ERROR;
-		return;
+		return ;
 	}
 	shell->code = OK;
 }
