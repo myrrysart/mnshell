@@ -31,6 +31,7 @@ static int	is_valid_identifier(char *str)
 
 static int	process_export_error(t_shell *shell, char *arg, int error_type)
 {
+	(void)shell;
 	if (error_type == 1)
 	{
 		ft_printf("export: `%s': not a valid identifier\n", arg);
@@ -41,6 +42,7 @@ static int	process_export_error(t_shell *shell, char *arg, int error_type)
 		ft_printf("export: `%s': not a valid identifier\n", arg);
 		return (EXIT_GENERAL_ERROR);
 	}
+	return 1;
 }
 
 static int	process_export_arg(t_shell *shell, char *arg)

@@ -6,7 +6,7 @@
 #    By: jyniemit <jyniemit@student.hive.fi>        +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2025/10/03 12:12:38 by jyniemit          #+#    #+#              #
-#    Updated: 2025/10/06 13:19:34 by jyniemit         ###   ########.fr        #
+#    Updated: 2025/10/06 15:42:38 by trupham          ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -51,6 +51,10 @@ SOURCES = \
 	lexer_utils.c \
 	main.c \
 	parser.c \
+	parser_syntax_check.c \
+	parser_utils.c \
+	parser_da.c \
+	parser_handle.c \
 	repl.c \
 	shell_environment.c \
 	signals.c \
