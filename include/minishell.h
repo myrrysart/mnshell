@@ -6,13 +6,13 @@
 /*   By: jyniemit <jyniemit@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/29 13:40:26 by jyniemit          #+#    #+#             */
-/*   Updated: 2025/10/06 11:56:03 by trupham          ###   ########.fr       */
+/*   Updated: 2025/10/06 15:43:50 by trupham          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef MINISHELL_H
 # define MINISHELL_H
-# define PROMPT GREEN "minishell$ " RESET
+# define PROMPT (GREEN "minishell$ " RESET)
 
 // PATH_MAX
 # include <errno.h>
@@ -253,6 +253,11 @@ t_cmd_table						*parser_cmd_build_many(t_shell *shell,
 bool							parser_is_syntax_correct(t_token *token);
 void							parser_cmd_type(t_shell *shell,
 									t_cmd_table *cmd, t_token *token);
+bool							parser_is_syntax_correct(t_token *token);
+void							parser_cmd_type(t_shell *shell, t_cmd_table *cmd, t_token *token);
+void							strip_delimiter(t_shell *shell, t_token *token);
+bool							handle_token(t_shell *shell, t_cmd_table *cmd, t_token **tok, int *first);
+bool							append_arg(t_shell *shell, t_cmd_table *cmd, t_token **tok, int *first);
 
 // lexer prototypes
 t_token							*build_token(t_arena *arena, t_token token);
