@@ -6,7 +6,7 @@
 /*   By: jyniemit <jyniemit@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/02 15:41:58 by jyniemit          #+#    #+#             */
-/*   Updated: 2025/09/02 15:42:23 by jyniemit         ###   ########.fr       */
+/*   Updated: 2025/10/06 12:36:30 by jyniemit         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,6 +29,20 @@ static int	is_valid_identifier(char *str)
 	return (1);
 }
 
+static int	process_export_error(t_shell *shell, char *arg, int error_type)
+{
+	if (error_type == 1)
+	{
+		ft_printf("export: `%s': not a valid identifier\n", arg);
+		return (EXIT_GENERAL_ERROR);
+	}
+	else if (error_type == 2)
+	{
+		ft_printf("export: `%s': not a valid identifier\n", arg);
+		return (EXIT_GENERAL_ERROR);
+	}
+}
+
 static int	process_export_arg(t_shell *shell, char *arg)
 {
 	char	*equals_pos;
@@ -46,19 +60,13 @@ static int	process_export_arg(t_shell *shell, char *arg)
 		ft_strlcpy(key, arg, key_len + 1);
 		value = equals_pos + 1;
 		if (!is_valid_identifier(key))
-		{
-			ft_printf("export: `%s': not a valid identifier\n", arg);
-			return (EXIT_GENERAL_ERROR);
-		}
+			return (process_export_error(shell, arg, 1));
 		set_env_var(shell, key, value);
 	}
 	else
 	{
 		if (!is_valid_identifier(arg))
-		{
-			ft_printf("export: `%s': not a valid identifier\n", arg);
-			return (EXIT_GENERAL_ERROR);
-		}
+			return (process_export_error(shell, arg, 2));
 	}
 	return (OK);
 }
@@ -70,12 +78,12 @@ void	builtin_export(t_shell *shell, t_cmd_table *cmd)
 	if (!shell)
 	{
 		shell->code = EXIT_BUILTIN_MISUSE;
-		return;
+		return ;
 	}
 	if (!cmd->cmd_da->items[1])
 	{
 		builtin_env(shell, cmd);
-		return;
+		return ;
 	}
 	i = 0;
 	shell->code = OK;
@@ -84,5 +92,4 @@ void	builtin_export(t_shell *shell, t_cmd_table *cmd)
 		if (process_export_arg(shell, cmd->cmd_da->items[i]) != OK)
 			shell->code = EXIT_GENERAL_ERROR;
 	}
-	
 }
