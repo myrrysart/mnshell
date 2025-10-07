@@ -6,7 +6,7 @@
 /*   By: jyniemit <jyniemit@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/29 13:40:26 by jyniemit          #+#    #+#             */
-/*   Updated: 2025/10/07 16:55:11 by jyniemit         ###   ########.fr       */
+/*   Updated: 2025/10/07 19:13:07 by jyniemit         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -297,9 +297,12 @@ bool							parser_is_syntax_correct(t_token *token);
 void							parser_cmd_type(t_shell *shell,
 									t_cmd_table *cmd, t_token *token);
 void							strip_delimiter(t_shell *shell, t_token *token);
-bool							handle_token(t_shell *shell, t_cmd_table *cmd, t_token **tok, int *first);
-bool							append_arg(t_shell *shell, t_cmd_table *cmd, t_token **tok, int *first);
-char							*parser_expand_dollar(t_shell *shell, char *str);
+bool							handle_token(t_shell *shell, t_cmd_table *cmd,
+									t_token **tok, int *first);
+bool							handle_word(t_shell *sh, t_cmd_table *cmd,
+									t_token **tok, int *first);
+char							*parser_expand_dollar(t_shell *shell,
+									char *str);
 
 // lexer prototypes
 t_token							*build_token(t_arena *arena, t_token token);
