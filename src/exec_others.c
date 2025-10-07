@@ -14,7 +14,7 @@
 
 void	builtin_select(t_shell *shell, t_cmd_table *cmd)
 {
-	const builtin	builtin_table[BUILTIN_COUNT] = {
+	const t_builtin	builtin_table[BUILTIN_COUNT] = {
 		builtin_cd,
 		builtin_echo,
 		builtin_exit,

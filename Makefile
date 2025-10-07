@@ -26,9 +26,7 @@ OBJDIR = obj
 INCLUDEDIR = include
 ASMDIR = asm
 
-HEADERS = \
-	  minishell.h \
-	  arena.h \
+HEADERS = minishell.h
 
 SOURCES = \
 	arena.c \
