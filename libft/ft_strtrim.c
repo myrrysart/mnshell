@@ -36,8 +36,8 @@ static char const	*ft_strcheckset(char const *s1, char const *set)
 	return (s1);
 }
 
-static char const	*ft_strchecksetrev(char const *s1,
-									char const *s2, char const *set)
+static char const	*ft_strchecksetrev(char const *s1, char const *s2,
+		char const *set)
 {
 	while (ft_setcheck(s1, set) && s1 > s2)
 		s1--;
