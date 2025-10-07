@@ -10,7 +10,6 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "arena.h"
 #include "minishell.h"
 
 t_lexer	build_lexer(char *content)
