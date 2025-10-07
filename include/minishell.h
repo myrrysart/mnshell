@@ -6,7 +6,7 @@
 /*   By: jyniemit <jyniemit@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/29 13:40:26 by jyniemit          #+#    #+#             */
-/*   Updated: 2025/10/07 12:50:18 by jyniemit         ###   ########.fr       */
+/*   Updated: 2025/10/07 16:55:11 by jyniemit         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -204,6 +204,15 @@ typedef struct s_cmd
 	struct s_cmd				*prev;
 }								t_cmd_table;
 
+// heredoc data
+typedef struct s_buf
+{
+	char	*data;
+	size_t	len;
+	size_t	cap;
+	t_shell	*sh;
+}			t_buf;
+
 void							init_signals(t_shell *shell);
 void							init_shell(char **av, char **env,
 									t_shell *shell);
@@ -221,7 +230,18 @@ void							set_env_var(t_shell *shell, char *key,
 char							*expand_dollar_variable(t_shell *shell,
 									const char *var_name);
 
+// heredoc
 int								read_heredoc(t_shell *shell);
+char							*expand_heredoc_line(t_shell *sh, const char *line);
+void							leave_heredoc(t_shell *sh, struct sigaction *old_int);
+void							heredoc_child(t_shell *sh, int write_fd, char *delim);
+void							enter_heredoc(t_shell *sh, struct sigaction *old_int);
+void							buf_puts(t_buf *b, const char *s);
+void							buf_putc(t_buf *b, char c);
+void							buf_grow(t_buf *b, size_t need);
+void							buf_init(t_buf *b, t_shell *sh);
+
+
 char							*get_env_var(t_shell *shell, char *key);
 void							unset_env_var(t_shell *shell, char *key);
 void							init_shell_env(t_shell *shell, char **av);
