@@ -57,6 +57,8 @@ void	parser_cmd_type(t_shell *shell, t_cmd_table *cmd, t_token *token)
 	}
 }
 
+/* @brief: find length of the env key
+ */
 static size_t	ms_var_len(const char *s)
 {
 	size_t	i;
@@ -71,47 +73,42 @@ static size_t	ms_var_len(const char *s)
 	return (i);
 }
 
-static void	ms_expand_pass_len(t_shell *sh, char *str, size_t *out_len)
+static void ms_increment(size_t *out_len, size_t *i)
+{
+	(*out_len)++;
+	(*i)++;
+}
+
+static size_t	calculate_output_len(t_shell *sh, char *str, size_t out_len)
 {
 	size_t	i;
-	size_t	n;
+	size_t	env_key_len;
 	char	save;
-	char	*val;
 
-	(void)sh;
 	i = 0;
-	*out_len = 0;
 	while (str[i])
 	{
 		if (str[i] == '$')
 		{
-			n = ms_var_len(&str[i + 1]);
-			if (!n)
-			{
-				(*out_len)++;
-				i++;
-			}
+			env_key_len = ms_var_len(&str[i + 1]);
+			if (!env_key_len)
+				ms_increment(&out_len, &i);
 			else
 			{
-				save = str[i + 1 + n];
-				str[i + 1 + n] = '\0';
-				val = expand_dollar_variable(sh, &str[i + 1]);
-				*out_len += ft_strlen(val);
-				str[i + 1 + n] = save;
-				i += 1 + n;
+				save = str[i + 1 + env_key_len];
+				out_len += ft_strlen(expand_dollar_variable(sh, &str[i + 1]));
+				str[i + 1 + env_key_len] = save;
+				i += 1 + env_key_len;
 			}
 		}
 		else
-		{
-			(*out_len)++;
-			i++;
-		}
+			ms_increment(&out_len, &i);
 	}
+	return out_len;
 }
 
 char	*parser_expand_dollar(t_shell *sh, char *str)
 {
-	size_t	out_len;
 	size_t	i;
 	size_t	j;
 	size_t	n;
@@ -121,8 +118,7 @@ char	*parser_expand_dollar(t_shell *sh, char *str)
 
 	if (!str || !ft_strchr(str, '$'))
 		return (str);
-	ms_expand_pass_len(sh, str, &out_len);
-	out = arena_alloc(sh_work_arena(sh), out_len + 1);
+	out = arena_alloc(sh_work_arena(sh), calculate_output_len(sh, str, 0) + 1);
 	if (!out)
 		return (str);
 	i = 0;

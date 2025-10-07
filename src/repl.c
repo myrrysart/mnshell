@@ -47,7 +47,7 @@ static void	parse_and_execute(t_shell *shell)
 	check_flag(shell, t);
 	if (!parser_is_syntax_correct(t))
 	{
-		ft_printf("[debug] Syntax Error\n");
+		write(STDERR_FILENO, "Syntax Error\n", 14);
 		return ;
 	}
 	shell->cmd = parser_cmd_build_many(shell, t);
@@ -73,7 +73,7 @@ void	run_shell(t_shell *shell)
 		line = readline(PROMPT);
 		if (!line)
 		{
-			write(STDOUT_FILENO, "exit\n", 5);
+			write(STDOUT_FILENO, "exit\n", 6);
 			shell->state |= SHOULD_EXIT;
 			break ;
 		}
