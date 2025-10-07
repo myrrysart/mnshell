@@ -12,7 +12,7 @@
 
 #ifndef MINISHELL_H
 # define MINISHELL_H
-# define PROMPT (GREEN "minishell$ " RESET)
+# define PROMPT "\033[32m minishell$ \033[0m"
 
 // PATH_MAX
 # include <errno.h>
@@ -29,7 +29,6 @@
 // uint typedefinitions
 # include <stdint.h>
 // our own libraries
-# include "arena.h"
 # include "libft.h"
 // parser libraries
 # include <fcntl.h>
@@ -41,11 +40,32 @@
 # define WR 1
 # define RD 0
 # define MAX_HEREDOCS 16
-# define HEREDOC_INTERRUPTED (-2)
+# define HEREDOC_INTERRUPTED -2
 # ifndef DA_CAP
 #  define DA_CAP 128
 # endif // DA_CAP
+
 extern volatile sig_atomic_t	g_received_signal;
+
+// arena prototype
+# ifndef ARENA_CAP
+#  define ARENA_CAP 5120
+# endif // !ARENA_CAP
+
+typedef struct s_arena
+{
+	uint64_t					capacity;
+	uint64_t					cursor;
+	unsigned char				*data;
+	struct s_arena				*next;
+}								t_arena;
+
+t_arena							*arena_init(uint64_t capacity);
+void							*arena_alloc(t_arena *arena, uint64_t size);
+void							*s_malloc(uint64_t size);
+char							*arena_strdup(t_arena *arena, const char *s);
+void							arena_free(t_arena *arena);
+t_arena							*get_static_arena(void);
 
 typedef enum e_shell_code
 {
@@ -85,7 +105,7 @@ typedef enum e_shell_state
 	HAS_QUOTE = (1u << 14)
 }								t_shell_state;
 
-typedef struct
+typedef struct s_pipe_line
 {
 	int							pipe[2];
 	int							tmp_fd;
@@ -129,7 +149,7 @@ typedef struct s_shell
 }								t_shell;
 
 // lexer data
-typedef enum
+typedef enum e_token_type
 {
 	END = 0,
 	SQUOTE,
@@ -161,10 +181,10 @@ typedef struct s_lexer
 	size_t						line;
 }								t_lexer;
 
-typedef void					(*builtin)(t_shell *shell, t_cmd_table *cmd);
+typedef void					(*t_builtin)(t_shell *shell, t_cmd_table *cmd);
 
 // parser data
-typedef enum
+typedef enum e_cmd_type
 {
 	BUILTIN_CD,
 	BUILTIN_ECHO,
@@ -177,7 +197,7 @@ typedef enum
 	EXTERNAL,
 }								t_cmd_type;
 
-typedef enum
+typedef enum e_cmd_pos
 {
 	FIRST,
 	MID,
@@ -254,10 +274,13 @@ bool							parser_is_syntax_correct(t_token *token);
 void							parser_cmd_type(t_shell *shell,
 									t_cmd_table *cmd, t_token *token);
 bool							parser_is_syntax_correct(t_token *token);
-void							parser_cmd_type(t_shell *shell, t_cmd_table *cmd, t_token *token);
+void							parser_cmd_type(t_shell *shell,
+									t_cmd_table *cmd, t_token *token);
 void							strip_delimiter(t_shell *shell, t_token *token);
-bool							handle_token(t_shell *shell, t_cmd_table *cmd, t_token **tok, int *first);
-bool							append_arg(t_shell *shell, t_cmd_table *cmd, t_token **tok, int *first);
+bool							handle_token(t_shell *shell, t_cmd_table *cmd,
+									t_token **tok, int *first);
+bool							append_arg(t_shell *shell, t_cmd_table *cmd,
+									t_token **tok, int *first);
 
 // lexer prototypes
 t_token							*build_token(t_arena *arena, t_token token);
@@ -282,7 +305,8 @@ char							*exec_copy_bin_path(t_shell *shell, char *cmd);
 void							exec_pipe(t_shell *shell);
 void							exec_no_pipe(t_shell *shell);
 pid_t							exec_pipeline(t_shell *shell, t_cmd_table *cmd);
-void							exec_prep(t_cmd_table *cmd, t_pipe_line *pipeline);
+void							exec_prep(t_cmd_table *cmd,
+									t_pipe_line *pipeline);
 void							close_pipe(t_pipe_line *pipe);
 
 // execution

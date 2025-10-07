@@ -83,33 +83,6 @@ void	arena_free(t_arena *arena)
 	arena = NULL;
 }
 
-void	*s_malloc(uint64_t size)
-{
-	void	*buf;
-
-	buf = arena_alloc(get_static_arena(), size);
-	if (!buf)
-	{
-		arena_free(get_static_arena());
-		ft_putendl_fd("failed to allocate memory arena", 2);
-		exit(EXIT_FAILURE);
-	}
-	return (buf);
-}
-
-t_arena	*get_static_arena(void)
-{
-	static t_arena	*arena;
-
-	if (!arena)
-	{
-		arena = arena_init(ARENA_CAP);
-		if (!arena)
-			return (NULL);
-	}
-	return (arena);
-}
-
 char	*arena_strdup(t_arena *arena, const char *s)
 {
 	size_t	len;
