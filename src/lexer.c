@@ -6,7 +6,7 @@
 /*   By: trupham <trupham@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/31 10:45:01 by trupham           #+#    #+#             */
-/*   Updated: 2025/10/06 12:06:46 by trupham          ###   ########.fr       */
+/*   Updated: 2025/10/07 12:32:10 by jyniemit         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,7 +28,7 @@ t_lexer	build_lexer(char *content)
  * @param: pointer to the lexer structure. this funciton will modify the lexer
  * and moving the cursor forward
  */
-t_token	get_next_token(t_shell *shell, t_lexer *l)
+t_token	get_next_token(t_lexer *l)
 {
 	t_token	token;
 
@@ -44,8 +44,6 @@ t_token	get_next_token(t_shell *shell, t_lexer *l)
 		return (lexer_handle_append(l));
 	if (l->content[l->cursor] == '<' && l->content[l->cursor + 1] == '<')
 		return (lexer_handle_heredoc(l));
-	if (l->content[l->cursor] == '$')
-		return (lexer_handle_dollar(shell, l));
 	if (!is_operator(l->content[l->cursor]) && !is_quote(l->content[l->cursor]))
 		return (lexer_handle_word(l));
 	return (lexer_handle_other_token(l));
@@ -87,7 +85,7 @@ t_token	*build_token_list(t_shell *shell, t_lexer *l)
 	t_token	*new;
 	t_token	*curr;
 
-	head = build_token(sh_work_arena(shell), get_next_token(shell, l));
+	head = build_token(sh_work_arena(shell), get_next_token(l));
 	curr = head;
 	if (!head)
 		return (NULL);
@@ -95,7 +93,7 @@ t_token	*build_token_list(t_shell *shell, t_lexer *l)
 	{
 		while (curr->next)
 			curr = curr->next;
-		new = build_token(sh_work_arena(shell), get_next_token(shell, l));
+		new = build_token(sh_work_arena(shell), get_next_token(l));
 		if (!new)
 			return (NULL);
 		curr->next = new;

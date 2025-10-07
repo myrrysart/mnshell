@@ -6,34 +6,54 @@
 /*   By: trupham <trupham@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/25 11:27:57 by trupham           #+#    #+#             */
-/*   Updated: 2025/10/06 15:44:39 by trupham          ###   ########.fr       */
+/*   Updated: 2025/10/07 12:58:12 by jyniemit         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-bool	append_arg(t_shell *shell, t_cmd_table *cmd, t_token **tok, int *first)
+static char	*ms_dup_inner(t_shell *sh, t_token *tok)
 {
-	char	*trim;
+	char	*inner;
+	size_t	len;
+
+	if (tok->content_len < 2)
+		return (arena_strdup(sh_work_arena(sh), ""));
+	len = tok->content_len - 2;
+	inner = arena_alloc(sh_work_arena(sh), len + 1);
+	if (!inner)
+		return (NULL);
+	ft_memcpy(inner, tok->content + 1, len);
+	inner[len] = '\0';
+	return (inner);
+}
+
+static char	*ms_handle_token_arg(t_shell *sh, t_token *tok)
+{
+	char	*inner;
+
+	if (tok->type == SQUOTE)
+	{
+		inner = ms_dup_inner(sh, tok);
+		return (inner);
+	}
+	if (tok->type == DQUOTE)
+	{
+		inner = ms_dup_inner(sh, tok);
+		return (parser_expand_dollar(sh, inner));
+	}
+	return (parser_expand_dollar(sh, tok->content));
+}
+
+bool	append_arg(t_shell *sh, t_cmd_table *cmd, t_token **tok, int *first)
+{
 	char	*arg;
 
-	if (ft_strchr((*tok)->content, '\'') || ft_strchr((*tok)->content, '"'))
-	{
-		trim = ft_strtrim((*tok)->content, "'\"");
-		if (!trim)
-			return (false);
-		da_append(sh_work_arena(shell), cmd->cmd_da, trim);
-		free(trim);
-	}
-	else
-	{
-		if (*first && cmd->cmd_type == EXTERNAL)
-			arg = exec_copy_bin_path(shell, (*tok)->content);
-		else
-			arg = (*tok)->content;
-		if (arg)
-			da_append(sh_work_arena(shell), cmd->cmd_da, arg);
-	}
+	arg = ms_handle_token_arg(sh, *tok);
+	if (*first && cmd->cmd_type == EXTERNAL)
+		arg = exec_copy_bin_path(sh, arg);
+	if (arg)
+		da_append(sh_work_arena(sh), cmd->cmd_da, arg);
 	*first = 0;
 	*tok = (*tok)->next;
 	return (true);

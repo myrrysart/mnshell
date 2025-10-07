@@ -6,7 +6,7 @@
 /*   By: jyniemit <jyniemit@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/29 13:40:26 by jyniemit          #+#    #+#             */
-/*   Updated: 2025/10/06 17:06:28 by trupham          ###   ########.fr       */
+/*   Updated: 2025/10/07 12:50:18 by jyniemit         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -258,18 +258,18 @@ void							parser_cmd_type(t_shell *shell, t_cmd_table *cmd, t_token *token);
 void							strip_delimiter(t_shell *shell, t_token *token);
 bool							handle_token(t_shell *shell, t_cmd_table *cmd, t_token **tok, int *first);
 bool							append_arg(t_shell *shell, t_cmd_table *cmd, t_token **tok, int *first);
+char							*parser_expand_dollar(t_shell *shell, char *str);
 
 // lexer prototypes
 t_token							*build_token(t_arena *arena, t_token token);
 t_token							*build_token_list(t_shell *shell, t_lexer *l);
 t_lexer							build_lexer(char *content);
-t_token							get_next_token(t_shell *shell, t_lexer *l);
+t_token							get_next_token(t_lexer *l);
 t_token_type					get_token_type(const char c);
 bool							is_operator(const char c);
 void							trim_left(t_lexer *l);
 t_token							lexer_handle_append(t_lexer *l);
 t_token							lexer_handle_heredoc(t_lexer *l);
-t_token							lexer_handle_dollar(t_shell *shell, t_lexer *l);
 t_token							lexer_handle_word(t_lexer *l);
 t_token							lexer_handle_squote(t_lexer *l);
 t_token							lexer_handle_dquote(t_lexer *l);
