@@ -10,11 +10,7 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "arena.h"
-#include "libft.h"
-#include <stdint.h>
-#include <stdio.h>
-#include <stdlib.h>
+#include "minishell.h"
 
 /*@brief: initialize the memory arena with max size of capacity
  * @return: pointer to the arena

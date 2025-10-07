@@ -10,8 +10,6 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "arena.h"
-#include "libft.h"
 #include "minishell.h"
 
 static char	*ft_getenv(char **env, char *name)

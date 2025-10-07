@@ -12,7 +12,7 @@
 
 #ifndef MINISHELL_H
 # define MINISHELL_H
-# define PROMPT "\033[32m minishell$ \033[0m"
+# define PROMPT "\033[32mminishell$ \033[0m"
 
 // PATH_MAX
 # include <errno.h>
@@ -49,7 +49,7 @@ extern volatile sig_atomic_t	g_received_signal;
 
 // arena prototype
 # ifndef ARENA_CAP
-#  define ARENA_CAP 5120
+#  define ARENA_CAP 1024*16
 # endif // !ARENA_CAP
 
 typedef struct s_arena
