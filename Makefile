@@ -6,7 +6,7 @@
 #    By: jyniemit <jyniemit@student.hive.fi>        +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2025/10/03 12:12:38 by jyniemit          #+#    #+#              #
-#    Updated: 2025/10/07 12:41:38 by jyniemit         ###   ########.fr        #
+#    Updated: 2025/10/07 17:06:21 by jyniemit         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -43,6 +43,10 @@ SOURCES = \
 	exec_utils.c \
 	exec_pipeline_prep.c \
 	heredoc.c \
+	heredoc_utils.c \
+	heredoc_child.c \
+	heredoc_signals.c \
+	heredoc_buf_utils.c \
 	lexer.c \
 	lexer_handle.c \
 	lexer_handle_quote.c \
