@@ -6,7 +6,7 @@
 /*   By: jyniemit <jyniemit@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/30 17:23:53 by jyniemit          #+#    #+#             */
-/*   Updated: 2025/10/06 17:01:42 by trupham          ###   ########.fr       */
+/*   Updated: 2025/10/07 17:40:20 by jyniemit         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,6 +23,7 @@ void	builtin_select(t_shell *shell, t_cmd_table *cmd)
 		builtin_unset,
 		builtin_env,
 	};
+
 	builtin_table[cmd->cmd_type](shell, cmd);
 }
 

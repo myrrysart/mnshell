@@ -6,50 +6,11 @@
 /*   By: jyniemit <jyniemit@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/29 12:37:53 by jyniemit          #+#    #+#             */
-/*   Updated: 2025/10/06 13:54:10 by jyniemit         ###   ########.fr       */
+/*   Updated: 2025/10/07 17:37:51 by jyniemit         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
-
-static void	init_env(char **env, t_shell *shell)
-{
-	int	i;
-
-	i = -1;
-	shell->original_env = env;
-	shell->env_count = 0;
-	while (env[shell->env_count])
-		shell->env_count++;
-	shell->env_capacity = shell->env_count * 2;
-	shell->heap_env = (char **)arena_alloc(shell->arena, sizeof(char *)
-			* (shell->env_capacity + 1));
-	if (!shell->heap_env)
-		return ;
-	while (++i < shell->env_count)
-		shell->heap_env[i] = arena_strdup(shell->arena, env[i]);
-	shell->heap_env[shell->env_count] = NULL;
-}
-
-void	init_shell(char **av, char **env, t_shell *shell)
-{
-	shell->arena = arena_init(ARENA_CAP);
-	if (!shell->arena)
-	{
-		shell->code = EXIT_SHELLINITFAIL;
-		shell->state |= SHOULD_EXIT;
-		return ;
-	}
-	shell->pipeline = arena_alloc(shell->arena, sizeof(*shell->pipeline));
-	init_env(env, shell);
-	init_shell_env(shell, av);
-	if (!getcwd(shell->working_directory, PATH_MAX))
-	{
-		shell->code = EXIT_SHELLINITFAIL;
-		shell->state |= SHOULD_EXIT;
-	}
-	shell->heredoc_index = -1;
-}
 
 void	check_flag(t_shell *shell, t_token *t)
 {
