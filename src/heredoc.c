@@ -14,11 +14,11 @@
 
 typedef struct s_buf
 {
-	char		*data;
-	size_t		len;
-	size_t		cap;
-	t_shell		*sh;
-} t_buf;
+	char	*data;
+	size_t	len;
+	size_t	cap;
+	t_shell	*sh;
+}			t_buf;
 
 static void	buf_init(t_buf *b, t_shell *sh)
 {
@@ -57,7 +57,7 @@ static void	buf_putc(t_buf *b, char c)
 
 static void	buf_puts(t_buf *b, const char *s)
 {
-	size_t sl;
+	size_t	sl;
 
 	if (!s)
 		return ;
@@ -80,11 +80,11 @@ static int	parse_var_end(const char *s, int i)
 
 static void	expand_dollar_token(t_shell *sh, t_buf *b, const char *line, int *i)
 {
-	int	start;
-	int	end;
+	int		start;
+	int		end;
 	char	*name;
 	char	*exp;
-	int	diff;
+	int		diff;
 
 	(*i)++;
 	start = *i;
@@ -134,9 +134,9 @@ static void	heredoc_sigint(int sig)
 
 static void	heredoc_child(t_shell *sh, int write_fd, char *delim)
 {
-	char			*line;
-	int				expand;
-	char			*proc;
+	char				*line;
+	int					expand;
+	char				*proc;
 	struct sigaction	sa;
 
 	sigemptyset(&sa.sa_mask);
@@ -148,8 +148,8 @@ static void	heredoc_child(t_shell *sh, int write_fd, char *delim)
 	expand = (sh->state & HEREDOC_EXPAND) != 0;
 	while ((line = readline("> ")) != NULL)
 	{
-		if (ft_strlen(line) == ft_strlen(delim)
-			&& !ft_strncmp(line, delim, ft_strlen(delim)))
+		if (ft_strlen(line) == ft_strlen(delim) && !ft_strncmp(line, delim,
+				ft_strlen(delim)))
 		{
 			free(line);
 			break ;
@@ -173,7 +173,7 @@ static void	heredoc_child(t_shell *sh, int write_fd, char *delim)
 
 static void	enter_heredoc(t_shell *sh, struct sigaction *old_int)
 {
-	struct sigaction ign;
+	struct sigaction	ign;
 
 	sigemptyset(&ign.sa_mask);
 	ign.sa_flags = 0;
@@ -190,9 +190,9 @@ static void	leave_heredoc(t_shell *sh, struct sigaction *old_int)
 
 int	read_heredoc(t_shell *sh)
 {
-	int				pfd[2];
-	pid_t			pid;
-	int				st;
+	int					pfd[2];
+	pid_t				pid;
+	int					st;
 	struct sigaction	old_int;
 
 	if (sh->heredoc_index > 8)

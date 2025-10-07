@@ -23,7 +23,6 @@ void	builtin_select(t_shell *shell, t_cmd_table *cmd)
 		builtin_unset,
 		builtin_env,
 	};
-
 	builtin_table[cmd->cmd_type](shell, cmd);
 }
 

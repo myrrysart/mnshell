@@ -6,7 +6,7 @@
 #    By: jyniemit <jyniemit@student.hive.fi>        +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2025/10/03 12:12:38 by jyniemit          #+#    #+#              #
-#    Updated: 2025/10/06 17:06:45 by trupham          ###   ########.fr        #
+#    Updated: 2025/10/07 12:41:38 by jyniemit         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -46,7 +46,6 @@ SOURCES = \
 	lexer.c \
 	lexer_handle.c \
 	lexer_handle_quote.c \
-	lexer_handle_dollar.c \
 	lexer_utils.c \
 	main.c \
 	parser.c \

@@ -6,7 +6,7 @@
 /*   By: trupham <trupham@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/06 11:48:11 by trupham           #+#    #+#             */
-/*   Updated: 2025/10/06 11:51:29 by trupham          ###   ########.fr       */
+/*   Updated: 2025/10/07 12:50:54 by jyniemit         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,8 +41,6 @@ void	trim_left(t_lexer *l)
 
 t_token_type	get_token_type(const char c)
 {
-	if (c == '$')
-		return (DOLLAR);
 	if (c == '\'')
 		return (SQUOTE);
 	if (c == '\"')
