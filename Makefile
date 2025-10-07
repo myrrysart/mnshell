@@ -6,7 +6,7 @@
 #    By: jyniemit <jyniemit@student.hive.fi>        +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2025/10/03 12:12:38 by jyniemit          #+#    #+#              #
-#    Updated: 2025/10/07 17:31:50 by jyniemit         ###   ########.fr        #
+#    Updated: 2025/10/07 17:38:46 by jyniemit         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -59,6 +59,7 @@ SOURCES = \
 	parser_da.c \
 	parser_handle.c \
 	repl.c \
+	shell_init.c \
 	shell_environment.c \
 	signals.c \
 	signal_setups.c \
