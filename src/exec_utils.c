@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   execution_utils.c                                  :+:      :+:    :+:   */
+/*   exec_utils.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: trupham <trupham@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/12 11:09:42 by trupham           #+#    #+#             */
-/*   Updated: 2025/09/12 11:11:47 by trupham          ###   ########.fr       */
+/*   Updated: 2025/10/06 16:02:35 by trupham          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -90,22 +90,22 @@ char	*exec_get_binary_path(char *cmd, char **env)
 	return (free_split(arr), full_cmd);
 }
 
-char *exec_copy_bin_path(t_shell *shell, char *cmd)
+char	*exec_copy_bin_path(t_shell *shell, char *cmd)
 {
-	char *bin_cmd;
-	char *arena_cmd;
+	char	*bin_cmd;
+	char	*arena_cmd;
 
 	if (ft_strlen(cmd) <= 0)
-		return NULL;
+		return (NULL);
 	if (ft_strchr(cmd, '/'))
-		return cmd;
+		return (cmd);
 	bin_cmd = exec_get_binary_path(cmd, shell->heap_env);
 	if (!bin_cmd)
-		return cmd;
+		return (cmd);
 	arena_cmd = arena_alloc(sh_work_arena(shell), ft_strlen(bin_cmd));
 	if (!arena_cmd)
-		return NULL;
+		return (NULL);
 	ft_memcpy(arena_cmd, bin_cmd, ft_strlen(bin_cmd));
 	free(bin_cmd);
-	return arena_cmd;
+	return (arena_cmd);
 }

@@ -6,7 +6,7 @@
 /*   By: jyniemit <jyniemit@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/29 13:40:26 by jyniemit          #+#    #+#             */
-/*   Updated: 2025/10/06 15:43:50 by trupham          ###   ########.fr       */
+/*   Updated: 2025/10/06 17:06:28 by trupham          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -281,6 +281,9 @@ char							*exec_get_binary_path(char *cmd, char **env);
 char							*exec_copy_bin_path(t_shell *shell, char *cmd);
 void							exec_pipe(t_shell *shell);
 void							exec_no_pipe(t_shell *shell);
+pid_t							exec_pipeline(t_shell *shell, t_cmd_table *cmd);
+void							exec_prep(t_cmd_table *cmd, t_pipe_line *pipeline);
+void							close_pipe(t_pipe_line *pipe);
 
 // execution
 void							builtin_select(t_shell *shell,
