@@ -6,7 +6,7 @@
 #    By: jyniemit <jyniemit@student.hive.fi>        +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2025/10/03 12:12:38 by jyniemit          #+#    #+#              #
-#    Updated: 2025/10/07 17:06:21 by jyniemit         ###   ########.fr        #
+#    Updated: 2025/10/07 17:31:50 by jyniemit         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -38,6 +38,7 @@ SOURCES = \
 	builtin_pwd.c \
 	builtin_unset.c \
 	environment.c \
+	environment_utilities.c \
 	exec_pipeline.c \
 	exec_others.c \
 	exec_utils.c \
