@@ -6,7 +6,7 @@
 /*   By: jyniemit <jyniemit@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/29 12:37:53 by jyniemit          #+#    #+#             */
-/*   Updated: 2025/10/07 17:37:51 by jyniemit         ###   ########.fr       */
+/*   Updated: 2025/10/08 15:06:36 by jyniemit         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,6 +22,8 @@ void	check_flag(t_shell *shell, t_token *t)
 			shell->state |= HAS_QUOTE;
 		if (t->type == REDIRECT_IN)
 			shell->state |= HAS_INPUT_REDIR;
+		if (t->type == HEREDOC)
+			shell->heredoc_count++;
 		t = t->next;
 	}
 }
