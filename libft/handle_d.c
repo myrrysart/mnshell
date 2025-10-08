@@ -15,8 +15,8 @@ static int	print_nbr(int num);
 
 int	handle_d(va_list args)
 {
-	int		num;
-	int		ret;
+	int	num;
+	int	ret;
 
 	ret = 0;
 	num = va_arg(args, int);

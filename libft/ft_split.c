@@ -14,8 +14,8 @@
 
 static size_t	ft_count_array_height(char const *s, char c)
 {
-	size_t		i;
-	size_t		result;
+	size_t	i;
+	size_t	result;
 
 	i = 0;
 	result = 0;
@@ -74,8 +74,8 @@ static int	ft_save_strings(char **dest, char const *source, char c)
 
 char	**ft_split(char const *s, char c)
 {
-	char		**res;
-	size_t		height;
+	char	**res;
+	size_t	height;
 
 	res = NULL;
 	height = 0;
@@ -88,7 +88,7 @@ char	**ft_split(char const *s, char c)
 	res[height] = NULL;
 	if (ft_save_strings(res, s, c))
 	{
-		free (res);
+		free(res);
 		return (NULL);
 	}
 	return (res);

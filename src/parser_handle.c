@@ -6,7 +6,7 @@
 /*   By: trupham <trupham@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/06 15:41:48 by trupham           #+#    #+#             */
-/*   Updated: 2025/10/06 15:42:56 by trupham          ###   ########.fr       */
+/*   Updated: 2025/10/07 19:01:35 by jyniemit         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -83,5 +83,5 @@ bool	handle_token(t_shell *shell, t_cmd_table *cmd, t_token **tok,
 		return (handle_append(shell, cmd, tok));
 	else if ((*tok)->type == HEREDOC)
 		return (handle_heredoc(shell, cmd, tok));
-	return (append_arg(shell, cmd, tok, first));
+	return (handle_word(shell, cmd, tok, first));
 }

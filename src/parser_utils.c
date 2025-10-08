@@ -6,7 +6,7 @@
 /*   By: trupham <trupham@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/06 15:39:47 by trupham           #+#    #+#             */
-/*   Updated: 2025/10/07 12:56:58 by jyniemit         ###   ########.fr       */
+/*   Updated: 2025/10/07 18:47:29 by jyniemit         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -57,7 +57,7 @@ void	parser_cmd_type(t_shell *shell, t_cmd_table *cmd, t_token *token)
 	}
 }
 
-static size_t	ms_var_len(const char *s)
+static size_t	var_name_len(const char *s)
 {
 	size_t	i;
 
@@ -71,83 +71,42 @@ static size_t	ms_var_len(const char *s)
 	return (i);
 }
 
-static void	ms_expand_pass_len(t_shell *sh, char *str, size_t *out_len)
+static size_t	expand_one(t_shell *sh, t_buf *b, const char *s)
 {
-	size_t	i;
 	size_t	n;
 	char	save;
 	char	*val;
 
-	(void)sh;
-	i = 0;
-	*out_len = 0;
-	while (str[i])
+	n = var_name_len(s + 1);
+	if (n == 0)
 	{
-		if (str[i] == '$')
-		{
-			n = ms_var_len(&str[i + 1]);
-			if (!n)
-			{
-				(*out_len)++;
-				i++;
-			}
-			else
-			{
-				save = str[i + 1 + n];
-				str[i + 1 + n] = '\0';
-				val = expand_dollar_variable(sh, &str[i + 1]);
-				*out_len += ft_strlen(val);
-				str[i + 1 + n] = save;
-				i += 1 + n;
-			}
-		}
-		else
-		{
-			(*out_len)++;
-			i++;
-		}
+		buf_putc(b, '$');
+		return (1);
 	}
+	save = s[1 + n];
+	((char *)s)[1 + n] = '\0';
+	val = expand_dollar_variable(sh, s + 1);
+	if (val)
+		buf_puts(b, val);
+	((char *)s)[1 + n] = save;
+	return (1 + n);
 }
 
 char	*parser_expand_dollar(t_shell *sh, char *str)
 {
-	size_t	out_len;
+	t_buf	b;
 	size_t	i;
-	size_t	j;
-	size_t	n;
-	char	save;
-	char	*val;
-	char	*out;
 
+	i = 0;
 	if (!str || !ft_strchr(str, '$'))
 		return (str);
-	ms_expand_pass_len(sh, str, &out_len);
-	out = arena_alloc(sh_work_arena(sh), out_len + 1);
-	if (!out)
-		return (str);
-	i = 0;
-	j = 0;
+	buf_init(&b, sh);
 	while (str[i])
 	{
 		if (str[i] == '$')
-		{
-			n = ms_var_len(&str[i + 1]);
-			if (!n)
-				out[j++] = str[i++];
-			else
-			{
-				save = str[i + 1 + n];
-				str[i + 1 + n] = '\0';
-				val = expand_dollar_variable(sh, &str[i + 1]);
-				ft_memcpy(&out[j], val, ft_strlen(val));
-				j += ft_strlen(val);
-				str[i + 1 + n] = save;
-				i += 1 + n;
-			}
-		}
+			i += expand_one(sh, &b, str + i);
 		else
-			out[j++] = str[i++];
+			buf_putc(&b, str[i++]);
 	}
-	out[j] = '\0';
-	return (out);
+	return (b.data);
 }

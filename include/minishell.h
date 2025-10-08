@@ -6,7 +6,7 @@
 /*   By: jyniemit <jyniemit@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/29 13:40:26 by jyniemit          #+#    #+#             */
-/*   Updated: 2025/10/07 16:55:11 by jyniemit         ###   ########.fr       */
+/*   Updated: 2025/10/07 19:13:07 by jyniemit         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,7 +49,7 @@ extern volatile sig_atomic_t	g_received_signal;
 
 // arena prototype
 # ifndef ARENA_CAP
-#  define ARENA_CAP 1024*16
+#  define ARENA_CAP 16384
 # endif // !ARENA_CAP
 
 typedef struct s_arena
@@ -227,11 +227,11 @@ typedef struct s_cmd
 // heredoc data
 typedef struct s_buf
 {
-	char	*data;
-	size_t	len;
-	size_t	cap;
-	t_shell	*sh;
-}			t_buf;
+	char						*data;
+	size_t						len;
+	size_t						cap;
+	t_shell						*sh;
+}								t_buf;
 
 void							init_signals(t_shell *shell);
 void							init_shell(char **av, char **env,
@@ -252,15 +252,18 @@ char							*expand_dollar_variable(t_shell *shell,
 
 // heredoc
 int								read_heredoc(t_shell *shell);
-char							*expand_heredoc_line(t_shell *sh, const char *line);
-void							leave_heredoc(t_shell *sh, struct sigaction *old_int);
-void							heredoc_child(t_shell *sh, int write_fd, char *delim);
-void							enter_heredoc(t_shell *sh, struct sigaction *old_int);
+char							*expand_heredoc_line(t_shell *sh,
+									const char *line);
+void							leave_heredoc(t_shell *sh,
+									struct sigaction *old_int);
+void							heredoc_child(t_shell *sh, int write_fd,
+									char *delim);
+void							enter_heredoc(t_shell *sh,
+									struct sigaction *old_int);
 void							buf_puts(t_buf *b, const char *s);
 void							buf_putc(t_buf *b, char c);
 void							buf_grow(t_buf *b, size_t need);
 void							buf_init(t_buf *b, t_shell *sh);
-
 
 char							*get_env_var(t_shell *shell, char *key);
 void							unset_env_var(t_shell *shell, char *key);
@@ -297,9 +300,12 @@ bool							parser_is_syntax_correct(t_token *token);
 void							parser_cmd_type(t_shell *shell,
 									t_cmd_table *cmd, t_token *token);
 void							strip_delimiter(t_shell *shell, t_token *token);
-bool							handle_token(t_shell *shell, t_cmd_table *cmd, t_token **tok, int *first);
-bool							append_arg(t_shell *shell, t_cmd_table *cmd, t_token **tok, int *first);
-char							*parser_expand_dollar(t_shell *shell, char *str);
+bool							handle_token(t_shell *shell, t_cmd_table *cmd,
+									t_token **tok, int *first);
+bool							handle_word(t_shell *sh, t_cmd_table *cmd,
+									t_token **tok, int *first);
+char							*parser_expand_dollar(t_shell *shell,
+									char *str);
 
 // lexer prototypes
 t_token							*build_token(t_arena *arena, t_token token);

@@ -26,7 +26,7 @@ void	ft_recursive_putnbr_helper(int n, int fd)
 	}
 	if (n < 0)
 	{
-		write (fd, "-", 1);
+		write(fd, "-", 1);
 		n *= -1;
 	}
 	ft_recursive_putnbr_helper(n / 10, fd);

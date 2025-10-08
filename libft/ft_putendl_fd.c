@@ -20,7 +20,7 @@ void	ft_putendl_fd(char *s, int fd)
 	write(fd, "\n", 1);
 }
 
-void log_debug(char *str, char *file, int line)
+void	log_debug(char *str, char *file, int line)
 {
-	ft_printf(GREEN"[DEBUG]"RESET"%s:%d: %s", file, line, str);
+	ft_printf(GREEN "[DEBUG]" RESET "%s:%d: %s", file, line, str);
 }
