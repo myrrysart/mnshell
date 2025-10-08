@@ -6,7 +6,7 @@
 /*   By: jyniemit <jyniemit@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/29 13:40:26 by jyniemit          #+#    #+#             */
-/*   Updated: 2025/10/07 19:13:07 by jyniemit         ###   ########.fr       */
+/*   Updated: 2025/10/08 15:01:59 by jyniemit         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -137,6 +137,7 @@ typedef struct s_shell
 	char						working_directory[PATH_MAX];
 
 	int							heredoc_index;
+	int							heredoc_count;
 	int							heredoc_fd;
 	char						heredoc_delim[MAX_HEREDOCS][256];
 	struct sigaction			saved_sigint;

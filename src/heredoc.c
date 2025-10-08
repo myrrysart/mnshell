@@ -6,7 +6,7 @@
 /*   By: jyniemit <jyniemit@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/16 13:05:20 by jyniemit          #+#    #+#             */
-/*   Updated: 2025/10/07 16:17:44 by jyniemit         ###   ########.fr       */
+/*   Updated: 2025/10/08 14:53:25 by jyniemit         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,7 +25,6 @@ static int	heredoc_cancelled(t_shell *sh, int *pfd)
 	if (isatty(STDIN_FILENO))
 		write(STDOUT_FILENO, "\n", 1);
 	sh->code = EXIT_SIGINT;
-	sh->command_line[0] = '\0';
 	sh->state &= ~(EVALUATING | IN_HEREDOC | IN_SQUOTE | IN_DQUOTE | HAS_PIPE);
 	close(pfd[RD]);
 	return (-2);
@@ -37,10 +36,19 @@ static void	heredoc_into_child(t_shell *sh, int *pfd)
 	heredoc_child(sh, pfd[WR], sh->heredoc_delim[sh->heredoc_index]);
 }
 
-static int	heredoc_generic_error(int *pfd)
+static int	heredoc_generic_error(int *pfd, int return_nbr)
 {
-	close(pfd[RD]);
-	return (-1);
+	if (return_nbr == -1)
+	{
+		close(pfd[RD]);
+		return (-1);
+	}
+	else if (return_nbr == -2)
+	{
+		ft_putendl_fd("minishell: maximum here-document count exceeded", 2);
+		return (-1);
+	}
+	return (return_nbr);
 }
 
 int	read_heredoc(t_shell *sh)
@@ -50,8 +58,8 @@ int	read_heredoc(t_shell *sh)
 	int					st;
 	struct sigaction	old_int;
 
-	if (sh->heredoc_index > 8)
-		return (-1);
+	if (sh->heredoc_count > 8)
+		return (heredoc_generic_error(pfd, -2));
 	if (pipe(pfd) < 0)
 		return (-1);
 	enter_heredoc(sh, &old_int);
@@ -67,6 +75,6 @@ int	read_heredoc(t_shell *sh)
 	if (WIFEXITED(st) && WEXITSTATUS(st) == 130)
 		return (heredoc_cancelled(sh, pfd));
 	if (!(WIFEXITED(st) && WEXITSTATUS(st) == 0))
-		return (heredoc_generic_error(pfd));
+		return (heredoc_generic_error(pfd, -1));
 	return (pfd[RD]);
 }
