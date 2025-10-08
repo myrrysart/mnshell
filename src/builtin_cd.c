@@ -6,7 +6,7 @@
 /*   By: jyniemit <jyniemit@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/02 15:41:44 by jyniemit          #+#    #+#             */
-/*   Updated: 2025/10/06 12:15:53 by jyniemit         ###   ########.fr       */
+/*   Updated: 2025/10/08 13:42:11 by jyniemit         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,12 +40,12 @@ static void	cd_error(t_shell *shell, char *path, int cd_error_code)
 	}
 }
 
-static void	cd_go_to_home(t_shell *shell, char *path, char *home)
+static void	cd_go_to_home(t_shell *shell, char **path, char *home)
 {
 	home = get_env_var(shell, "HOME");
 	if (!home)
-		return (cd_error(shell, path, 2));
-	path = home;
+		return (cd_error(shell, *path, 2));
+	*path = home;
 }
 
 void	builtin_cd(t_shell *shell, t_cmd_table *cmd)
@@ -61,7 +61,9 @@ void	builtin_cd(t_shell *shell, t_cmd_table *cmd)
 		return (cd_error(shell, path, 1));
 	ft_strlcpy(old_pwd, shell->working_directory, PATH_MAX);
 	if (!cmd->cmd_da->items[1])
-		cd_go_to_home(shell, path, home);
+		cd_go_to_home(shell, &path, home);
+	else if (!ft_strncmp(cmd->cmd_da->items[1],"-", 2))
+		path = get_env_var(shell, "OLDPWD");
 	else
 		path = cmd->cmd_da->items[1];
 	if (chdir(path) != 0)
