@@ -6,7 +6,7 @@
 /*   By: jyniemit <jyniemit@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/02 15:41:54 by jyniemit          #+#    #+#             */
-/*   Updated: 2025/10/03 18:59:55 by jyniemit         ###   ########.fr       */
+/*   Updated: 2025/10/08 12:50:33 by jyniemit         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,6 +14,18 @@
 
 void	builtin_exit(t_shell *shell, t_cmd_table *cmd)
 {
+	int	i;
+
+	i = -1;
+	if (cmd->cmd_da->items[1])
+		while (cmd->cmd_da->items[1][++i])
+		{
+			if (!(ft_isdigit(cmd->cmd_da->items[1][i])))
+			{
+				ft_printf("Exit:%s: numeric argument required\n", cmd->cmd_da->items[1]);
+				return ;
+			}
+		}
 	if (cmd->cmd_da->items[2])
 	{
 		ft_printf("Exit: too many arguments.\n");
