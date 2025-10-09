@@ -64,6 +64,7 @@ SOURCES = \
 	shell_environment.c \
 	signals.c \
 	signal_setups.c \
+	exec_redirs.c \
 
 OBJECTS = $(SOURCES:%.c=$(OBJDIR)/%.o)
 SRCFILES = $(addprefix $(SRCDIR)/, $(SOURCES))

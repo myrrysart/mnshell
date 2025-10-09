@@ -6,7 +6,7 @@
 /*   By: jyniemit <jyniemit@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/07 16:49:16 by jyniemit          #+#    #+#             */
-/*   Updated: 2025/10/08 13:01:27 by jyniemit         ###   ########.fr       */
+/*   Updated: 2025/10/09 11:32:58 by jyniemit         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -61,7 +61,6 @@ static void	hd_proc_readl(t_shell *sh, int write_fd, char *delim, int *flag)
 static void	heredoc_sigint(int sig)
 {
 	(void)sig;
-	//write(STDOUT_FILENO, "\n", 1);
 	exit(130);
 }
 

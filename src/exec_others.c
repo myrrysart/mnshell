@@ -6,7 +6,7 @@
 /*   By: jyniemit <jyniemit@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/30 17:23:53 by jyniemit          #+#    #+#             */
-/*   Updated: 2025/10/07 17:40:20 by jyniemit         ###   ########.fr       */
+/*   Updated: 2025/10/09 11:32:08 by jyniemit         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,16 +29,7 @@ void	builtin_select(t_shell *shell, t_cmd_table *cmd)
 
 void	exec_child_no_pipe_prep(t_cmd_table *cmd)
 {
-	if (cmd->fd_in != STDIN_FILENO)
-	{
-		dup2(cmd->fd_in, STDIN_FILENO);
-		close(cmd->fd_in);
-	}
-	if (cmd->fd_out != STDOUT_FILENO)
-	{
-		dup2(cmd->fd_out, STDOUT_FILENO);
-		close(cmd->fd_out);
-	}
+	exec_apply_redirs(cmd);
 }
 
 void	exec_cleanup_parent(t_cmd_table *cmd)
@@ -57,7 +48,7 @@ void	exec_no_pipe(t_shell *shell)
 
 	cmd = shell->cmd;
 	if (cmd->cmd_type != EXTERNAL)
-		return (builtin_select(shell, cmd));
+		return (exec_builtin_with_redirs(shell, cmd));
 	child = fork();
 	if (child < 0)
 	{

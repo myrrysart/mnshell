@@ -62,7 +62,7 @@ void	builtin_cd(t_shell *shell, t_cmd_table *cmd)
 	ft_strlcpy(old_pwd, shell->working_directory, PATH_MAX);
 	if (!cmd->cmd_da->items[1])
 		cd_go_to_home(shell, &path, home);
-	else if (!ft_strncmp(cmd->cmd_da->items[1],"-", 2))
+	else if (!ft_strncmp(cmd->cmd_da->items[1], "-", 2))
 		path = get_env_var(shell, "OLDPWD");
 	else
 		path = cmd->cmd_da->items[1];
