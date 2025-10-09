@@ -341,6 +341,8 @@ void							exec_no_pipe(t_shell *shell);
 pid_t							exec_pipeline(t_shell *shell, t_cmd_table *cmd);
 void							exec_prep(t_cmd_table *cmd,
 									t_pipe_line *pipeline);
+void							exec_apply_redirs(t_cmd_table *cmd);
+void							exec_builtin_with_redirs(t_shell *shell, t_cmd_table *cmd);
 void							close_pipe(t_pipe_line *pipe);
 
 // execution
