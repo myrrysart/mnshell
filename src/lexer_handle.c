@@ -38,10 +38,11 @@ t_token	lexer_handle_heredoc(t_lexer *l)
 	return (token);
 }
 
-t_token	lexer_handle_word(t_lexer *l)
+t_token	lexer_handle_word(t_lexer *l, bool wp)
 {
 	t_token	token;
 
+	token.wp = wp;
 	token.content_len = 0;
 	token.type = WORD;
 	token.content = &l->content[l->cursor];

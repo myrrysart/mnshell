@@ -6,7 +6,7 @@
 /*   By: trupham <trupham@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/03 11:54:34 by trupham           #+#    #+#             */
-/*   Updated: 2025/08/26 17:09:35 by jyniemit         ###   ########.fr       */
+/*   Updated: 2025/10/10 11:39:59 by trupham          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,6 +45,8 @@ void	*arena_alloc(t_arena *arena, size_t size)
 	t_arena	*next;
 
 	next = NULL;
+	if (size > arena->capacity)
+		return NULL;
 	while (arena->cursor + size > arena->capacity)
 	{
 		if (arena->next == NULL)

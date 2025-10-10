@@ -6,7 +6,7 @@
 /*   By: trupham <trupham@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/06 15:36:51 by trupham           #+#    #+#             */
-/*   Updated: 2025/10/06 15:37:05 by trupham          ###   ########.fr       */
+/*   Updated: 2025/10/10 11:28:31 by trupham          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,7 @@
 
 /* realloc the buf pointer but in the arena
  */
-void	*ft_realloc(t_arena *arena, char **src, size_t src_size,
+static void	*ft_realloc(t_arena *arena, char **src, size_t src_size,
 		size_t new_size)
 {
 	char	**new_ptr;

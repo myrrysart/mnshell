@@ -6,7 +6,7 @@
 /*   By: jyniemit <jyniemit@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/07 18:53:40 by jyniemit          #+#    #+#             */
-/*   Updated: 2025/10/07 18:59:53 by jyniemit         ###   ########.fr       */
+/*   Updated: 2025/10/10 11:28:31 by trupham          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,14 +47,32 @@ static char	*build_arg_from_token(t_shell *sh, t_token *tok)
 
 bool	handle_word(t_shell *sh, t_cmd_table *cmd, t_token **tok, int *first)
 {
-	char	*arg;
+	t_str	*str;
 
-	arg = build_arg_from_token(sh, *tok);
+	str = str_init(sh_work_arena(sh), STR_CAP);
+	if (!str)
+		return false;
+	str_append(sh_work_arena(sh), str, build_arg_from_token(sh, *tok));
 	if (*first && cmd->cmd_type == EXTERNAL)
-		arg = exec_copy_bin_path(sh, arg);
-	if (arg)
-		da_append(sh_work_arena(sh), cmd->cmd_da, arg);
+	{
+		str_append(sh_work_arena(sh), str, exec_copy_bin_path(sh, str->str));
+		da_append(sh_work_arena(sh), cmd->cmd_da, str->str);
+		*tok = (*tok)->next;
+	}
+	else if ((*tok)->wp && (*tok)->next && !((*tok)->next->wp))
+	{
+		while (*tok && (*tok)->next && !((*tok)->next->wp))
+		{
+			str_append(sh_work_arena(sh), str, build_arg_from_token(sh, *tok));
+			*tok = (*tok)->next;
+		}
+		da_append(sh_work_arena(sh), cmd->cmd_da, str->str);
+	}
+	else
+	{
+		da_append(sh_work_arena(sh), cmd->cmd_da, str->str);
+		*tok = (*tok)->next;
+	}
 	*first = 0;
-	*tok = (*tok)->next;
 	return (true);
 }

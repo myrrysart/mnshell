@@ -32,19 +32,19 @@ t_token	get_next_token(t_lexer *l)
 	t_token	token;
 
 	ft_bzero(&token, sizeof(t_token));
+	token.wp = trim_left(l);
 	if (l->cursor >= l->content_len)
 		return (token);
-	trim_left(l);
 	if (l->content[l->cursor] == '\'')
-		return (lexer_handle_squote(l));
+		return (lexer_handle_squote(l, token.wp));
 	if (l->content[l->cursor] == '"')
-		return (lexer_handle_dquote(l));
+		return (lexer_handle_dquote(l, token.wp));
 	if (l->content[l->cursor] == '>' && l->content[l->cursor + 1] == '>')
 		return (lexer_handle_append(l));
 	if (l->content[l->cursor] == '<' && l->content[l->cursor + 1] == '<')
 		return (lexer_handle_heredoc(l));
 	if (!is_operator(l->content[l->cursor]) && !is_quote(l->content[l->cursor]))
-		return (lexer_handle_word(l));
+		return (lexer_handle_word(l, token.wp));
 	return (lexer_handle_other_token(l));
 }
 
@@ -72,6 +72,7 @@ t_token	*build_token(t_arena *arena, t_token token)
 		i++;
 	}
 	new_token->content[i] = '\0';
+	new_token->wp = token.wp;
 	return (new_token);
 }
 
