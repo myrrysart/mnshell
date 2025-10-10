@@ -6,7 +6,7 @@
 /*   By: jyniemit <jyniemit@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/29 13:40:26 by jyniemit          #+#    #+#             */
-/*   Updated: 2025/10/12 12:13:38 by jyniemit         ###   ########.fr       */
+/*   Updated: 2025/10/13 15:36:03 by jyniemit         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -344,8 +344,12 @@ void							exec_prep(t_cmd_table *cmd,
 void							exec_apply_redirs(t_cmd_table *cmd);
 void							exec_builtin_with_redirs(t_shell *shell, t_cmd_table *cmd);
 void							close_pipe(t_pipe_line *pipe);
+void							shell_abort_eval(t_shell *shell, t_shell_code code);
+void							shell_update_code_from_status(t_shell *shell, int status);
+int								map_exec_errno_to_exit(int err);
 
 // execution
-void							builtin_select(t_shell *shell,
-									t_cmd_table *cmd);
+void						builtin_select(t_shell *shell,
+								t_cmd_table *cmd);
 #endif // MINISHELL_H
+

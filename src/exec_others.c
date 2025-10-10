@@ -6,7 +6,7 @@
 /*   By: jyniemit <jyniemit@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/30 17:23:53 by jyniemit          #+#    #+#             */
-/*   Updated: 2025/10/09 11:32:08 by jyniemit         ###   ########.fr       */
+/*   Updated: 2025/10/10 10:25:00 by jyniemit         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,7 +44,7 @@ void	exec_no_pipe(t_shell *shell)
 {
 	pid_t		child;
 	t_cmd_table	*cmd;
-	int			status;
+	int		status;
 
 	cmd = shell->cmd;
 	if (cmd->cmd_type != EXTERNAL)
@@ -54,17 +54,21 @@ void	exec_no_pipe(t_shell *shell)
 	{
 		perror("fork");
 		shell->code = errno;
+		exec_cleanup_parent(cmd);
+		return ;
 	}
 	if (child == 0)
+	
 	{
 		exec_child_no_pipe_prep(cmd);
 		execve(cmd->cmd_da->items[0], cmd->cmd_da->items, shell->heap_env);
-		exit(errno);
+		_exit(map_exec_errno_to_exit(errno));
 	}
 	waitpid(child, &status, 0);
-	shell->last_code = status;
+	shell_update_code_from_status(shell, status);
 	exec_cleanup_parent(cmd);
 }
+
 
 /*looping through the command table and execute each command
  */
@@ -72,12 +76,34 @@ void	exec_pipe(t_shell *shell)
 {
 	t_cmd_table	*cmd;
 	pid_t		child;
+	int		status;
 
 	cmd = shell->cmd;
 	while (cmd)
 	{
 		child = exec_pipeline(shell, cmd);
 		cmd = cmd->next;
-		waitpid(child, &shell->last_code, 0);
+		waitpid(child, &status, 0);
+		shell_update_code_from_status(shell, status);
+		if (WIFSIGNALED(status) && WTERMSIG(status) == SIGINT)
+		{
+			if (shell->pipeline && shell->pipeline->tmp_fd != -1)
+			{
+				close(shell->pipeline->tmp_fd);
+				shell->pipeline->tmp_fd = -1;
+			}
+			shell_abort_eval(shell, EXIT_SIGINT);
+			break ;
+		}
+		if (!(shell->state & EVALUATING))
+		{
+			if (shell->pipeline && shell->pipeline->tmp_fd != -1)
+			{
+				close(shell->pipeline->tmp_fd);
+				shell->pipeline->tmp_fd = -1;
+			}
+			break ;
+		}
 	}
 }
+

@@ -6,7 +6,7 @@
 /*   By: jyniemit <jyniemit@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/06 13:18:42 by jyniemit          #+#    #+#             */
-/*   Updated: 2025/10/06 13:30:20 by jyniemit         ###   ########.fr       */
+/*   Updated: 2025/10/09 19:16:43 by jyniemit         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,10 +19,15 @@ void	signal_handler(int sig)
 	g_received_signal = sig;
 	if (sig == SIGINT)
 	{
+		if (rl_readline_state & RL_STATE_READCMD)
+		{
+			write(STDOUT_FILENO, "\n", 1);
+			rl_on_new_line();
+			rl_replace_line("", 0);
+			rl_redisplay();
+			return ;
+		}
 		write(STDOUT_FILENO, "\n", 1);
-		rl_on_new_line();
-		rl_replace_line("", 0);
-		rl_redisplay();
 	}
 }
 
