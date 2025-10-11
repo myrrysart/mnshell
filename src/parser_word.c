@@ -28,7 +28,7 @@ static char	*unquoate_token(t_shell *sh, t_token *tok)
 	return (inner);
 }
 
-static char	*build_arg_from_token(t_shell *sh, t_token *tok)
+static char	*rm_quote(t_shell *sh, t_token *tok)
 {
 	char	*inner;
 
@@ -52,24 +52,29 @@ bool	handle_word(t_shell *sh, t_cmd_table *cmd, t_token **tok, int *first)
 	str = str_init(sh_work_arena(sh), STR_CAP);
 	if (!str)
 		return false;
-	str_append(sh_work_arena(sh), str, build_arg_from_token(sh, *tok));
 	if (*first && cmd->cmd_type == EXTERNAL)
 	{
-		str_append(sh_work_arena(sh), str, exec_copy_bin_path(sh, str->str));
+		str_append(sh_work_arena(sh), str, exec_copy_bin_path(sh, rm_quote(sh, *tok)));
 		da_append(sh_work_arena(sh), cmd->cmd_da, str->str);
 		*tok = (*tok)->next;
 	}
-	else if ((*tok)->wp && (*tok)->next && !((*tok)->next->wp))
+	else if (!(*first) && (*tok)->wp && (*tok)->next && !((*tok)->next->wp))
 	{
 		while (*tok && (*tok)->next && !((*tok)->next->wp))
 		{
-			str_append(sh_work_arena(sh), str, build_arg_from_token(sh, *tok));
+			str_append(sh_work_arena(sh), str, rm_quote(sh, *tok));
+			*tok = (*tok)->next;
+		}
+		if (!((*tok)->next))
+		{
+			str_append(sh_work_arena(sh), str, rm_quote(sh, *tok));
 			*tok = (*tok)->next;
 		}
 		da_append(sh_work_arena(sh), cmd->cmd_da, str->str);
 	}
 	else
 	{
+		str_append(sh_work_arena(sh), str, rm_quote(sh, *tok));
 		da_append(sh_work_arena(sh), cmd->cmd_da, str->str);
 		*tok = (*tok)->next;
 	}

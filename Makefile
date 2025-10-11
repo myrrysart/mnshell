@@ -93,7 +93,7 @@ fclean: clean
 	rm -f $(NAME)
 	make -C $(LIBFTDIR) fclean
 
-debug: fclean
+debug:
 	$(MAKE) CFLAGS="$(CFLAGS) -g" all
 
 re: fclean all

@@ -20,9 +20,9 @@
 // STDIN_FILENO, STDOUT_FILENO, STDERR_FILENO
 # include <unistd.h>
 // readline
+# include <stdio.h>
 # include <readline/history.h>
 # include <readline/readline.h>
-# include <stdio.h>
 # include <stdlib.h>
 // sigaction & signals
 # include <signal.h>
