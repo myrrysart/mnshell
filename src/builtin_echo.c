@@ -12,28 +12,45 @@
 
 #include "minishell.h"
 
-static bool	is_newline(const char *str)
+static bool	has_nl_flag(const char *str)
 {
-	return (ft_strncmp(str, "-n", 3) == 0);
+	int i;
+
+	i = 0;
+	if (str[i] == '-')
+		i++;
+	else
+		return false;
+	while (str[i])
+	{
+		if (str[i] != 'n')
+			return false;
+		i++;
+	}
+	return true;
 }
 
 void	builtin_echo(t_shell *shell, t_cmd_table *cmd)
 {
 	int		i;
 	bool	print_nl;
+	bool	echo;
 
+	echo = false;
 	print_nl = true;
 	i = 1;
 	while (cmd->cmd_da->items[i])
 	{
-		if (!is_newline(cmd->cmd_da->items[i]))
-			ft_printf("%s", cmd->cmd_da->items[i]);
-		else
+		if (has_nl_flag(cmd->cmd_da->items[i]) && !echo)
 		{
 			print_nl = false;
 			i++;
-			continue ;
+			continue;
 		}
+		else
+			echo = true;
+		if (echo)
+			ft_printf("%s", cmd->cmd_da->items[i]);
 		if (cmd->cmd_da->items[i + 1])
 			ft_printf(" ");
 		i++;
