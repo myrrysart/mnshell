@@ -65,7 +65,7 @@ bool	handle_word(t_shell *sh, t_cmd_table *cmd, t_token **tok, int *first)
 			str_append(sh_work_arena(sh), str, rm_quote(sh, *tok));
 			*tok = (*tok)->next;
 		}
-		if (!((*tok)->next))
+		if (!((*tok)->next) || ((*tok)->next && (*tok)->next->wp))
 		{
 			str_append(sh_work_arena(sh), str, rm_quote(sh, *tok));
 			*tok = (*tok)->next;

@@ -62,9 +62,9 @@ t_token	*build_token(t_arena *arena, t_token token)
 	if (!new_token)
 		return (NULL);
 	new_token->content = arena_alloc(arena, token.content_len + 1);
-	if (!new_token->content)
-		return (NULL);
 	new_token->content_len = token.content_len;
+	if (!new_token->content || !new_token->content_len)
+		return (NULL);
 	new_token->type = token.type;
 	while (i < new_token->content_len && token.content[i])
 	{
