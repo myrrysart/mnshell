@@ -46,6 +46,11 @@ t_str	*str_init(t_arena *arena, size_t cap)
 
 void	str_append(t_arena *arena, t_str *str, char *item)
 {
+	int	i;
+
+	i = 0;
+	if (!str || !item)
+		return;
 	if (str->len + ft_strlen(item) >= str->cap)
 	{
 		while (str->len + ft_strlen(item) >= str->cap)
@@ -54,7 +59,7 @@ void	str_append(t_arena *arena, t_str *str, char *item)
 		if (!str->str)
 			return ;
 	}
-	while (*item)
-		str->str[str->len++] = *item++;
+	while (item[i])
+		str->str[str->len++] = item[i++];
 	str->str[str->len] = '\0';
 }

@@ -334,7 +334,6 @@ t_token							lexer_handle_other_token(t_lexer *l);
 bool							is_quote(const char c);
 
 // exec prototypes
-char							*exec_get_binary_path(char *cmd, char **env);
 char							*get_path(t_shell *shell, char *cmd);
 void							exec_pipe(t_shell *shell);
 void							exec_no_pipe(t_shell *shell);
