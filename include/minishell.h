@@ -335,7 +335,7 @@ bool							is_quote(const char c);
 
 // exec prototypes
 char							*exec_get_binary_path(char *cmd, char **env);
-char							*exec_copy_bin_path(t_shell *shell, char *cmd);
+char							*get_path(t_shell *shell, char *cmd);
 void							exec_pipe(t_shell *shell);
 void							exec_no_pipe(t_shell *shell);
 pid_t							exec_pipeline(t_shell *shell, t_cmd_table *cmd);

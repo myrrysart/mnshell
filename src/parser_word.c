@@ -45,6 +45,22 @@ static char	*rm_quote(t_shell *sh, t_token *tok)
 	return (parser_expand_dollar(sh, tok->content));
 }
 
+static void	handle_word_loop(t_shell *sh, t_cmd_table *cmd, t_token **tok,
+		t_str *str)
+{
+	while (*tok && (*tok)->next && !((*tok)->next->wp))
+	{
+		str_append(sh_work_arena(sh), str, rm_quote(sh, *tok));
+		*tok = (*tok)->next;
+	}
+	if (!((*tok)->next) || ((*tok)->next && (*tok)->next->wp))
+	{
+		str_append(sh_work_arena(sh), str, rm_quote(sh, *tok));
+		*tok = (*tok)->next;
+	}
+	da_append(sh_work_arena(sh), cmd->cmd_da, str->str);
+}
+
 bool	handle_word(t_shell *sh, t_cmd_table *cmd, t_token **tok, int *first)
 {
 	t_str	*str;
@@ -54,25 +70,13 @@ bool	handle_word(t_shell *sh, t_cmd_table *cmd, t_token **tok, int *first)
 		return (false);
 	if (*first && cmd->cmd_type == EXTERNAL)
 	{
-		str_append(sh_work_arena(sh), str, exec_copy_bin_path(sh, rm_quote(sh,
-					*tok)));
+		str_append(sh_work_arena(sh), str, get_path(sh, rm_quote(sh, *tok)));
 		da_append(sh_work_arena(sh), cmd->cmd_da, str->str);
 		*tok = (*tok)->next;
 	}
-	else if (!(*first) && (*tok)->wp && (*tok)->next && !((*tok)->next->wp))
-	{
-		while (*tok && (*tok)->next && !((*tok)->next->wp))
-		{
-			str_append(sh_work_arena(sh), str, rm_quote(sh, *tok));
-			*tok = (*tok)->next;
-		}
-		if (!((*tok)->next) || ((*tok)->next && (*tok)->next->wp))
-		{
-			str_append(sh_work_arena(sh), str, rm_quote(sh, *tok));
-			*tok = (*tok)->next;
-		}
-		da_append(sh_work_arena(sh), cmd->cmd_da, str->str);
-	}
+	else if (!(*first) && (*tok)->wp && (*tok)->next
+		&& (*tok)->next->type != PIPE && !((*tok)->next->wp))
+		handle_word_loop(sh, cmd, tok, str);
 	else
 	{
 		str_append(sh_work_arena(sh), str, rm_quote(sh, *tok));

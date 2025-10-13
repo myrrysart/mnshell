@@ -88,7 +88,7 @@ char	*exec_get_binary_path(char *cmd, char **env)
 	return (free_split(arr), full_cmd);
 }
 
-char	*exec_copy_bin_path(t_shell *shell, char *cmd)
+char	*get_path(t_shell *shell, char *cmd)
 {
 	char	*bin_cmd;
 	char	*arena_cmd;
