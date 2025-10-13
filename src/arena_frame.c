@@ -39,7 +39,7 @@ void	shell_end_frame(t_shell *sh)
 		arena_free(sh->frame_arena);
 	sh->frame_arena = NULL;
 	sh->active_arena = NULL;
-	sh->state &= ~(HAS_PIPE | IN_SQUOTE | IN_DQUOTE
-			| EVALUATING | HEREDOC_EXPAND);
+	sh->state &= ~(HAS_PIPE | IN_SQUOTE | IN_DQUOTE | EVALUATING
+			| HEREDOC_EXPAND);
 	sh->heredoc_index = -1;
 }

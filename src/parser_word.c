@@ -51,10 +51,11 @@ bool	handle_word(t_shell *sh, t_cmd_table *cmd, t_token **tok, int *first)
 
 	str = str_init(sh_work_arena(sh), STR_CAP);
 	if (!str)
-		return false;
+		return (false);
 	if (*first && cmd->cmd_type == EXTERNAL)
 	{
-		str_append(sh_work_arena(sh), str, exec_copy_bin_path(sh, rm_quote(sh, *tok)));
+		str_append(sh_work_arena(sh), str, exec_copy_bin_path(sh, rm_quote(sh,
+					*tok)));
 		da_append(sh_work_arena(sh), cmd->cmd_da, str->str);
 		*tok = (*tok)->next;
 	}

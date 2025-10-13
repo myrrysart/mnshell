@@ -46,10 +46,7 @@ static void	parse_and_execute(t_shell *shell)
 	t = build_token_list(shell, &l);
 	check_flag(shell, t);
 	if (!parser_is_syntax_correct(t))
-	{
-		write(STDERR_FILENO, "Syntax Error\n", 14);
 		return ;
-	}
 	shell->cmd = parser_cmd_build_many(shell, t);
 	if (!shell->cmd)
 		shell->state &= ~(HAS_PIPE | EVALUATING);

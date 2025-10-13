@@ -14,20 +14,27 @@
 
 static bool	has_nl_flag(const char *str)
 {
-	int i;
+	int	i;
 
 	i = 0;
 	if (str[i] == '-')
 		i++;
 	else
-		return false;
+		return (false);
 	while (str[i])
 	{
 		if (str[i] != 'n')
-			return false;
+			return (false);
 		i++;
 	}
-	return true;
+	return (true);
+}
+
+static void	init_echo(int *i, bool *print_nl, bool *echo)
+{
+	*i = 1;
+	*print_nl = true;
+	*echo = false;
 }
 
 void	builtin_echo(t_shell *shell, t_cmd_table *cmd)
@@ -36,16 +43,14 @@ void	builtin_echo(t_shell *shell, t_cmd_table *cmd)
 	bool	print_nl;
 	bool	echo;
 
-	echo = false;
-	print_nl = true;
-	i = 1;
+	init_echo(&i, &print_nl, &echo);
 	while (cmd->cmd_da->items[i])
 	{
 		if (has_nl_flag(cmd->cmd_da->items[i]) && !echo)
 		{
 			print_nl = false;
 			i++;
-			continue;
+			continue ;
 		}
 		else
 			echo = true;

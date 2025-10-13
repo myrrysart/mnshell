@@ -46,7 +46,7 @@ void	*arena_alloc(t_arena *arena, size_t size)
 
 	next = NULL;
 	if (size > arena->capacity)
-		return NULL;
+		return (NULL);
 	while (arena->cursor + size > arena->capacity)
 	{
 		if (arena->next == NULL)
