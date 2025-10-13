@@ -6,7 +6,7 @@
 /*   By: trupham <trupham@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/12 11:09:42 by trupham           #+#    #+#             */
-/*   Updated: 2025/10/13 15:37:01 by jyniemit         ###   ########.fr       */
+/*   Updated: 2025/10/13 15:40:29 by jyniemit         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,7 +33,7 @@ static void	free_split(char **arr)
 	int	i;
 
 	if (!arr)
-		return;
+		return ;
 	i = 0;
 	while (arr[i])
 		free(arr[i++]);
@@ -42,10 +42,10 @@ static void	free_split(char **arr)
 
 static char	*get_full_cmd(char **arr, char *cmd)
 {
-	int		i;
-	char	*tmp_cmd;
-	char	*full_cmd;
-	struct stat st;
+	int			i;
+	char		*tmp_cmd;
+	char		*full_cmd;
+	struct stat	st;
 
 	i = 0;
 	while (arr[i])
@@ -57,8 +57,8 @@ static char	*get_full_cmd(char **arr, char *cmd)
 		if (!full_cmd)
 			return (free(tmp_cmd), NULL);
 		free(tmp_cmd);
-		if (stat(full_cmd, &st) == 0 && S_ISREG(st.st_mode)
-			&& access(full_cmd, X_OK) == 0)
+		if (stat(full_cmd, &st) == 0 && S_ISREG(st.st_mode) && access(full_cmd,
+				X_OK) == 0)
 			return (full_cmd);
 		free(full_cmd);
 		i++;
@@ -116,7 +116,7 @@ char	*get_path(t_shell *shell, char *cmd)
 		free(bin_cmd);
 		return (NULL);
 	}
-	ft_strlcpy(arena_cmd, bin_cmd, len + 1);
+	ft_memcpy(arena_cmd, bin_cmd, ft_strlen(bin_cmd) + 1);
 	free(bin_cmd);
 	return (arena_cmd);
 }
@@ -132,7 +132,7 @@ int	map_exec_errno_to_exit(int err)
 {
 	if (err == ENOENT)
 		return (EXIT_CMD_NOT_FOUND);
-	if (err == EACCES || err == EISDIR || err == ENOTDIR)
+	if (err == EACCES || err == EISDIR || err == ENOTDIR || err == ENOEXEC)
 		return (EXIT_CMD_NOT_EXECUTABLE);
 	return (EXIT_CMD_NOT_EXECUTABLE);
 }
@@ -145,5 +145,3 @@ void	shell_update_code_from_status(t_shell *shell, int status)
 	else if (WIFSIGNALED(status))
 		shell->code = 128 + WTERMSIG(status);
 }
-
-

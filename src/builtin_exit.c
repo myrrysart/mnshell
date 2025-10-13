@@ -14,7 +14,7 @@
 
 void	builtin_exit(t_shell *shell, t_cmd_table *cmd)
 {
-	char		*arg;
+	char	*arg;
 	int		i;
 
 	arg = cmd->cmd_da->items[1];
@@ -50,4 +50,3 @@ void	builtin_exit(t_shell *shell, t_cmd_table *cmd)
 	if (!(shell->state & HAS_PIPE) && isatty(STDIN_FILENO))
 		write(STDOUT_FILENO, "exit\n", 5);
 }
-

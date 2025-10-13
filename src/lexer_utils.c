@@ -18,7 +18,7 @@ bool	is_operator(const char c)
 	int			i;
 
 	i = 0;
-	operators = "'\"|>< \n\t";
+	operators = "'\"|><;\\ \n\t";
 	while (operators[i])
 	{
 		if (c == operators[i])

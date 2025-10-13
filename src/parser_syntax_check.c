@@ -6,7 +6,7 @@
 /*   By: trupham <trupham@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/06 15:31:29 by trupham           #+#    #+#             */
-/*   Updated: 2025/10/06 15:31:43 by trupham          ###   ########.fr       */
+/*   Updated: 2025/10/13 20:55:21 by jyniemit         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -61,6 +61,8 @@ bool	parser_is_syntax_correct(t_token *token)
 		return (false);
 	while (token && token->next)
 	{
+		if (token->type == INVALID)
+			return (write(2, "Syntax error: invalid token\n", 30), false);
 		if (token->type == PIPE && (token->next->type != WORD || !token->prev))
 			return (write(2, "Syntax error: invalid pipe\n", 28), false);
 		if ((token->type == REDIRECT_OUT || token->type == REDIRECT_IN
@@ -70,5 +72,7 @@ bool	parser_is_syntax_correct(t_token *token)
 			return (write(2, "Syntax error: invalid redirect\n", 32), false);
 		token = token->next;
 	}
+	if (token && token->type == INVALID)
+		return (write(2, "Syntax error: invalid token\n", 30), false);
 	return (true);
 }

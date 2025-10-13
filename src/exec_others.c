@@ -6,7 +6,7 @@
 /*   By: jyniemit <jyniemit@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/30 17:23:53 by jyniemit          #+#    #+#             */
-/*   Updated: 2025/10/13 10:12:00 by jyniemit         ###   ########.fr       */
+/*   Updated: 2025/10/13 20:13:44 by jyniemit         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,7 @@
 
 void	builtin_select(t_shell *shell, t_cmd_table *cmd)
 {
-	const t_builtin	builtin_table[BUILTIN_COUNT] = {
+	const t_builtin builtin_table[BUILTIN_COUNT] = {
 		builtin_cd,
 		builtin_echo,
 		builtin_exit,
@@ -23,7 +23,6 @@ void	builtin_select(t_shell *shell, t_cmd_table *cmd)
 		builtin_unset,
 		builtin_env,
 	};
-
 	builtin_table[cmd->cmd_type](shell, cmd);
 }
 
@@ -44,7 +43,8 @@ void	exec_no_pipe(t_shell *shell)
 {
 	pid_t		child;
 	t_cmd_table	*cmd;
-	int		status;
+	int			status;
+	struct stat	st;
 
 	cmd = shell->cmd;
 	if (cmd->cmd_type != EXTERNAL)
@@ -59,23 +59,21 @@ void	exec_no_pipe(t_shell *shell)
 	}
 	if (child == 0)
 	{
+		setup_child_signals();
 		exec_child_no_pipe_prep(cmd);
-		/* Special-case: '.' with no arguments should be a builtin error */
 		if (cmd->cmd_da && cmd->cmd_da->count == 1
 			&& ft_strncmp(cmd->cmd_da->items[0], ".", 2) == 0)
 		{
 			ft_putendl_fd(".: filename argument required", 2);
-			_exit(EXIT_BUILTIN_MISUSE);
+			exit(EXIT_BUILTIN_MISUSE);
 		}
-		/* If target is a directory, print friendly message */
 		if (cmd->cmd_da && cmd->cmd_da->items[0])
 		{
-			struct stat st;
 			if (stat(cmd->cmd_da->items[0], &st) == 0 && S_ISDIR(st.st_mode))
 			{
 				ft_putstr_fd(cmd->cmd_da->items[0], 2);
 				ft_putendl_fd(": Is a directory", 2);
-				_exit(EXIT_CMD_NOT_EXECUTABLE);
+				exit(EXIT_CMD_NOT_EXECUTABLE);
 			}
 		}
 		execve(cmd->cmd_da->items[0], cmd->cmd_da->items, shell->heap_env);
@@ -87,7 +85,10 @@ void	exec_no_pipe(t_shell *shell)
 		else if (errno == ENOENT)
 		{
 			ft_putstr_fd(cmd->cmd_da->items[0], 2);
-			ft_putendl_fd(": No such file or directory", 2);
+			if (ft_strchr(cmd->cmd_da->items[0], '/'))
+				ft_putendl_fd(": No such file or directory", 2);
+			else
+				ft_putendl_fd(": Command not found.", 2);
 		}
 		else if (errno == ENOTDIR)
 		{
@@ -99,6 +100,11 @@ void	exec_no_pipe(t_shell *shell)
 			ft_putstr_fd(cmd->cmd_da->items[0], 2);
 			ft_putendl_fd(": Is a directory", 2);
 		}
+		else if (errno == ENOEXEC)
+		{
+			ft_putstr_fd(cmd->cmd_da->items[0], 2);
+			ft_putendl_fd(": Exec format error", 2);
+		}
 		_exit(map_exec_errno_to_exit(errno));
 	}
 	waitpid(child, &status, 0);
@@ -106,14 +112,13 @@ void	exec_no_pipe(t_shell *shell)
 	exec_cleanup_parent(cmd);
 }
 
-
 /*looping through the command table and execute each command
  */
 void	exec_pipe(t_shell *shell)
 {
 	t_cmd_table	*cmd;
 	pid_t		child;
-	int		status;
+	int			status;
 
 	cmd = shell->cmd;
 	while (cmd)
@@ -143,5 +148,3 @@ void	exec_pipe(t_shell *shell)
 		}
 	}
 }
-
-

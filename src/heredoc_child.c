@@ -15,7 +15,8 @@
 static void	heredoc_delim_error_message(char *delim)
 {
 	ft_putstr_fd("minishell: warning: here-document delimited \
-by end-of-file (wanted \'", STDERR_FILENO);
+by end-of-file (wanted \'",
+					STDERR_FILENO);
 	ft_putstr_fd(delim, STDERR_FILENO);
 	ft_putstr_fd("\')\n", STDERR_FILENO);
 }
@@ -35,25 +36,13 @@ static void	hd_proc_readl(t_shell *sh, int write_fd, char *delim, int *flag)
 {
 	int		expand;
 	char	*line;
-	int		interactive;
 
 	expand = (sh->state & HEREDOC_EXPAND) != 0;
-	interactive = isatty(STDIN_FILENO);
 	while (1)
 	{
-		if (interactive)
-			line = readline("> ");
-		else
-			line = get_next_line(STDIN_FILENO);
+		line = readline("> ");
 		if (!line)
 			break ;
-		if (!interactive)
-		{
-			/* strip trailing newline from gnl */
-			size_t len = ft_strlen(line);
-			if (len > 0 && line[len - 1] == '\n')
-				line[len - 1] = '\0';
-		}
 		if (ft_strlen(line) == ft_strlen(delim) && !ft_strncmp(line, delim,
 				ft_strlen(delim)))
 		{
@@ -92,7 +81,7 @@ void	heredoc_child(t_shell *sh, int write_fd, char *delim)
 	close(write_fd);
 	if (!received_delim)
 		heredoc_delim_error_message(delim);
-	while(*delim)
+	while (*delim)
 	{
 		*delim = '\0';
 		delim++;

@@ -2,7 +2,8 @@
 /*                                                                            */
 /*                                                        :::      ::::::::   */
 /*   builtin_export.c                                   :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+      */
+/*                                                    +:+ +:+
+	+:+      */
 /*   By: jyniemit <jyniemit@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/02 15:41:58 by jyniemit          #+#    #+#             */
@@ -124,7 +125,6 @@ static void	print_env_sorted_ascii(t_shell *shell)
 		}
 		if (idx == -1)
 			break ;
-		/* print all entries equal to current minimum to handle duplicates */
 		i = -1;
 		while (++i < shell->env_count)
 			if (ascii_cmp(shell->heap_env[i], min_str) == 0)

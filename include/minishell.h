@@ -6,7 +6,7 @@
 /*   By: jyniemit <jyniemit@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/29 13:40:26 by jyniemit          #+#    #+#             */
-/*   Updated: 2025/10/13 15:36:03 by jyniemit         ###   ########.fr       */
+/*   Updated: 2025/10/13 20:57:37 by jyniemit         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,8 +34,8 @@
 # include <fcntl.h>
 # include <stdbool.h>
 # include <stddef.h>
-# include <sys/wait.h>
 # include <sys/stat.h>
+# include <sys/wait.h>
 # define MAX_PROCESSES 30587
 # define ARG_MAX 4096
 # define WR 1
@@ -48,6 +48,7 @@
 # ifndef STR_CAP
 #  define STR_CAP 16
 # endif // DA_CAP
+
 extern volatile sig_atomic_t	g_received_signal;
 
 // arena prototype
@@ -246,6 +247,8 @@ typedef struct s_buf
 }								t_buf;
 
 void							init_signals(t_shell *shell);
+void							setup_child_signals(void);
+void							setup_heredoc_signals(void);
 void							init_shell(char **av, char **env,
 									t_shell *shell);
 void							run_shell(t_shell *shell);
@@ -300,7 +303,8 @@ t_da							*da_cmd_init(t_arena *arena, size_t cap);
 void							parser_da_append(char **da, char *str);
 void							da_append(t_arena *arena, t_da *da, char *item);
 t_str							*str_init(t_arena *arena, size_t cap);
-void							str_append(t_arena *arena, t_str *str, char *item);
+void							str_append(t_arena *arena, t_str *str,
+									char *item);
 t_cmd_table						*parser_cmd_build_one(t_shell *shell,
 									t_token *token);
 t_cmd_table						*parser_cmd_build_many(t_shell *shell,
@@ -343,14 +347,16 @@ pid_t							exec_pipeline(t_shell *shell, t_cmd_table *cmd);
 void							exec_prep(t_cmd_table *cmd,
 									t_pipe_line *pipeline);
 void							exec_apply_redirs(t_cmd_table *cmd);
-void							exec_builtin_with_redirs(t_shell *shell, t_cmd_table *cmd);
+void							exec_builtin_with_redirs(t_shell *shell,
+									t_cmd_table *cmd);
 void							close_pipe(t_pipe_line *pipe);
-void							shell_abort_eval(t_shell *shell, t_shell_code code);
-void							shell_update_code_from_status(t_shell *shell, int status);
+void							shell_abort_eval(t_shell *shell,
+									t_shell_code code);
+void							shell_update_code_from_status(t_shell *shell,
+									int status);
 int								map_exec_errno_to_exit(int err);
 
 // execution
-void						builtin_select(t_shell *shell,
-								t_cmd_table *cmd);
+void							builtin_select(t_shell *shell,
+									t_cmd_table *cmd);
 #endif // MINISHELL_H
-

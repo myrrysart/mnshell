@@ -6,7 +6,7 @@
 /*   By: trupham <trupham@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/19 11:46:53 by trupham           #+#    #+#             */
-/*   Updated: 2025/10/13 10:12:00 by jyniemit         ###   ########.fr       */
+/*   Updated: 2025/10/13 20:14:13 by jyniemit         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,6 +16,7 @@ pid_t	exec_pipeline(t_shell *shell, t_cmd_table *cmd)
 {
 	t_pipe_line	*pipeline;
 	pid_t		child;
+	struct stat	st;
 
 	pipeline = shell->pipeline;
 	if (pipe(pipeline->pipe) < 0)
@@ -23,21 +24,20 @@ pid_t	exec_pipeline(t_shell *shell, t_cmd_table *cmd)
 	child = fork();
 	if (child == 0)
 	{
+		setup_child_signals();
 		exec_prep(cmd, pipeline);
 		if (cmd->cmd_type == EXTERNAL)
 		{
-			/* Special-case: '.' with no arguments should be a builtin error */
 			if (cmd->cmd_da && cmd->cmd_da->count == 1
 				&& ft_strncmp(cmd->cmd_da->items[0], ".", 2) == 0)
 			{
 				ft_putendl_fd(".: filename argument required", 2);
 				_exit(EXIT_BUILTIN_MISUSE);
 			}
-			/* If target is a directory, print friendly message */
 			if (cmd->cmd_da && cmd->cmd_da->items[0])
 			{
-				struct stat st;
-				if (stat(cmd->cmd_da->items[0], &st) == 0 && S_ISDIR(st.st_mode))
+				if (stat(cmd->cmd_da->items[0], &st) == 0
+					&& S_ISDIR(st.st_mode))
 				{
 					ft_putstr_fd(cmd->cmd_da->items[0], 2);
 					ft_putendl_fd(": Is a directory", 2);
@@ -53,7 +53,10 @@ pid_t	exec_pipeline(t_shell *shell, t_cmd_table *cmd)
 			else if (errno == ENOENT)
 			{
 				ft_putstr_fd(cmd->cmd_da->items[0], 2);
-				ft_putendl_fd(": No such file or directory", 2);
+				if (ft_strchr(cmd->cmd_da->items[0], '/'))
+					ft_putendl_fd(": No such file or directory", 2);
+				else
+					ft_putendl_fd(": Command not found.", 2);
 			}
 			else if (errno == ENOTDIR)
 			{
@@ -64,6 +67,11 @@ pid_t	exec_pipeline(t_shell *shell, t_cmd_table *cmd)
 			{
 				ft_putstr_fd(cmd->cmd_da->items[0], 2);
 				ft_putendl_fd(": Is a directory", 2);
+			}
+			else if (errno == ENOEXEC)
+			{
+				ft_putstr_fd(cmd->cmd_da->items[0], 2);
+				ft_putendl_fd(": Exec format error", 2);
 			}
 			_exit(map_exec_errno_to_exit(errno));
 		}

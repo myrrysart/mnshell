@@ -6,7 +6,7 @@
 /*   By: jyniemit <jyniemit@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/16 13:05:20 by jyniemit          #+#    #+#             */
-/*   Updated: 2025/10/08 14:53:25 by jyniemit         ###   ########.fr       */
+/*   Updated: 2025/10/13 20:15:47 by jyniemit         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,21 +51,6 @@ static int	heredoc_generic_error(int *pfd, int return_nbr)
 	return (return_nbr);
 }
 
-static void	hd_parent_write_line(t_shell *sh, int write_fd, char *line, int expand)
-{
-	if (expand)
-	{
-		char *proc = expand_heredoc_line(sh, line);
-		if (proc)
-			write(write_fd, proc, ft_strlen(proc));
-		else
-			write(write_fd, line, ft_strlen(line));
-	}
-	else
-		write(write_fd, line, ft_strlen(line));
-	write(write_fd, "\n", 1);
-}
-
 int	read_heredoc(t_shell *sh)
 {
 	int					pfd[2];
@@ -73,45 +58,10 @@ int	read_heredoc(t_shell *sh)
 	int					st;
 	struct sigaction	old_int;
 
-	if (sh->heredoc_count > 8)
+	if (sh->heredoc_count >= MAX_HEREDOCS)
 		return (heredoc_generic_error(pfd, -2));
 	if (pipe(pfd) < 0)
 		return (-1);
-	/* In non-interactive mode, consume from parent's GNL buffer */
-	if (!isatty(STDIN_FILENO))
-	{
-		int expand = (sh->state & HEREDOC_EXPAND) != 0;
-		char *line;
-		while (1)
-		{
-			line = get_next_line(STDIN_FILENO);
-			if (!line)
-			{
-				ft_putstr_fd("minishell: warning: here-document delimited by end-of-file (wanted '", STDERR_FILENO);
-				ft_putstr_fd(sh->heredoc_delim[sh->heredoc_index], STDERR_FILENO);
-				ft_putendl_fd("')", STDERR_FILENO);
-				break;
-			}
-			size_t len = ft_strlen(line);
-			if (len > 0 && line[len - 1] == '\n')
-				line[len - 1] = '\0';
-			if (ft_strlen(line) == ft_strlen(sh->heredoc_delim[sh->heredoc_index])
-				&& !ft_strncmp(line, sh->heredoc_delim[sh->heredoc_index], ft_strlen(sh->heredoc_delim[sh->heredoc_index])))
-			{
-				free(line);
-				break;
-			}
-			hd_parent_write_line(sh, pfd[WR], line, expand);
-			free(line);
-		}
-		/* clear delimiter buffer */
-		char *d = sh->heredoc_delim[sh->heredoc_index];
-		while (*d)
-			*(d++) = '\0';
-		close(pfd[WR]);
-		return (pfd[RD]);
-	}
-	/* Interactive: fork and read via readline */
 	enter_heredoc(sh, &old_int);
 	pid = fork();
 	if (pid < 0)
