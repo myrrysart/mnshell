@@ -6,7 +6,7 @@
 /*   By: trupham <trupham@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/12 11:09:42 by trupham           #+#    #+#             */
-/*   Updated: 2025/10/13 15:32:18 by jyniemit         ###   ########.fr       */
+/*   Updated: 2025/10/13 15:37:01 by jyniemit         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,7 +21,7 @@ static char	*ft_getenv(char **env, char *name)
 	len = ft_strlen(name);
 	while (env[i])
 	{
-		if (ft_strncmp(env[i], name, len) == 0)
+		if (ft_strncmp(env[i], name, len) == 0 && env[i][len] == '=')
 			return (ft_substr(env[i], len + 1, ft_strlen(env[i]) - len - 1));
 		i++;
 	}
@@ -32,6 +32,8 @@ static void	free_split(char **arr)
 {
 	int	i;
 
+	if (!arr)
+		return;
 	i = 0;
 	while (arr[i])
 		free(arr[i++]);
@@ -43,6 +45,7 @@ static char	*get_full_cmd(char **arr, char *cmd)
 	int		i;
 	char	*tmp_cmd;
 	char	*full_cmd;
+	struct stat st;
 
 	i = 0;
 	while (arr[i])
@@ -54,10 +57,10 @@ static char	*get_full_cmd(char **arr, char *cmd)
 		if (!full_cmd)
 			return (free(tmp_cmd), NULL);
 		free(tmp_cmd);
-		if (access(full_cmd, F_OK | X_OK) == 0)
+		if (stat(full_cmd, &st) == 0 && S_ISREG(st.st_mode)
+			&& access(full_cmd, X_OK) == 0)
 			return (full_cmd);
-		else
-			free(full_cmd);
+		free(full_cmd);
 		i++;
 	}
 	return (NULL);
@@ -95,6 +98,8 @@ char	*get_path(t_shell *shell, char *cmd)
 
 	if (ft_strlen(cmd) <= 0)
 		return (NULL);
+	if (ft_strncmp(cmd, ".", 2) == 0)
+		return (cmd);
 	if (ft_strchr(cmd, '/'))
 		return (cmd);
 	bin_cmd = exec_get_binary_path(cmd, shell->heap_env);
@@ -107,8 +112,11 @@ char	*get_path(t_shell *shell, char *cmd)
 	}
 	arena_cmd = arena_alloc(sh_work_arena(shell), ft_strlen(bin_cmd) + 1);
 	if (!arena_cmd)
+	{
+		free(bin_cmd);
 		return (NULL);
-	ft_memcpy(arena_cmd, bin_cmd, ft_strlen(bin_cmd));
+	}
+	ft_strlcpy(arena_cmd, bin_cmd, len + 1);
 	free(bin_cmd);
 	return (arena_cmd);
 }
@@ -137,4 +145,5 @@ void	shell_update_code_from_status(t_shell *shell, int status)
 	else if (WIFSIGNALED(status))
 		shell->code = 128 + WTERMSIG(status);
 }
+
 

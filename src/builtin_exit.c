@@ -47,7 +47,7 @@ void	builtin_exit(t_shell *shell, t_cmd_table *cmd)
 		shell->code = (unsigned char)ft_atoi(arg);
 	}
 	shell->state |= SHOULD_EXIT;
-	if (!(shell->state & HAS_PIPE))
+	if (!(shell->state & HAS_PIPE) && isatty(STDIN_FILENO))
 		write(STDOUT_FILENO, "exit\n", 5);
 }
 

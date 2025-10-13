@@ -61,7 +61,7 @@ static void	parse_and_execute(t_shell *shell)
 	check_flag(shell, t);
 	if (!parser_is_syntax_correct(t))
 	{
-		write(STDERR_FILENO, "Syntax Error\n", 14);
+		write(STDERR_FILENO, "Syntax Error\n", 13);
 		shell_abort_eval(shell, EXIT_PARSE_ERROR);
 		return ;
 	}
@@ -85,21 +85,43 @@ static void	parse_and_execute(t_shell *shell)
 void	run_shell(t_shell *shell)
 {
 	char	*line;
+	int		interactive;
 
+	interactive = isatty(STDIN_FILENO);
 	while (!(shell->state & SHOULD_EXIT))
 	{
 		if (g_received_signal)
 			handle_signal(shell, g_received_signal);
-		line = readline(PROMPT);
+		if (interactive)
+			line = readline(PROMPT);
+		else
+			line = get_next_line(STDIN_FILENO);
 		if (!line)
 		{
-			write(STDOUT_FILENO, "exit\n", 6);
+			if (interactive)
+				write(STDOUT_FILENO, "exit\n", 5);
 			shell->state |= SHOULD_EXIT;
 			break ;
 		}
+		if (!interactive)
+		{
+			/* strip trailing newline for non-interactive */
+			size_t len = ft_strlen(line);
+			if (len > 0 && line[len - 1] == '\n')
+				line[len - 1] = '\0';
+		}
+		/* ignore comment lines starting with optional whitespace then '#' */
+		{
+			char *p = line;
+			while (*p == ' ' || *p == '\t')
+				p++;
+			if (*p == '#')
+				line[0] = '\0';
+		}
 		if (*line)
 		{
-			add_history(line);
+			if (interactive)
+				add_history(line);
 			ft_strlcpy(shell->command_line, line, ARG_MAX - 1);
 			shell->command_line[ARG_MAX - 1] = '\0';
 			shell->state |= EVALUATING;

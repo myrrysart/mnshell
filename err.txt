@@ -1,0 +1,3 @@
+.: Command not found.
+./: Is a directory
+..: Command not found.

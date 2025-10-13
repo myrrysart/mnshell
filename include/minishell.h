@@ -35,6 +35,7 @@
 # include <stdbool.h>
 # include <stddef.h>
 # include <sys/wait.h>
+# include <sys/stat.h>
 # define MAX_PROCESSES 30587
 # define ARG_MAX 4096
 # define WR 1
