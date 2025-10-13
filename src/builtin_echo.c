@@ -55,12 +55,12 @@ void	builtin_echo(t_shell *shell, t_cmd_table *cmd)
 		else
 			echo = true;
 		if (echo)
-			ft_printf("%s", cmd->cmd_da->items[i]);
+			ft_putstr_fd(cmd->cmd_da->items[i], cmd->fd_out);
 		if (cmd->cmd_da->items[i + 1])
-			ft_printf(" ");
+			ft_putstr_fd(" ", cmd->fd_out);
 		i++;
 	}
 	if (print_nl)
-		ft_printf("\n");
+		ft_putstr_fd("\n", cmd->fd_out);
 	shell->code = OK;
 }

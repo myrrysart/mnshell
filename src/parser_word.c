@@ -61,6 +61,14 @@ static void	handle_word_loop(t_shell *sh, t_cmd_table *cmd, t_token **tok,
 	da_append(sh_work_arena(sh), cmd->cmd_da, str->str);
 }
 
+static bool	parser_is_operator(t_token_type type)
+{
+	if (type == HEREDOC || type == REDIRECT_IN || type == REDIRECT_OUT
+		|| type == PIPE || type == APPEND)
+		return (true);
+	return (false);
+}
+
 bool	handle_word(t_shell *sh, t_cmd_table *cmd, t_token **tok, int *first)
 {
 	t_str	*str;
@@ -75,7 +83,7 @@ bool	handle_word(t_shell *sh, t_cmd_table *cmd, t_token **tok, int *first)
 		*tok = (*tok)->next;
 	}
 	else if (!(*first) && (*tok)->wp && (*tok)->next
-		&& (*tok)->next->type != PIPE && !((*tok)->next->wp))
+		&& !parser_is_operator((*tok)->next->type) && !((*tok)->next->wp))
 		handle_word_loop(sh, cmd, tok, str);
 	else
 	{
