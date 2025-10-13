@@ -6,7 +6,7 @@
 /*   By: jyniemit <jyniemit@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/07 18:53:40 by jyniemit          #+#    #+#             */
-/*   Updated: 2025/10/07 18:59:53 by jyniemit         ###   ########.fr       */
+/*   Updated: 2025/10/10 11:28:31 by trupham          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,7 +28,7 @@ static char	*unquoate_token(t_shell *sh, t_token *tok)
 	return (inner);
 }
 
-static char	*build_arg_from_token(t_shell *sh, t_token *tok)
+static char	*rm_quote(t_shell *sh, t_token *tok)
 {
 	char	*inner;
 
@@ -45,16 +45,52 @@ static char	*build_arg_from_token(t_shell *sh, t_token *tok)
 	return (parser_expand_dollar(sh, tok->content));
 }
 
+static void	handle_word_loop(t_shell *sh, t_cmd_table *cmd, t_token **tok,
+		t_str *str)
+{
+	while (*tok && (*tok)->next && !((*tok)->next->wp))
+	{
+		str_append(sh_work_arena(sh), str, rm_quote(sh, *tok));
+		*tok = (*tok)->next;
+	}
+	if (!((*tok)->next) || ((*tok)->next && (*tok)->next->wp))
+	{
+		str_append(sh_work_arena(sh), str, rm_quote(sh, *tok));
+		*tok = (*tok)->next;
+	}
+	da_append(sh_work_arena(sh), cmd->cmd_da, str->str);
+}
+
+static bool	parser_is_operator(t_token_type type)
+{
+	if (type == HEREDOC || type == REDIRECT_IN || type == REDIRECT_OUT
+		|| type == PIPE || type == APPEND)
+		return (true);
+	return (false);
+}
+
 bool	handle_word(t_shell *sh, t_cmd_table *cmd, t_token **tok, int *first)
 {
-	char	*arg;
+	t_str	*str;
 
-	arg = build_arg_from_token(sh, *tok);
+	str = str_init(sh_work_arena(sh), STR_CAP);
+	if (!str)
+		return (false);
 	if (*first && cmd->cmd_type == EXTERNAL)
-		arg = exec_copy_bin_path(sh, arg);
-	if (arg)
-		da_append(sh_work_arena(sh), cmd->cmd_da, arg);
+	{
+		str_append(sh_work_arena(sh), str, get_path(sh, rm_quote(sh, *tok)));
+		da_append(sh_work_arena(sh), cmd->cmd_da, str->str);
+		*tok = (*tok)->next;
+	}
+	else if (!(*first) && (*tok)->wp && (*tok)->next
+		&& !parser_is_operator((*tok)->next->type) && !((*tok)->next->wp))
+		handle_word_loop(sh, cmd, tok, str);
+	else
+	{
+		str_append(sh_work_arena(sh), str, rm_quote(sh, *tok));
+		da_append(sh_work_arena(sh), cmd->cmd_da, str->str);
+		*tok = (*tok)->next;
+	}
 	*first = 0;
-	*tok = (*tok)->next;
 	return (true);
 }

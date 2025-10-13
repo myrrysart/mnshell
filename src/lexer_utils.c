@@ -33,10 +33,17 @@ bool	is_quote(const char c)
 	return (c == '\'' || c == '\"');
 }
 
-void	trim_left(t_lexer *l)
+bool	trim_left(t_lexer *l)
 {
+	size_t	count;
+
+	count = 0;
 	while (ft_isspace(l->content[l->cursor]) && l->cursor < l->content_len)
+	{
+		count++;
 		l->cursor++;
+	}
+	return (count > 0);
 }
 
 t_token_type	get_token_type(const char c)

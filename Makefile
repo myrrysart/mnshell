@@ -64,6 +64,7 @@ SOURCES = \
 	shell_environment.c \
 	signals.c \
 	signal_setups.c \
+	str_builder.c \
 
 OBJECTS = $(SOURCES:%.c=$(OBJDIR)/%.o)
 SRCFILES = $(addprefix $(SRCDIR)/, $(SOURCES))
@@ -92,7 +93,7 @@ fclean: clean
 	rm -f $(NAME)
 	make -C $(LIBFTDIR) fclean
 
-debug: fclean
+debug:
 	$(MAKE) CFLAGS="$(CFLAGS) -g" all
 
 re: fclean all

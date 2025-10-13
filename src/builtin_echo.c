@@ -12,33 +12,55 @@
 
 #include "minishell.h"
 
-static bool	is_newline(const char *str)
+static bool	has_nl_flag(const char *str)
 {
-	return (ft_strncmp(str, "-n", 3) == 0);
+	int	i;
+
+	i = 0;
+	if (str[i] == '-')
+		i++;
+	else
+		return (false);
+	while (str[i])
+	{
+		if (str[i] != 'n')
+			return (false);
+		i++;
+	}
+	return (true);
+}
+
+static void	init_echo(int *i, bool *print_nl, bool *echo)
+{
+	*i = 1;
+	*print_nl = true;
+	*echo = false;
 }
 
 void	builtin_echo(t_shell *shell, t_cmd_table *cmd)
 {
 	int		i;
 	bool	print_nl;
+	bool	echo;
 
-	print_nl = true;
-	i = 1;
+	init_echo(&i, &print_nl, &echo);
 	while (cmd->cmd_da->items[i])
 	{
-		if (!is_newline(cmd->cmd_da->items[i]))
-			ft_printf("%s", cmd->cmd_da->items[i]);
-		else
+		if (has_nl_flag(cmd->cmd_da->items[i]) && !echo)
 		{
 			print_nl = false;
 			i++;
 			continue ;
 		}
+		else
+			echo = true;
+		if (echo)
+			ft_putstr_fd(cmd->cmd_da->items[i], cmd->fd_out);
 		if (cmd->cmd_da->items[i + 1])
-			ft_printf(" ");
+			ft_putstr_fd(" ", cmd->fd_out);
 		i++;
 	}
 	if (print_nl)
-		ft_printf("\n");
+		ft_putstr_fd("\n", cmd->fd_out);
 	shell->code = OK;
 }

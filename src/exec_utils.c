@@ -54,7 +54,7 @@ static char	*get_full_cmd(char **arr, char *cmd)
 		if (!full_cmd)
 			return (free(tmp_cmd), NULL);
 		free(tmp_cmd);
-		if (access(full_cmd, X_OK) == 0)
+		if (access(full_cmd, F_OK | X_OK) == 0)
 			return (full_cmd);
 		else
 			free(full_cmd);
@@ -69,7 +69,7 @@ static char	*get_full_cmd(char **arr, char *cmd)
  * @return: the whole path to the command: /usr/bin/cat
  */
 
-char	*exec_get_binary_path(char *cmd, char **env)
+static char	*exec_get_binary_path(char *cmd, char **env)
 {
 	char	*path;
 	char	**arr;
@@ -88,7 +88,7 @@ char	*exec_get_binary_path(char *cmd, char **env)
 	return (free_split(arr), full_cmd);
 }
 
-char	*exec_copy_bin_path(t_shell *shell, char *cmd)
+char	*get_path(t_shell *shell, char *cmd)
 {
 	char	*bin_cmd;
 	char	*arena_cmd;
@@ -100,7 +100,7 @@ char	*exec_copy_bin_path(t_shell *shell, char *cmd)
 	bin_cmd = exec_get_binary_path(cmd, shell->heap_env);
 	if (!bin_cmd)
 		return (cmd);
-	arena_cmd = arena_alloc(sh_work_arena(shell), ft_strlen(bin_cmd));
+	arena_cmd = arena_alloc(sh_work_arena(shell), ft_strlen(bin_cmd) + 1);
 	if (!arena_cmd)
 		return (NULL);
 	ft_memcpy(arena_cmd, bin_cmd, ft_strlen(bin_cmd));

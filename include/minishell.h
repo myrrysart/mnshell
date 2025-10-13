@@ -6,7 +6,7 @@
 /*   By: jyniemit <jyniemit@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/29 13:40:26 by jyniemit          #+#    #+#             */
-/*   Updated: 2025/10/07 19:13:07 by jyniemit         ###   ########.fr       */
+/*   Updated: 2025/10/10 11:57:32 by trupham          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,9 +20,9 @@
 // STDIN_FILENO, STDOUT_FILENO, STDERR_FILENO
 # include <unistd.h>
 // readline
+# include <stdio.h>
 # include <readline/history.h>
 # include <readline/readline.h>
-# include <stdio.h>
 # include <stdlib.h>
 // sigaction & signals
 # include <signal.h>
@@ -44,7 +44,9 @@
 # ifndef DA_CAP
 #  define DA_CAP 128
 # endif // DA_CAP
-
+# ifndef STR_CAP
+#  define STR_CAP 16
+# endif // DA_CAP
 extern volatile sig_atomic_t	g_received_signal;
 
 // arena prototype
@@ -168,6 +170,7 @@ typedef struct s_token
 {
 	t_token_type				type;
 	size_t						content_len;
+	bool						wp;
 	char						*content;
 	struct s_token				*next;
 	struct s_token				*prev;
@@ -210,6 +213,13 @@ typedef struct s_da
 	size_t						count;
 	size_t						cap;
 }								t_da;
+
+typedef struct s_str
+{
+	char						*str;
+	size_t						len;
+	size_t						cap;
+}								t_str;
 
 typedef struct s_cmd
 {
@@ -284,11 +294,11 @@ void							builtin_unset(t_shell *shell, t_cmd_table *cmd);
 char							*find_executable_path(char *cmd, char **env);
 
 // parser prototypes
-void							*ft_realloc(t_arena *arena, char **src,
-									size_t src_size, size_t new_size);
 t_da							*da_cmd_init(t_arena *arena, size_t cap);
 void							parser_da_append(char **da, char *str);
 void							da_append(t_arena *arena, t_da *da, char *item);
+t_str							*str_init(t_arena *arena, size_t cap);
+void							str_append(t_arena *arena, t_str *str, char *item);
 t_cmd_table						*parser_cmd_build_one(t_shell *shell,
 									t_token *token);
 t_cmd_table						*parser_cmd_build_many(t_shell *shell,
@@ -314,18 +324,17 @@ t_lexer							build_lexer(char *content);
 t_token							get_next_token(t_lexer *l);
 t_token_type					get_token_type(const char c);
 bool							is_operator(const char c);
-void							trim_left(t_lexer *l);
+bool							trim_left(t_lexer *l);
 t_token							lexer_handle_append(t_lexer *l);
 t_token							lexer_handle_heredoc(t_lexer *l);
-t_token							lexer_handle_word(t_lexer *l);
-t_token							lexer_handle_squote(t_lexer *l);
-t_token							lexer_handle_dquote(t_lexer *l);
+t_token							lexer_handle_word(t_lexer *l, bool wp);
+t_token							lexer_handle_squote(t_lexer *l, bool wp);
+t_token							lexer_handle_dquote(t_lexer *l, bool wp);
 t_token							lexer_handle_other_token(t_lexer *l);
 bool							is_quote(const char c);
 
 // exec prototypes
-char							*exec_get_binary_path(char *cmd, char **env);
-char							*exec_copy_bin_path(t_shell *shell, char *cmd);
+char							*get_path(t_shell *shell, char *cmd);
 void							exec_pipe(t_shell *shell);
 void							exec_no_pipe(t_shell *shell);
 pid_t							exec_pipeline(t_shell *shell, t_cmd_table *cmd);

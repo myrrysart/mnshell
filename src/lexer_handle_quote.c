@@ -12,10 +12,11 @@
 
 #include "minishell.h"
 
-t_token	lexer_handle_squote(t_lexer *l)
+t_token	lexer_handle_squote(t_lexer *l, bool wp)
 {
 	t_token	token;
 
+	token.wp = wp;
 	token.type = SQUOTE;
 	token.content = &l->content[l->cursor];
 	l->cursor++;
@@ -37,10 +38,11 @@ t_token	lexer_handle_squote(t_lexer *l)
 	return (token);
 }
 
-t_token	lexer_handle_dquote(t_lexer *l)
+t_token	lexer_handle_dquote(t_lexer *l, bool wp)
 {
 	t_token	token;
 
+	token.wp = wp;
 	token.type = DQUOTE;
 	token.content = &l->content[l->cursor];
 	l->cursor++;
