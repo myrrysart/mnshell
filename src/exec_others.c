@@ -6,7 +6,7 @@
 /*   By: jyniemit <jyniemit@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/30 17:23:53 by jyniemit          #+#    #+#             */
-/*   Updated: 2025/10/13 20:13:44 by jyniemit         ###   ########.fr       */
+/*   Updated: 2025/10/14 17:06:12 by jyniemit         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -65,7 +65,7 @@ void	exec_no_pipe(t_shell *shell)
 			&& ft_strncmp(cmd->cmd_da->items[0], ".", 2) == 0)
 		{
 			ft_putendl_fd(".: filename argument required", 2);
-			exit(EXIT_BUILTIN_MISUSE);
+			child_cleanup_and_exit(shell, cmd, EXIT_BUILTIN_MISUSE);
 		}
 		if (cmd->cmd_da && cmd->cmd_da->items[0])
 		{
@@ -73,8 +73,12 @@ void	exec_no_pipe(t_shell *shell)
 			{
 				ft_putstr_fd(cmd->cmd_da->items[0], 2);
 				ft_putendl_fd(": Is a directory", 2);
-				exit(EXIT_CMD_NOT_EXECUTABLE);
+				child_cleanup_and_exit(shell, cmd, EXIT_CMD_NOT_EXECUTABLE);
 			}
+		}
+		if (!cmd->cmd_da || !cmd->cmd_da->items[0]) {
+			ft_putendl_fd("Command not found.", 2);
+			child_cleanup_and_exit(shell, cmd, EXIT_CMD_NOT_FOUND);
 		}
 		execve(cmd->cmd_da->items[0], cmd->cmd_da->items, shell->heap_env);
 		if (errno == EACCES)
@@ -146,5 +150,19 @@ void	exec_pipe(t_shell *shell)
 			}
 			break ;
 		}
+	}
+	if (shell->pipeline && shell->pipeline->tmp_fd != -1)
+	{
+		close(shell->pipeline->tmp_fd);
+		shell->pipeline->tmp_fd = -1;
+	}
+	cmd = shell->cmd;
+	while (cmd)
+	{
+		if (cmd->fd_in != STDIN_FILENO)
+			close(cmd->fd_in);
+		if (cmd->fd_out != STDOUT_FILENO)
+			close(cmd->fd_out);
+		cmd = cmd->next;
 	}
 }

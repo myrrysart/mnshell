@@ -32,7 +32,7 @@ pid_t	exec_pipeline(t_shell *shell, t_cmd_table *cmd)
 				&& ft_strncmp(cmd->cmd_da->items[0], ".", 2) == 0)
 			{
 				ft_putendl_fd(".: filename argument required", 2);
-				_exit(EXIT_BUILTIN_MISUSE);
+				child_cleanup_and_exit(shell, cmd, EXIT_BUILTIN_MISUSE);
 			}
 			if (cmd->cmd_da && cmd->cmd_da->items[0])
 			{
@@ -41,8 +41,12 @@ pid_t	exec_pipeline(t_shell *shell, t_cmd_table *cmd)
 				{
 					ft_putstr_fd(cmd->cmd_da->items[0], 2);
 					ft_putendl_fd(": Is a directory", 2);
-					_exit(EXIT_CMD_NOT_EXECUTABLE);
+					child_cleanup_and_exit(shell, cmd, EXIT_CMD_NOT_EXECUTABLE);
 				}
+			}
+			if (!cmd->cmd_da || !cmd->cmd_da->items[0]) {
+				ft_putendl_fd("Command not found.", 2);
+				child_cleanup_and_exit(shell, cmd, EXIT_CMD_NOT_FOUND);
 			}
 			execve(cmd->cmd_da->items[0], cmd->cmd_da->items, shell->heap_env);
 			if (errno == EACCES)
@@ -78,9 +82,10 @@ pid_t	exec_pipeline(t_shell *shell, t_cmd_table *cmd)
 		else
 		{
 			builtin_select(shell, cmd);
-			_exit(shell->code);
+			child_cleanup_and_exit(shell, cmd, shell->code);
 		}
 	}
+	if (pipeline->tmp_fd != -1) close(pipeline->tmp_fd);
 	pipeline->tmp_fd = dup(pipeline->pipe[RD]);
 	close_pipe(pipeline);
 	return (child);

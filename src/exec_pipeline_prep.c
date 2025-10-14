@@ -20,34 +20,59 @@ void	close_pipe(t_pipe_line *pipe)
 
 static void	exec_first_prep(t_cmd_table *cmd, t_pipe_line *pipeline)
 {
-	if (cmd->fd_in && cmd->fd_in != STDIN_FILENO)
+	if (cmd->fd_in != STDIN_FILENO)
 	{
 		dup2(cmd->fd_in, STDIN_FILENO);
 		close(cmd->fd_in);
 	}
 	dup2(pipeline->pipe[WR], STDOUT_FILENO);
 	close_pipe(pipeline);
-	close(pipeline->tmp_fd);
 }
 
-static void	exec_mid_prep(t_pipe_line *pipeline)
+static void	exec_mid_prep(t_cmd_table *cmd, t_pipe_line *pipeline)
 {
-	dup2(pipeline->pipe[WR], STDOUT_FILENO);
-	dup2(pipeline->tmp_fd, STDIN_FILENO);
+	if (cmd->fd_out != STDOUT_FILENO)
+	{
+		dup2(cmd->fd_out, STDOUT_FILENO);
+		close(cmd->fd_out);
+	}
+	else
+	{
+		dup2(pipeline->pipe[WR], STDOUT_FILENO);
+	}
+	if (cmd->fd_in != STDIN_FILENO)
+	{
+		dup2(cmd->fd_in, STDIN_FILENO);
+		close(cmd->fd_in);
+	}
+	else
+	{
+		dup2(pipeline->tmp_fd, STDIN_FILENO);
+	}
 	close_pipe(pipeline);
-	close(pipeline->tmp_fd);
+	if (pipeline->tmp_fd != -1)
+		close(pipeline->tmp_fd);
 }
 
 static void	exec_last_prep(t_cmd_table *cmd, t_pipe_line *pipeline)
 {
-	if (cmd->fd_out && cmd->fd_out != STDOUT_FILENO)
+	if (cmd->fd_out != STDOUT_FILENO)
 	{
 		dup2(cmd->fd_out, STDOUT_FILENO);
 		close(cmd->fd_out);
 	}
 	close_pipe(pipeline);
-	dup2(pipeline->tmp_fd, STDIN_FILENO);
-	close(pipeline->tmp_fd);
+	if (cmd->fd_in != STDIN_FILENO)
+	{
+		dup2(cmd->fd_in, STDIN_FILENO);
+		close(cmd->fd_in);
+	}
+	else
+	{
+		dup2(pipeline->tmp_fd, STDIN_FILENO);
+	}
+	if (pipeline->tmp_fd != -1)
+		close(pipeline->tmp_fd);
 }
 
 void	exec_prep(t_cmd_table *cmd, t_pipe_line *pipeline)
@@ -55,7 +80,7 @@ void	exec_prep(t_cmd_table *cmd, t_pipe_line *pipeline)
 	if (cmd->cmd_pos == FIRST)
 		exec_first_prep(cmd, pipeline);
 	if (cmd->cmd_pos == MID)
-		exec_mid_prep(pipeline);
+		exec_mid_prep(cmd, pipeline);
 	if (cmd->cmd_pos == LAST)
 		exec_last_prep(cmd, pipeline);
 }

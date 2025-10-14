@@ -22,6 +22,8 @@ int	main(int ac, char **av, char **env)
 	init_signals(&shell);
 	run_shell(&shell);
 	arena_free(shell.arena);
+	if (shell.frame_arena)
+		arena_free(shell.frame_arena);
 	rl_clear_history();
 	return (shell.code);
 }
