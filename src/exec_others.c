@@ -105,7 +105,7 @@ void	exec_no_pipe(t_shell *shell)
 			ft_putstr_fd(cmd->cmd_da->items[0], 2);
 			ft_putendl_fd(": Exec format error", 2);
 		}
-		_exit(map_exec_errno_to_exit(errno));
+		child_cleanup_and_exit(shell, cmd, map_exec_errno_to_exit(errno));
 	}
 	waitpid(child, &status, 0);
 	shell_update_code_from_status(shell, status);

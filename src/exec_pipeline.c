@@ -73,7 +73,7 @@ pid_t	exec_pipeline(t_shell *shell, t_cmd_table *cmd)
 				ft_putstr_fd(cmd->cmd_da->items[0], 2);
 				ft_putendl_fd(": Exec format error", 2);
 			}
-			_exit(map_exec_errno_to_exit(errno));
+			child_cleanup_and_exit(shell, cmd, map_exec_errno_to_exit(errno));
 		}
 		else
 		{

@@ -6,7 +6,7 @@
 /*   By: jyniemit <jyniemit@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/07 16:49:16 by jyniemit          #+#    #+#             */
-/*   Updated: 2025/10/13 14:23:00 by jyniemit         ###   ########.fr       */
+/*   Updated: 2025/10/14 14:26:01 by jyniemit         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -86,5 +86,5 @@ void	heredoc_child(t_shell *sh, int write_fd, char *delim)
 		*delim = '\0';
 		delim++;
 	}
-	exit(0);
+	child_cleanup_and_exit(sh, NULL, 0);
 }

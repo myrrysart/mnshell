@@ -357,6 +357,6 @@ void							shell_update_code_from_status(t_shell *shell,
 int								map_exec_errno_to_exit(int err);
 
 // execution
-void							builtin_select(t_shell *shell,
-									t_cmd_table *cmd);
+void							builtin_select(t_shell *shell, t_cmd_table *cmd);
+void							child_cleanup_and_exit(t_shell *sh, t_cmd_table *cmd, int status);
 #endif // MINISHELL_H
