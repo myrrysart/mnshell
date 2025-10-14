@@ -1,9 +1,0 @@
-#!/bin/bash
-if [ $# -eq 0 ]; then
-    echo "Usage: ./at \"command to test\""
-    exit 1
-fi
-last_line=$(tail -n1 test/test_cases.def)
-sed -i '$d' test/test_cases.def
-echo "$last_line \\" >> test/test_cases.def
-echo "X(\"$1\")" >> test/test_cases.def

@@ -1,4 +1,0 @@
-FAIL: .ms_mand/run.ms
-BASH: 'bash: line 1: .ms_mand/run.ms: Permission denied' (exit: 126)
-MINI: '[32mminishell$ [0m.ms_mand/run.ms
-[32mminishell$ [0mexit' (exit: 126)
