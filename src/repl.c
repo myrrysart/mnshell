@@ -6,7 +6,7 @@
 /*   By: jyniemit <jyniemit@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/29 12:37:53 by jyniemit          #+#    #+#             */
-/*   Updated: 2025/10/16 16:56:56 by trupham          ###   ########.fr       */
+/*   Updated: 2025/10/17 14:52:36 by jyniemit         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -81,12 +81,25 @@ static void	parse_and_execute(t_shell *shell)
 void	run_shell(t_shell *shell)
 {
 	char	*line;
+	char	*raw_line;
 
 	while (!(shell->state & SHOULD_EXIT))
 	{
 		if (g_received_signal)
 			handle_signal(shell, g_received_signal);
-		line = readline(PROMPT);
+		if (isatty(fileno(stdin)))
+			line = readline(PROMPT);
+		else
+		{
+			raw_line = get_next_line(fileno(stdin));
+			if (!raw_line)
+			{
+				shell->state |= SHOULD_EXIT;
+				break ;
+			}
+			line = ft_strtrim(raw_line, "\n");
+			free(raw_line);
+		}
 		if (!line)
 		{
 			close_cmd_fds(shell->cmd);
