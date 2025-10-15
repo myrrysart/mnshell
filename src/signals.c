@@ -25,8 +25,23 @@ int	waitpid_retry(pid_t pid, int *st)
 void	handle_signal(t_shell *shell, int sig)
 {
 	if (sig == SIGINT)
-		shell->code = EXIT_SIGINT;
+	{
+		if (shell->state & EVALUATING)
+		{
+			write(STDOUT_FILENO, "\n", 1);
+			shell_abort_eval(shell, EXIT_SIGINT);
+		}
+		else
+		{
+			shell->code = EXIT_SIGINT;
+		}
+	}
 	else if (sig == SIGTERM)
-		shell->code = EXIT_SIGTERM;
+	{
+		if (shell->state & EVALUATING)
+			shell_abort_eval(shell, EXIT_SIGTERM);
+		else
+			shell->code = EXIT_SIGTERM;
+	}
 	g_received_signal = 0;
 }

@@ -6,7 +6,7 @@
 /*   By: jyniemit <jyniemit@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/29 12:37:53 by jyniemit          #+#    #+#             */
-/*   Updated: 2025/10/07 17:37:51 by jyniemit         ###   ########.fr       */
+/*   Updated: 2025/10/13 21:10:52 by jyniemit         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,17 +20,31 @@ void	check_flag(t_shell *shell, t_token *t)
 			shell->state |= HAS_PIPE;
 		if (t->type == SQUOTE || t->type == DQUOTE)
 			shell->state |= HAS_QUOTE;
-		if (t->type == REDIRECT_IN)
+		if (t->type == REDIRECT_IN || t->type == HEREDOC)
 			shell->state |= HAS_INPUT_REDIR;
+		if (t->type == REDIRECT_OUT || t->type == APPEND)
+			shell->state |= HAS_OUTPUT_REDIR;
+		if (t->type == HEREDOC)
+			shell->heredoc_count++;
 		t = t->next;
 	}
 }
 
 static void	reset_flags(t_shell *shell)
 {
-	shell->state &= ~HAS_PIPE;
-	shell->state &= ~EVALUATING;
-	shell->state &= ~HAS_QUOTE;
+	shell->state &= ~(HAS_PIPE | EVALUATING | HAS_QUOTE | HAS_INPUT_REDIR | HAS_OUTPUT_REDIR);
+}
+
+static void	close_cmd_fds(t_cmd_table *cmd)
+{
+	while (cmd)
+	{
+		if (cmd->fd_in != STDIN_FILENO)
+			close(cmd->fd_in);
+		if (cmd->fd_out != STDOUT_FILENO)
+			close(cmd->fd_out);
+		cmd = cmd->next;
+	}
 }
 
 static void	parse_and_execute(t_shell *shell)
@@ -46,12 +60,20 @@ static void	parse_and_execute(t_shell *shell)
 	t = build_token_list(shell, &l);
 	check_flag(shell, t);
 	if (!parser_is_syntax_correct(t))
+	{
+		shell_abort_eval(shell, EXIT_PARSE_ERROR);
 		return ;
+	}
 	shell->cmd = parser_cmd_build_many(shell, t);
 	if (!shell->cmd)
 		shell->state &= ~(HAS_PIPE | EVALUATING);
 	if (!shell->cmd)
 		return ;
+	if (!(shell->state & EVALUATING))
+	{
+		close_cmd_fds(shell->cmd);
+		return ;
+	}
 	if (shell->cmd && shell->state & HAS_PIPE)
 		exec_pipe(shell);
 	else
@@ -70,7 +92,7 @@ void	run_shell(t_shell *shell)
 		line = readline(PROMPT);
 		if (!line)
 		{
-			write(STDOUT_FILENO, "exit\n", 6);
+			write(STDOUT_FILENO, "exit\n", 5);
 			shell->state |= SHOULD_EXIT;
 			break ;
 		}

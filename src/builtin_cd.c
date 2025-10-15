@@ -6,72 +6,87 @@
 /*   By: jyniemit <jyniemit@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/02 15:41:44 by jyniemit          #+#    #+#             */
-/*   Updated: 2025/10/06 12:15:53 by jyniemit         ###   ########.fr       */
+/*   Updated: 2025/10/14 19:24:43 by jyniemit         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-static void	cd_error(t_shell *shell, char *path, int cd_error_code)
+static void	cd_error(t_shell *shell, char *path, int code)
 {
-	if (cd_error_code == 1)
+	if (code == 1)
 	{
-		ft_printf("cd: too many arguments\n");
+		ft_putendl_fd("cd: too many arguments", STDERR_FILENO);
 		shell->code = EXIT_GENERAL_ERROR;
 		return ;
 	}
-	else if (cd_error_code == 2)
+	if (code == 2)
 	{
-		ft_printf("cd: HOME not set\n");
+		ft_putendl_fd("cd: HOME not set", STDERR_FILENO);
 		shell->code = EXIT_GENERAL_ERROR;
 		return ;
 	}
-	else if (cd_error_code == 3)
+	if (code == 3)
 	{
-		ft_printf("cd: %s: No such file or directory\n", path);
+		ft_putstr_fd("cd: ", STDERR_FILENO);
+		ft_putstr_fd(path, STDERR_FILENO);
+		ft_putendl_fd(": No such file or directory", STDERR_FILENO);
 		shell->code = EXIT_GENERAL_ERROR;
 		return ;
 	}
-	else if (cd_error_code == 4)
+	if (code == 4)
 	{
-		ft_printf("cd: error retrieving current directory\n");
+		ft_putendl_fd("cd: error retrieving current directory", STDERR_FILENO);
+		shell->code = EXIT_GENERAL_ERROR;
+		return ;
+	}
+	if (code == 5)
+	{
+		ft_putendl_fd("cd: OLDPWD not set", STDERR_FILENO);
 		shell->code = EXIT_GENERAL_ERROR;
 		return ;
 	}
 }
-
-static void	cd_go_to_home(t_shell *shell, char *path, char *home)
+static int	set_target_path(t_shell *shell, t_cmd_table *cmd, char **out)
 {
-	home = get_env_var(shell, "HOME");
-	if (!home)
-		return (cd_error(shell, path, 2));
-	path = home;
-}
+	char	*arg;
 
+	arg = cmd->cmd_da->items[1];
+	if (!arg)
+	{
+		*out = get_env_var(shell, "HOME");
+		if (!*out)
+			return (cd_error(shell, NULL, 2), 0);
+		return (1);
+	}
+	if (!ft_strncmp(arg, "-", 2))
+	{
+		*out = get_env_var(shell, "OLDPWD");
+		if (!*out)
+			return (cd_error(shell, NULL, 5), 0);
+		ft_printf("%s\n", *out);
+		return (1);
+	}
+	*out = arg;
+	return (1);
+}
 void	builtin_cd(t_shell *shell, t_cmd_table *cmd)
 {
 	char	*path;
-	char	*home;
 	char	old_pwd[PATH_MAX];
 	char	new_pwd[PATH_MAX];
 
 	path = NULL;
-	home = NULL;
 	if (cmd->cmd_da->items[2])
-		return (cd_error(shell, path, 1));
+		return (cd_error(shell, NULL, 1));
 	ft_strlcpy(old_pwd, shell->working_directory, PATH_MAX);
-	if (!cmd->cmd_da->items[1])
-		cd_go_to_home(shell, path, home);
-	else
-		path = cmd->cmd_da->items[1];
+	if (!set_target_path(shell, cmd, &path))
+		return ;
 	if (chdir(path) != 0)
 		return (cd_error(shell, path, 3));
-	if (getcwd(new_pwd, PATH_MAX))
-	{
-		ft_strlcpy(shell->working_directory, new_pwd, PATH_MAX);
-		update_pwd_env(shell, old_pwd, new_pwd);
-	}
-	else
+	if (!getcwd(new_pwd, PATH_MAX))
 		return (cd_error(shell, path, 4));
+	ft_strlcpy(shell->working_directory, new_pwd, PATH_MAX);
+	update_pwd_env(shell, old_pwd, new_pwd);
 	shell->code = OK;
 }

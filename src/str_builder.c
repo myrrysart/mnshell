@@ -50,7 +50,7 @@ void	str_append(t_arena *arena, t_str *str, char *item)
 
 	i = 0;
 	if (!str || !item)
-		return;
+		return ;
 	if (str->len + ft_strlen(item) >= str->cap)
 	{
 		while (str->len + ft_strlen(item) >= str->cap)

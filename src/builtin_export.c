@@ -2,11 +2,12 @@
 /*                                                                            */
 /*                                                        :::      ::::::::   */
 /*   builtin_export.c                                   :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
+/*                                                    +:+ +:+
+	+:+      */
 /*   By: jyniemit <jyniemit@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/02 15:41:58 by jyniemit          #+#    #+#             */
-/*   Updated: 2025/10/06 12:36:30 by jyniemit         ###   ########.fr       */
+/*   Updated: 2025/10/09 13:12:55 by jyniemit         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,12 +35,16 @@ static int	process_export_error(t_shell *shell, char *arg, int error_type)
 	(void)shell;
 	if (error_type == 1)
 	{
-		ft_printf("export: `%s': not a valid identifier\n", arg);
+		ft_putstr_fd("export: `", STDERR_FILENO);
+		ft_putstr_fd(arg, STDERR_FILENO);
+		ft_putendl_fd("': not a valid identifier", STDERR_FILENO);
 		return (EXIT_GENERAL_ERROR);
 	}
 	else if (error_type == 2)
 	{
-		ft_printf("export: `%s': not a valid identifier\n", arg);
+		ft_putstr_fd("export: `", STDERR_FILENO);
+		ft_putstr_fd(arg, STDERR_FILENO);
+		ft_putendl_fd("': not a valid identifier", STDERR_FILENO);
 		return (EXIT_GENERAL_ERROR);
 	}
 	return (1);
@@ -73,6 +78,68 @@ static int	process_export_arg(t_shell *shell, char *arg)
 	return (OK);
 }
 
+static int	ascii_cmp(const char *a, const char *b)
+{
+	const unsigned char	*sa;
+	const unsigned char	*sb;
+
+	sa = (const unsigned char *)a;
+	sb = (const unsigned char *)b;
+	while (*sa && *sb && *sa == *sb)
+	{
+		sa++;
+		sb++;
+	}
+	return ((int)(*sa) - (int)(*sb));
+}
+
+static void	print_env_sorted_ascii(t_shell *shell)
+{
+	int		printed;
+	int		idx;
+	int		i;
+	char	*min_str;
+	char	*last;
+
+	printed = 0;
+	last = NULL;
+	while (printed < shell->env_count)
+	{
+		idx = -1;
+		min_str = NULL;
+		i = -1;
+		while (++i < shell->env_count)
+		{
+			if (!last)
+			{
+				if (idx == -1 || ascii_cmp(shell->heap_env[i], min_str) < 0)
+				{
+					idx = i;
+					min_str = shell->heap_env[i];
+				}
+			}
+			else if (ascii_cmp(shell->heap_env[i], last) > 0)
+			{
+				if (idx == -1 || ascii_cmp(shell->heap_env[i], min_str) < 0)
+				{
+					idx = i;
+					min_str = shell->heap_env[i];
+				}
+			}
+		}
+		if (idx == -1)
+			break ;
+		i = -1;
+		while (++i < shell->env_count)
+			if (ascii_cmp(shell->heap_env[i], min_str) == 0)
+			{
+				ft_printf("%s\n", shell->heap_env[i]);
+				printed++;
+			}
+		last = min_str;
+	}
+}
+
 void	builtin_export(t_shell *shell, t_cmd_table *cmd)
 {
 	int	i;
@@ -84,7 +151,8 @@ void	builtin_export(t_shell *shell, t_cmd_table *cmd)
 	}
 	if (!cmd->cmd_da->items[1])
 	{
-		builtin_env(shell, cmd);
+		print_env_sorted_ascii(shell);
+		shell->code = OK;
 		return ;
 	}
 	i = 0;

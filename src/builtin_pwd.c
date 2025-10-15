@@ -26,7 +26,7 @@ void	builtin_pwd(t_shell *shell, t_cmd_table *cmd)
 		ft_printf("%s\n", shell->working_directory);
 	else
 	{
-		ft_printf("pwd: cannot determine current directory\n");
+		ft_putendl_fd("pwd: cannot determine current directory", STDERR_FILENO);
 		shell->code = EXIT_GENERAL_ERROR;
 		return ;
 	}

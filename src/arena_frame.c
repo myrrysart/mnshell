@@ -6,7 +6,7 @@
 /*   By: jyniemit <jyniemit@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/03 12:09:47 by jyniemit          #+#    #+#             */
-/*   Updated: 2025/10/03 12:10:01 by jyniemit         ###   ########.fr       */
+/*   Updated: 2025/10/14 12:06:38 by jyniemit         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,6 +31,7 @@ void	shell_begin_frame(t_shell *sh)
 	}
 	sh->active_arena = sh->frame_arena;
 	sh->heredoc_index = -1;
+	sh->heredoc_count = 0;
 }
 
 void	shell_end_frame(t_shell *sh)
@@ -39,7 +40,7 @@ void	shell_end_frame(t_shell *sh)
 		arena_free(sh->frame_arena);
 	sh->frame_arena = NULL;
 	sh->active_arena = NULL;
-	sh->state &= ~(HAS_PIPE | IN_SQUOTE | IN_DQUOTE | EVALUATING
-			| HEREDOC_EXPAND);
+	sh->state &= ~(HAS_PIPE | IN_SQUOTE | IN_DQUOTE | EVALUATING | HEREDOC_EXPAND | HAS_INPUT_REDIR | HAS_OUTPUT_REDIR);
 	sh->heredoc_index = -1;
+	sh->heredoc_count = 0;
 }

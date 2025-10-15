@@ -41,6 +41,8 @@ void	init_shell(char **av, char **env, t_shell *shell)
 		return ;
 	}
 	shell->pipeline = arena_alloc(shell->arena, sizeof(*shell->pipeline));
+	if (shell->pipeline)
+		shell->pipeline->tmp_fd = -1;
 	init_env(env, shell);
 	init_shell_env(shell, av);
 	if (!getcwd(shell->working_directory, PATH_MAX))

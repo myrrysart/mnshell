@@ -31,6 +31,7 @@ void	strip_delimiter(t_shell *sh, t_token *token)
 		}
 		i++;
 	}
+	sh->heredoc_delim[sh->heredoc_index][j] = '\0';
 }
 
 void	parser_cmd_type(t_shell *shell, t_cmd_table *cmd, t_token *token)

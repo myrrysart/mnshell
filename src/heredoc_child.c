@@ -6,7 +6,7 @@
 /*   By: jyniemit <jyniemit@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/07 16:49:16 by jyniemit          #+#    #+#             */
-/*   Updated: 2025/10/07 17:15:56 by jyniemit         ###   ########.fr       */
+/*   Updated: 2025/10/14 14:26:01 by jyniemit         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,9 +15,10 @@
 static void	heredoc_delim_error_message(char *delim)
 {
 	ft_putstr_fd("minishell: warning: here-document delimited \
-by end-of-file (wanted `", STDERR_FILENO);
+by end-of-file (wanted \'",
+					STDERR_FILENO);
 	ft_putstr_fd(delim, STDERR_FILENO);
-	ft_putstr_fd("')\n", STDERR_FILENO);
+	ft_putstr_fd("\')\n", STDERR_FILENO);
 }
 
 static void	hd_write_expansion(t_shell *sh, char *line, int write_fd)
@@ -61,7 +62,6 @@ static void	hd_proc_readl(t_shell *sh, int write_fd, char *delim, int *flag)
 static void	heredoc_sigint(int sig)
 {
 	(void)sig;
-	write(STDOUT_FILENO, "\n", 1);
 	exit(130);
 }
 
@@ -81,5 +81,10 @@ void	heredoc_child(t_shell *sh, int write_fd, char *delim)
 	close(write_fd);
 	if (!received_delim)
 		heredoc_delim_error_message(delim);
-	exit(0);
+	while (*delim)
+	{
+		*delim = '\0';
+		delim++;
+	}
+	child_cleanup_and_exit(sh, NULL, 0);
 }
