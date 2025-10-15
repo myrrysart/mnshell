@@ -21,7 +21,7 @@ static bool	ensure_next_is_word(t_token *tok)
 		|| tok->next->type == DQUOTE);
 }
 
-static void print_redir_error(char *path)
+static void	print_redir_error(char *path)
 {
 	ft_putstr_fd(path, 2);
 	if (errno == EACCES)
@@ -42,7 +42,8 @@ static bool	handle_redirect_out(t_shell *sh, t_cmd_table *cmd, t_token **tok)
 		return (shell_abort_eval(sh, EXIT_PARSE_ERROR), false);
 	if (cmd->fd_out != STDOUT_FILENO)
 		close(cmd->fd_out);
-	cmd->fd_out = open((*tok)->next->content, O_WRONLY | O_CREAT | O_TRUNC, 0644);
+	cmd->fd_out = open((*tok)->next->content, O_WRONLY | O_CREAT | O_TRUNC,
+			0644);
 	if (cmd->fd_out == -1)
 	{
 		print_redir_error((*tok)->next->content);
@@ -76,7 +77,8 @@ static bool	handle_append(t_shell *sh, t_cmd_table *cmd, t_token **tok)
 		return (shell_abort_eval(sh, EXIT_PARSE_ERROR), false);
 	if (cmd->fd_out != STDOUT_FILENO)
 		close(cmd->fd_out);
-	cmd->fd_out = open((*tok)->next->content, O_WRONLY | O_CREAT | O_APPEND, 0644);
+	cmd->fd_out = open((*tok)->next->content, O_WRONLY | O_CREAT | O_APPEND,
+			0644);
 	if (cmd->fd_out == -1)
 	{
 		print_redir_error((*tok)->next->content);
@@ -97,7 +99,8 @@ static bool	handle_heredoc(t_shell *sh, t_cmd_table *cmd, t_token **tok)
 	if (cmd->fd_in == HEREDOC_INTERRUPTED)
 		return (sh->heredoc_index--, shell_abort_eval(sh, EXIT_SIGINT), false);
 	if (cmd->fd_in < 0)
-		return (sh->heredoc_index--, shell_abort_eval(sh, EXIT_HEREDOC_ERROR), false);
+		return (sh->heredoc_index--, shell_abort_eval(sh, EXIT_HEREDOC_ERROR),
+			false);
 	cmd->heredoc_index = sh->heredoc_index;
 	sh->state |= HAS_INPUT_REDIR;
 	*tok = (*tok)->next->next;

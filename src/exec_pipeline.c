@@ -44,8 +44,8 @@ pid_t	exec_pipeline(t_shell *shell, t_cmd_table *cmd)
 					child_cleanup_and_exit(shell, cmd, EXIT_CMD_NOT_EXECUTABLE);
 				}
 			}
-				if (!cmd->cmd_da || !cmd->cmd_da->items[0])
-					child_cleanup_and_exit(shell, cmd, OK);
+			if (!cmd->cmd_da || !cmd->cmd_da->items[0])
+				child_cleanup_and_exit(shell, cmd, OK);
 			execve(cmd->cmd_da->items[0], cmd->cmd_da->items, shell->heap_env);
 			if (errno == EACCES)
 			{
@@ -83,7 +83,8 @@ pid_t	exec_pipeline(t_shell *shell, t_cmd_table *cmd)
 			child_cleanup_and_exit(shell, cmd, shell->code);
 		}
 	}
-	if (pipeline->tmp_fd != -1) close(pipeline->tmp_fd);
+	if (pipeline->tmp_fd != -1)
+		close(pipeline->tmp_fd);
 	pipeline->tmp_fd = dup(pipeline->pipe[RD]);
 	close_pipe(pipeline);
 	return (child);

@@ -40,8 +40,7 @@ void	shell_end_frame(t_shell *sh)
 		arena_free(sh->frame_arena);
 	sh->frame_arena = NULL;
 	sh->active_arena = NULL;
-	sh->state &= ~(HAS_PIPE | IN_SQUOTE | IN_DQUOTE | EVALUATING
-			| HEREDOC_EXPAND | HAS_INPUT_REDIR | HAS_OUTPUT_REDIR);
+	sh->state &= ~(HAS_PIPE | IN_SQUOTE | IN_DQUOTE | EVALUATING | HEREDOC_EXPAND | HAS_INPUT_REDIR | HAS_OUTPUT_REDIR);
 	sh->heredoc_index = -1;
 	sh->heredoc_count = 0;
 }

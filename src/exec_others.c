@@ -49,10 +49,11 @@ void	exec_no_pipe(t_shell *shell)
 	cmd = shell->cmd;
 	if (cmd->cmd_type != EXTERNAL)
 		return (exec_builtin_with_redirs(shell, cmd));
-	if (!cmd->cmd_da || cmd->cmd_da->count == 0) {
+	if (!cmd->cmd_da || cmd->cmd_da->count == 0)
+	{
 		exec_cleanup_parent(cmd);
 		shell->code = 0;
-		return;
+		return ;
 	}
 	child = fork();
 	if (child < 0)
@@ -81,8 +82,8 @@ void	exec_no_pipe(t_shell *shell)
 				child_cleanup_and_exit(shell, cmd, EXIT_CMD_NOT_EXECUTABLE);
 			}
 		}
-			if (!cmd->cmd_da || !cmd->cmd_da->items[0])
-				child_cleanup_and_exit(shell, cmd, OK);
+		if (!cmd->cmd_da || !cmd->cmd_da->items[0])
+			child_cleanup_and_exit(shell, cmd, OK);
 		execve(cmd->cmd_da->items[0], cmd->cmd_da->items, shell->heap_env);
 		if (errno == EACCES)
 		{

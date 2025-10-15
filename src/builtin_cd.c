@@ -28,7 +28,9 @@ static void	cd_error(t_shell *shell, char *path, int code)
 	}
 	if (code == 3)
 	{
-		ft_putstr_fd("cd: ", STDERR_FILENO); ft_putstr_fd(path, STDERR_FILENO); ft_putendl_fd(": No such file or directory", STDERR_FILENO);
+		ft_putstr_fd("cd: ", STDERR_FILENO);
+		ft_putstr_fd(path, STDERR_FILENO);
+		ft_putendl_fd(": No such file or directory", STDERR_FILENO);
 		shell->code = EXIT_GENERAL_ERROR;
 		return ;
 	}

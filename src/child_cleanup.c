@@ -1,8 +1,21 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   child_cleanup.c                                    :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: jyniemit <jyniemit@student.hive.fi>        +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/10/15 15:24:35 by jyniemit          #+#    #+#             */
+/*   Updated: 2025/10/15 15:24:38 by jyniemit         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "minishell.h"
 
-static void close_if_not_std(int fd)
+static void	close_if_not_std(int fd)
 {
-	if (fd != -1 && fd != STDIN_FILENO && fd != STDOUT_FILENO && fd != STDERR_FILENO)
+	if (fd != -1 && fd != STDIN_FILENO && fd != STDOUT_FILENO
+		&& fd != STDERR_FILENO)
 		close(fd);
 }
 
