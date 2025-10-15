@@ -1,2 +1,0 @@
-#!/bin/sh
-echo from-d1 && chmod +x d1/foo
