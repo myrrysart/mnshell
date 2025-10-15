@@ -12,32 +12,6 @@
 
 #include "minishell.h"
 
-static bool	parser_is_quote_count_correct(t_token *token)
-{
-	int		i;
-	size_t	count_squote;
-	size_t	count_dquote;
-
-	count_squote = 0;
-	count_dquote = 0;
-	while (token)
-	{
-		i = 0;
-		while (token->content[i])
-		{
-			if (token->content[i] == '"')
-				count_dquote++;
-			if (token->content[i] == '\'')
-				count_squote++;
-			i++;
-		}
-		token = token->next;
-	}
-	if (count_dquote % 2 != 0 || count_squote % 2 != 0)
-		return (false);
-	return (true);
-}
-
 static bool	check_last_token(t_token *tok)
 {
 	while (tok->next)
@@ -53,10 +27,6 @@ static bool	check_last_token(t_token *tok)
  */
 bool	parser_is_syntax_correct(t_token *token)
 {
-	if (!token)
-		return (write(2, "Syntax error: trailing whitespace\n", 34), false);
-	if (!parser_is_quote_count_correct(token))
-		return (write(2, "Syntax error: unclosed quotes\n", 30), false);
 	if (!check_last_token(token))
 		return (false);
 	while (token && token->next)

@@ -63,7 +63,7 @@ t_token	*build_token(t_arena *arena, t_token token)
 		return (NULL);
 	new_token->content = arena_alloc(arena, token.content_len + 1);
 	new_token->content_len = token.content_len;
-	if (!new_token->content || !new_token->content_len)
+	if (!new_token->content)
 		return (NULL);
 	new_token->type = token.type;
 	while (i < new_token->content_len && token.content[i])
@@ -96,6 +96,8 @@ t_token	*build_token_list(t_shell *shell, t_lexer *l)
 		new = build_token(sh_work_arena(shell), get_next_token(l));
 		if (!new)
 			return (NULL);
+		if (!new->content_len)
+			continue ;
 		curr->next = new;
 		new->prev = curr;
 	}
