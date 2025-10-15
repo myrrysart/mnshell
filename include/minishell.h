@@ -6,13 +6,13 @@
 /*   By: jyniemit <jyniemit@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/29 13:40:26 by jyniemit          #+#    #+#             */
-/*   Updated: 2025/10/13 20:57:37 by jyniemit         ###   ########.fr       */
+/*   Updated: 2025/10/14 19:36:29 by jyniemit         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef MINISHELL_H
 # define MINISHELL_H
-# define PROMPT "\033[32mminishell$ \033[0m"
+# define PROMPT "\001\e[0m\e[32m\002duckshell🐣$ \001\e[0m\002"
 
 // PATH_MAX
 # include <errno.h>

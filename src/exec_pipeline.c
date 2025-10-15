@@ -44,10 +44,8 @@ pid_t	exec_pipeline(t_shell *shell, t_cmd_table *cmd)
 					child_cleanup_and_exit(shell, cmd, EXIT_CMD_NOT_EXECUTABLE);
 				}
 			}
-			if (!cmd->cmd_da || !cmd->cmd_da->items[0]) {
-				ft_putendl_fd("Command not found.", 2);
-				child_cleanup_and_exit(shell, cmd, EXIT_CMD_NOT_FOUND);
-			}
+				if (!cmd->cmd_da || !cmd->cmd_da->items[0])
+					child_cleanup_and_exit(shell, cmd, OK);
 			execve(cmd->cmd_da->items[0], cmd->cmd_da->items, shell->heap_env);
 			if (errno == EACCES)
 			{

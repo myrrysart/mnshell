@@ -35,12 +35,12 @@ static int	process_export_error(t_shell *shell, char *arg, int error_type)
 	(void)shell;
 	if (error_type == 1)
 	{
-		ft_printf("export: `%s': not a valid identifier\n", arg);
+		ft_putstr_fd("export: `", STDERR_FILENO); ft_putstr_fd(arg, STDERR_FILENO); ft_putendl_fd("': not a valid identifier", STDERR_FILENO);
 		return (EXIT_GENERAL_ERROR);
 	}
 	else if (error_type == 2)
 	{
-		ft_printf("export: `%s': not a valid identifier\n", arg);
+		ft_putstr_fd("export: `", STDERR_FILENO); ft_putstr_fd(arg, STDERR_FILENO); ft_putendl_fd("': not a valid identifier", STDERR_FILENO);
 		return (EXIT_GENERAL_ERROR);
 	}
 	return (1);

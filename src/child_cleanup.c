@@ -19,7 +19,12 @@ void	child_cleanup_and_exit(t_shell *sh, t_cmd_table *cmd, int status)
 		close_if_not_std(sh->pipeline->pipe[WR]);
 		close_if_not_std(sh->pipeline->tmp_fd);
 	}
-	if (sh && sh->frame_arena)
-		arena_free(sh->frame_arena);
+	if (sh)
+	{
+		if (sh->frame_arena)
+			arena_free(sh->frame_arena);
+		if (sh->arena)
+			arena_free(sh->arena);
+	}
 	exit(status);
 }
