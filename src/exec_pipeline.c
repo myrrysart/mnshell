@@ -6,7 +6,7 @@
 /*   By: trupham <trupham@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/19 11:46:53 by trupham           #+#    #+#             */
-/*   Updated: 2025/10/16 17:15:33 by trupham          ###   ########.fr       */
+/*   Updated: 2025/10/17 14:53:59 by jyniemit         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,7 +46,7 @@ static void	clean_pipe(t_pipe_line *pipeline, t_cmd_table *cmd)
 		close(cmd->fd_out);
 }
 
-static pid_t	exec_pipe(t_shell *shell, t_cmd_table *cmd)
+pid_t	exec_pipeline(t_shell *shell, t_cmd_table *cmd)
 {
 	t_pipe_line	*pipeline;
 	pid_t		child;
