@@ -64,7 +64,7 @@ int	heredoc_generic_error(int *pfd, int return_nbr)
 
 int	read_heredoc(t_shell *sh)
 {
-	int					pfd[2];
+	int				pfd[2] = { -1, -1 };
 	pid_t				pid;
 	int					st;
 	struct sigaction	old_int;
