@@ -6,7 +6,7 @@
 /*   By: jyniemit <jyniemit@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/30 17:23:53 by jyniemit          #+#    #+#             */
-/*   Updated: 2025/10/14 17:06:12 by jyniemit         ###   ########.fr       */
+/*   Updated: 2025/10/16 16:40:07 by trupham          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,7 @@
 
 void	builtin_select(t_shell *shell, t_cmd_table *cmd)
 {
-	const t_builtin builtin_table[BUILTIN_COUNT] = {
+	const t_builtin	builtin_table[BUILTIN_COUNT] = {
 		builtin_cd,
 		builtin_echo,
 		builtin_exit,
@@ -23,12 +23,8 @@ void	builtin_select(t_shell *shell, t_cmd_table *cmd)
 		builtin_unset,
 		builtin_env,
 	};
-	builtin_table[cmd->cmd_type](shell, cmd);
-}
 
-void	exec_child_no_pipe_prep(t_cmd_table *cmd)
-{
-	exec_apply_redirs(cmd);
+	builtin_table[cmd->cmd_type](shell, cmd);
 }
 
 void	exec_cleanup_parent(t_cmd_table *cmd)
@@ -66,7 +62,7 @@ void	exec_no_pipe(t_shell *shell)
 	if (child == 0)
 	{
 		setup_child_signals();
-		exec_child_no_pipe_prep(cmd);
+		exec_apply_redirs(cmd);
 		if (cmd->cmd_da && cmd->cmd_da->count == 1
 			&& ft_strncmp(cmd->cmd_da->items[0], ".", 2) == 0)
 		{
@@ -85,34 +81,7 @@ void	exec_no_pipe(t_shell *shell)
 		if (!cmd->cmd_da || !cmd->cmd_da->items[0])
 			child_cleanup_and_exit(shell, cmd, OK);
 		execve(cmd->cmd_da->items[0], cmd->cmd_da->items, shell->heap_env);
-		if (errno == EACCES)
-		{
-			ft_putstr_fd(cmd->cmd_da->items[0], 2);
-			ft_putendl_fd(": Permission denied", 2);
-		}
-		else if (errno == ENOENT)
-		{
-			ft_putstr_fd(cmd->cmd_da->items[0], 2);
-			if (ft_strchr(cmd->cmd_da->items[0], '/'))
-				ft_putendl_fd(": No such file or directory", 2);
-			else
-				ft_putendl_fd(": Command not found.", 2);
-		}
-		else if (errno == ENOTDIR)
-		{
-			ft_putstr_fd(cmd->cmd_da->items[0], 2);
-			ft_putendl_fd(": Not a directory", 2);
-		}
-		else if (errno == EISDIR)
-		{
-			ft_putstr_fd(cmd->cmd_da->items[0], 2);
-			ft_putendl_fd(": Is a directory", 2);
-		}
-		else if (errno == ENOEXEC)
-		{
-			ft_putstr_fd(cmd->cmd_da->items[0], 2);
-			ft_putendl_fd(": Exec format error", 2);
-		}
+		errno_report(cmd);
 		child_cleanup_and_exit(shell, cmd, map_exec_errno_to_exit(errno));
 	}
 	waitpid(child, &status, 0);

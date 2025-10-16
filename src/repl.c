@@ -6,7 +6,7 @@
 /*   By: jyniemit <jyniemit@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/29 12:37:53 by jyniemit          #+#    #+#             */
-/*   Updated: 2025/10/13 21:10:52 by jyniemit         ###   ########.fr       */
+/*   Updated: 2025/10/16 15:53:53 by trupham          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,7 +32,8 @@ void	check_flag(t_shell *shell, t_token *t)
 
 static void	reset_flags(t_shell *shell)
 {
-	shell->state &= ~(HAS_PIPE | EVALUATING | HAS_QUOTE | HAS_INPUT_REDIR | HAS_OUTPUT_REDIR);
+	shell->state &= ~(HAS_PIPE | EVALUATING | HAS_QUOTE
+			| HAS_INPUT_REDIR | HAS_OUTPUT_REDIR);
 }
 
 static void	close_cmd_fds(t_cmd_table *cmd)
@@ -60,20 +61,14 @@ static void	parse_and_execute(t_shell *shell)
 	t = build_token_list(shell, &l);
 	check_flag(shell, t);
 	if (!parser_is_syntax_correct(t))
-	{
-		shell_abort_eval(shell, EXIT_PARSE_ERROR);
-		return ;
-	}
+		return (shell_abort_eval(shell, EXIT_PARSE_ERROR));
 	shell->cmd = parser_cmd_build_many(shell, t);
 	if (!shell->cmd)
 		shell->state &= ~(HAS_PIPE | EVALUATING);
 	if (!shell->cmd)
 		return ;
 	if (!(shell->state & EVALUATING))
-	{
-		close_cmd_fds(shell->cmd);
-		return ;
-	}
+		return (close_cmd_fds(shell->cmd));
 	if (shell->cmd && shell->state & HAS_PIPE)
 		exec_pipe(shell);
 	else

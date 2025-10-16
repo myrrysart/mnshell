@@ -6,7 +6,7 @@
 /*   By: trupham <trupham@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/12 11:09:42 by trupham           #+#    #+#             */
-/*   Updated: 2025/10/13 15:40:29 by jyniemit         ###   ########.fr       */
+/*   Updated: 2025/10/16 16:06:02 by trupham          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -112,36 +112,8 @@ char	*get_path(t_shell *shell, char *cmd)
 	}
 	arena_cmd = arena_alloc(sh_work_arena(shell), ft_strlen(bin_cmd) + 1);
 	if (!arena_cmd)
-	{
-		free(bin_cmd);
-		return (NULL);
-	}
+		return (free(bin_cmd), NULL);
 	ft_memcpy(arena_cmd, bin_cmd, ft_strlen(bin_cmd) + 1);
 	free(bin_cmd);
 	return (arena_cmd);
-}
-
-void	shell_abort_eval(t_shell *shell, t_shell_code code)
-{
-	if (code != OK)
-		shell->code = code;
-	shell->state &= ~(EVALUATING | HAS_PIPE | HAS_INPUT_REDIR | HAS_OUTPUT_REDIR | HAS_QUOTE | IN_SQUOTE | IN_DQUOTE | HEREDOC_EXPAND);
-	g_received_signal = 0;
-}
-int	map_exec_errno_to_exit(int err)
-{
-	if (err == ENOENT)
-		return (EXIT_CMD_NOT_FOUND);
-	if (err == EACCES || err == EISDIR || err == ENOTDIR || err == ENOEXEC)
-		return (EXIT_CMD_NOT_EXECUTABLE);
-	return (EXIT_CMD_NOT_EXECUTABLE);
-}
-
-void	shell_update_code_from_status(t_shell *shell, int status)
-{
-	shell->last_code = status;
-	if (WIFEXITED(status))
-		shell->code = WEXITSTATUS(status);
-	else if (WIFSIGNALED(status))
-		shell->code = 128 + WTERMSIG(status);
 }
