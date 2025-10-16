@@ -87,5 +87,9 @@ pid_t	exec_pipeline(t_shell *shell, t_cmd_table *cmd)
 		close(pipeline->tmp_fd);
 	pipeline->tmp_fd = dup(pipeline->pipe[RD]);
 	close_pipe(pipeline);
+	if (cmd->fd_in != STDIN_FILENO)
+		close(cmd->fd_in);
+	if (cmd->fd_out != STDOUT_FILENO)
+		close(cmd->fd_out);
 	return (child);
 }

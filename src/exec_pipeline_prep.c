@@ -25,7 +25,13 @@ static void	exec_first_prep(t_cmd_table *cmd, t_pipe_line *pipeline)
 		dup2(cmd->fd_in, STDIN_FILENO);
 		close(cmd->fd_in);
 	}
-	dup2(pipeline->pipe[WR], STDOUT_FILENO);
+	if (cmd->fd_out != STDOUT_FILENO)
+	{
+		dup2(cmd->fd_out, STDOUT_FILENO);
+		close(cmd->fd_out);
+	}
+	else
+		dup2(pipeline->pipe[WR], STDOUT_FILENO);
 	close_pipe(pipeline);
 }
 
@@ -37,9 +43,7 @@ static void	exec_mid_prep(t_cmd_table *cmd, t_pipe_line *pipeline)
 		close(cmd->fd_out);
 	}
 	else
-	{
 		dup2(pipeline->pipe[WR], STDOUT_FILENO);
-	}
 	if (cmd->fd_in != STDIN_FILENO)
 	{
 		dup2(cmd->fd_in, STDIN_FILENO);
