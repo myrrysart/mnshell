@@ -6,7 +6,7 @@
 /*   By: jyniemit <jyniemit@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/29 12:37:53 by jyniemit          #+#    #+#             */
-/*   Updated: 2025/10/16 15:53:53 by trupham          ###   ########.fr       */
+/*   Updated: 2025/10/16 16:56:56 by trupham          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -70,7 +70,7 @@ static void	parse_and_execute(t_shell *shell)
 	if (!(shell->state & EVALUATING))
 		return (close_cmd_fds(shell->cmd));
 	if (shell->cmd && shell->state & HAS_PIPE)
-		exec_pipe(shell);
+		exec_pipeline(shell);
 	else
 		exec_no_pipe(shell);
 	reset_flags(shell);

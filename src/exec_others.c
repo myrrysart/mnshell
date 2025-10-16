@@ -6,28 +6,13 @@
 /*   By: jyniemit <jyniemit@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/30 17:23:53 by jyniemit          #+#    #+#             */
-/*   Updated: 2025/10/16 16:40:07 by trupham          ###   ########.fr       */
+/*   Updated: 2025/10/16 17:17:47 by trupham          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-void	builtin_select(t_shell *shell, t_cmd_table *cmd)
-{
-	const t_builtin	builtin_table[BUILTIN_COUNT] = {
-		builtin_cd,
-		builtin_echo,
-		builtin_exit,
-		builtin_pwd,
-		builtin_export,
-		builtin_unset,
-		builtin_env,
-	};
-
-	builtin_table[cmd->cmd_type](shell, cmd);
-}
-
-void	exec_cleanup_parent(t_cmd_table *cmd)
+static void	exec_cleanup_parent(t_cmd_table *cmd)
 {
 	if (cmd->fd_in != STDIN_FILENO)
 		close(cmd->fd_in);
@@ -91,45 +76,17 @@ void	exec_no_pipe(t_shell *shell)
 
 /*looping through the command table and execute each command
  */
-void	exec_pipe(t_shell *shell)
+void	exec_pipeline(t_shell *shell)
 {
 	t_cmd_table	*cmd;
-	pid_t		child;
-	int			status;
 
 	cmd = shell->cmd;
-	while (cmd)
-	{
-		child = exec_pipeline(shell, cmd);
-		cmd = cmd->next;
-		waitpid(child, &status, 0);
-		shell_update_code_from_status(shell, status);
-		if (WIFSIGNALED(status) && WTERMSIG(status) == SIGINT)
-		{
-			if (shell->pipeline && shell->pipeline->tmp_fd != -1)
-			{
-				close(shell->pipeline->tmp_fd);
-				shell->pipeline->tmp_fd = -1;
-			}
-			shell_abort_eval(shell, EXIT_SIGINT);
-			break ;
-		}
-		if (!(shell->state & EVALUATING))
-		{
-			if (shell->pipeline && shell->pipeline->tmp_fd != -1)
-			{
-				close(shell->pipeline->tmp_fd);
-				shell->pipeline->tmp_fd = -1;
-			}
-			break ;
-		}
-	}
+	exec_pipe_entry(shell, cmd);
 	if (shell->pipeline && shell->pipeline->tmp_fd != -1)
 	{
 		close(shell->pipeline->tmp_fd);
 		shell->pipeline->tmp_fd = -1;
 	}
-	cmd = shell->cmd;
 	while (cmd)
 	{
 		if (cmd->fd_in != STDIN_FILENO)

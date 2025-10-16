@@ -6,7 +6,7 @@
 /*   By: trupham <trupham@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/19 11:46:53 by trupham           #+#    #+#             */
-/*   Updated: 2025/10/16 16:40:49 by trupham          ###   ########.fr       */
+/*   Updated: 2025/10/16 17:15:33 by trupham          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,7 +46,7 @@ static void	clean_pipe(t_pipe_line *pipeline, t_cmd_table *cmd)
 		close(cmd->fd_out);
 }
 
-pid_t	exec_pipeline(t_shell *shell, t_cmd_table *cmd)
+static pid_t	exec_pipe(t_shell *shell, t_cmd_table *cmd)
 {
 	t_pipe_line	*pipeline;
 	pid_t		child;
@@ -72,4 +72,38 @@ pid_t	exec_pipeline(t_shell *shell, t_cmd_table *cmd)
 	pipeline->tmp_fd = dup(pipeline->pipe[RD]);
 	clean_pipe(pipeline, cmd);
 	return (child);
+}
+
+static void	clean_sig_pipe(t_shell *shell)
+{
+	if (shell->pipeline && shell->pipeline->tmp_fd != -1)
+	{
+		close(shell->pipeline->tmp_fd);
+		shell->pipeline->tmp_fd = -1;
+	}
+}
+
+void	exec_pipe_entry(t_shell *shell, t_cmd_table *cmd)
+{
+	pid_t		child;
+	int			status;
+
+	while (cmd)
+	{
+		child = exec_pipe(shell, cmd);
+		cmd = cmd->next;
+		waitpid(child, &status, 0);
+		shell_update_code_from_status(shell, status);
+		if (WIFSIGNALED(status) && WTERMSIG(status) == SIGINT)
+		{
+			clean_sig_pipe(shell);
+			shell_abort_eval(shell, EXIT_SIGINT);
+			break ;
+		}
+		if (!(shell->state & EVALUATING))
+		{
+			clean_sig_pipe(shell);
+			break ;
+		}
+	}
 }
