@@ -12,22 +12,7 @@
 
 #include "minishell.h"
 
-void	builtin_select(t_shell *shell, t_cmd_table *cmd)
-{
-	const t_builtin	builtin_table[BUILTIN_COUNT] = {
-		builtin_cd,
-		builtin_echo,
-		builtin_exit,
-		builtin_pwd,
-		builtin_export,
-		builtin_unset,
-		builtin_env,
-	};
-
-	builtin_table[cmd->cmd_type](shell, cmd);
-}
-
-void	exec_cleanup_parent(t_cmd_table *cmd)
+static void	exec_cleanup_parent(t_cmd_table *cmd)
 {
 	if (cmd->fd_in != STDIN_FILENO)
 		close(cmd->fd_in);

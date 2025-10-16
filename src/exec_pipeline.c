@@ -55,7 +55,7 @@ static void	clean_pipe(t_pipe_line *pipeline, t_cmd_table *cmd)
 	close_pipe(pipeline);
 }
 
-pid_t	exec_pipeline(t_shell *shell, t_cmd_table *cmd)
+static pid_t	exec_pipe(t_shell *shell, t_cmd_table *cmd)
 {
 	t_pipe_line	*pipeline;
 	pid_t		child;
