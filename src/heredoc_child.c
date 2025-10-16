@@ -6,7 +6,7 @@
 /*   By: jyniemit <jyniemit@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/07 16:49:16 by jyniemit          #+#    #+#             */
-/*   Updated: 2025/10/14 14:26:01 by jyniemit         ###   ########.fr       */
+/*   Updated: 2025/10/16 19:15:19 by jyniemit         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,9 +38,16 @@ static void	hd_proc_readl(t_shell *sh, int write_fd, char *delim, int *flag)
 	char	*line;
 
 	expand = (sh->state & HEREDOC_EXPAND) != 0;
+	setup_heredoc_signals();
 	while (1)
 	{
 		line = readline("> ");
+		if (g_received_signal == SIGINT)
+		{
+			if (line)
+				free(line);
+			break ;
+		}
 		if (!line)
 			break ;
 		if (ft_strlen(line) == ft_strlen(delim) && !ft_strncmp(line, delim,
@@ -59,26 +66,18 @@ static void	hd_proc_readl(t_shell *sh, int write_fd, char *delim, int *flag)
 	}
 }
 
-static void	heredoc_sigint(int sig)
-{
-	(void)sig;
-	exit(130);
-}
 
 void	heredoc_child(t_shell *sh, int write_fd, char *delim)
 {
-	struct sigaction	sa;
 	int					received_delim;
 
 	received_delim = 0;
-	sigemptyset(&sa.sa_mask);
-	sa.sa_flags = 0;
-	sa.sa_handler = heredoc_sigint;
-	sigaction(SIGINT, &sa, NULL);
-	signal(SIGQUIT, SIG_IGN);
-	signal(SIGTERM, SIG_DFL);
 	hd_proc_readl(sh, write_fd, delim, &received_delim);
-	close(write_fd);
+	if (g_received_signal == SIGINT)
+	{
+		close(write_fd);
+		child_cleanup_and_exit(sh, NULL, 130);
+	}
 	if (!received_delim)
 		heredoc_delim_error_message(delim);
 	while (*delim)
@@ -86,5 +85,6 @@ void	heredoc_child(t_shell *sh, int write_fd, char *delim)
 		*delim = '\0';
 		delim++;
 	}
+	close(write_fd);
 	child_cleanup_and_exit(sh, NULL, 0);
 }

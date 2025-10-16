@@ -6,7 +6,7 @@
 /*   By: jyniemit <jyniemit@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/06 13:18:42 by jyniemit          #+#    #+#             */
-/*   Updated: 2025/10/09 19:16:43 by jyniemit         ###   ########.fr       */
+/*   Updated: 2025/10/16 19:42:03 by jyniemit         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,12 +31,15 @@ void	signal_handler(int sig)
 	}
 }
 
+
 static void	heredoc_sigint(int sig)
 {
+	g_received_signal = sig;
 	if (sig == SIGINT)
 	{
-		g_received_signal = SIGINT;
-		write(STDOUT_FILENO, "\n", 1);
+		close(STDIN_FILENO);
+		rl_on_new_line();
+		rl_redisplay();
 	}
 }
 
@@ -46,6 +49,7 @@ void	setup_heredoc_signals(void)
 
 	sigemptyset(&sa.sa_mask);
 	sa.sa_flags = 0;
+	g_received_signal = 0;
 	sa.sa_handler = heredoc_sigint;
 	sigaction(SIGINT, &sa, NULL);
 	signal(SIGQUIT, SIG_IGN);
