@@ -6,7 +6,7 @@
 /*   By: jyniemit <jyniemit@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/02 15:42:05 by jyniemit          #+#    #+#             */
-/*   Updated: 2025/10/03 19:04:07 by jyniemit         ###   ########.fr       */
+/*   Updated: 2025/10/16 16:52:24 by trupham          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,4 +31,19 @@ void	builtin_pwd(t_shell *shell, t_cmd_table *cmd)
 		return ;
 	}
 	shell->code = OK;
+}
+
+void	builtin_select(t_shell *shell, t_cmd_table *cmd)
+{
+	const t_builtin	builtin_table[BUILTIN_COUNT] = {
+		builtin_cd,
+		builtin_echo,
+		builtin_exit,
+		builtin_pwd,
+		builtin_export,
+		builtin_unset,
+		builtin_env,
+	};
+
+	builtin_table[cmd->cmd_type](shell, cmd);
 }

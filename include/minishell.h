@@ -6,7 +6,7 @@
 /*   By: jyniemit <jyniemit@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/29 13:40:26 by jyniemit          #+#    #+#             */
-/*   Updated: 2025/10/15 15:43:38 by jyniemit         ###   ########.fr       */
+/*   Updated: 2025/10/16 17:16:06 by trupham          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -341,9 +341,9 @@ bool							is_quote(const char c);
 
 // exec prototypes
 char							*get_path(t_shell *shell, char *cmd);
-void							exec_pipe(t_shell *shell);
+void							exec_pipe_entry(t_shell *shell, t_cmd_table *cmd);
+void							exec_pipeline(t_shell *shell);
 void							exec_no_pipe(t_shell *shell);
-pid_t							exec_pipeline(t_shell *shell, t_cmd_table *cmd);
 void							exec_prep(t_cmd_table *cmd,
 									t_pipe_line *pipeline);
 void							exec_apply_redirs(t_cmd_table *cmd);
@@ -359,4 +359,6 @@ int								map_exec_errno_to_exit(int err);
 // execution
 void							builtin_select(t_shell *shell, t_cmd_table *cmd);
 void							child_cleanup_and_exit(t_shell *sh, t_cmd_table *cmd, int status);
+void							errno_report(t_cmd_table *cmd);
+void							print_err(char *name, char *mes);
 #endif // MINISHELL_H
