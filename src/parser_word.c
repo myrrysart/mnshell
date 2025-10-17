@@ -79,6 +79,11 @@ bool	handle_word(t_shell *sh, t_cmd_table *cmd, t_token **tok, int *first)
 	if (*first && cmd->cmd_type == EXTERNAL)
 	{
 		str_append(sh_work_arena(sh), str, get_path(sh, rm_quote(sh, *tok)));
+		if (str->len == 0)
+		{
+			*tok = (*tok)->next;
+			return (true);
+		}
 		da_append(sh_work_arena(sh), cmd->cmd_da, str->str);
 		*tok = (*tok)->next;
 	}

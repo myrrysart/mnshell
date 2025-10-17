@@ -6,7 +6,7 @@
 /*   By: trupham <trupham@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/06 15:41:48 by trupham           #+#    #+#             */
-/*   Updated: 2025/10/17 15:29:53 by trupham          ###   ########.fr       */
+/*   Updated: 2025/10/17 16:34:52 by jyniemit         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -67,9 +67,11 @@ static bool	handle_append(t_shell *sh, t_cmd_table *cmd, t_token **tok)
 
 static bool	handle_heredoc(t_shell *sh, t_cmd_table *cmd, t_token **tok)
 {
-	int	newfd;
+	int newfd;
 
 	sh->heredoc_index++;
+	if (!*tok || !(*tok)->next || !(*tok)->next->content)
+		return (shell_abort_eval(sh, EXIT_PARSE_ERROR), false);
 	strip_delimiter(sh, *tok);
 	if (cmd->fd_in > STDERR_FILENO)
 	{
