@@ -6,7 +6,7 @@
 /*   By: jyniemit <jyniemit@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/29 13:40:26 by jyniemit          #+#    #+#             */
-/*   Updated: 2025/10/16 17:16:06 by trupham          ###   ########.fr       */
+/*   Updated: 2025/10/17 14:55:06 by jyniemit         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -361,4 +361,5 @@ void							builtin_select(t_shell *shell, t_cmd_table *cmd);
 void							child_cleanup_and_exit(t_shell *sh, t_cmd_table *cmd, int status);
 void							errno_report(t_cmd_table *cmd);
 void							print_err(char *name, char *mes);
+void							close_all_cmd_fds(t_cmd_table *cmd);
 #endif // MINISHELL_H

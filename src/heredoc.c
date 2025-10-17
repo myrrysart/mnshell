@@ -80,7 +80,6 @@ int	read_heredoc(t_shell *sh)
 	if ((WIFEXITED(st) && WEXITSTATUS(st) == 130) || (WIFSIGNALED(st) && WTERMSIG(st) == SIGINT))
 	{
 		close(pfd[RD]); pfd[RD] = -1;
-		close(pfd[WR]); pfd[WR] = -1;
 		return (heredoc_cancelled(sh));
 	}
 	if (!(WIFEXITED(st) && WEXITSTATUS(st) == 0))

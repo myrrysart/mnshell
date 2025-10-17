@@ -6,7 +6,7 @@
 /*   By: jyniemit <jyniemit@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/30 17:23:53 by jyniemit          #+#    #+#             */
-/*   Updated: 2025/10/16 17:17:47 by trupham          ###   ########.fr       */
+/*   Updated: 2025/10/17 14:54:36 by jyniemit         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -86,13 +86,5 @@ void	exec_pipeline(t_shell *shell)
 	{
 		close(shell->pipeline->tmp_fd);
 		shell->pipeline->tmp_fd = -1;
-	}
-	while (cmd)
-	{
-		if (cmd->fd_in != STDIN_FILENO)
-			close(cmd->fd_in);
-		if (cmd->fd_out != STDOUT_FILENO)
-			close(cmd->fd_out);
-		cmd = cmd->next;
 	}
 }

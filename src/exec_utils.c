@@ -6,7 +6,7 @@
 /*   By: trupham <trupham@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/12 11:09:42 by trupham           #+#    #+#             */
-/*   Updated: 2025/10/16 17:30:23 by jyniemit         ###   ########.fr       */
+/*   Updated: 2025/10/17 14:54:59 by jyniemit         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -104,12 +104,7 @@ char	*get_path(t_shell *shell, char *cmd)
 		return (cmd);
 	bin_cmd = exec_get_binary_path(cmd, shell->heap_env);
 	if (!bin_cmd)
-	{
-		ft_putstr_fd(cmd, 2);
-		ft_putendl_fd(": Command not found.", 2);
-		shell_abort_eval(shell, EXIT_CMD_NOT_FOUND);
 		return (cmd);
-	}
 	arena_cmd = arena_alloc(sh_work_arena(shell), ft_strlen(bin_cmd) + 1);
 	if (!arena_cmd)
 		return (free(bin_cmd), NULL);
