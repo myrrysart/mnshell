@@ -16,6 +16,8 @@ void	close_pipe(t_pipe_line *pipe)
 {
 	close(pipe->pipe[RD]);
 	close(pipe->pipe[WR]);
+    pipe->pipe[WR] = -1;
+    pipe->pipe[RD] = -1;
 }
 
 static void	exec_first_prep(t_cmd_table *cmd, t_pipe_line *pipeline)
@@ -24,11 +26,13 @@ static void	exec_first_prep(t_cmd_table *cmd, t_pipe_line *pipeline)
 	{
 		dup2(cmd->fd_in, STDIN_FILENO);
 		close(cmd->fd_in);
+		cmd->fd_in = STDIN_FILENO;
 	}
 	if (cmd->fd_out != STDOUT_FILENO)
 	{
 		dup2(cmd->fd_out, STDOUT_FILENO);
 		close(cmd->fd_out);
+		cmd->fd_out = STDOUT_FILENO;
 	}
 	else
 		dup2(pipeline->pipe[WR], STDOUT_FILENO);
@@ -41,6 +45,7 @@ static void	exec_mid_prep(t_cmd_table *cmd, t_pipe_line *pipeline)
 	{
 		dup2(cmd->fd_out, STDOUT_FILENO);
 		close(cmd->fd_out);
+		cmd->fd_out = STDOUT_FILENO;
 	}
 	else
 		dup2(pipeline->pipe[WR], STDOUT_FILENO);
@@ -48,6 +53,7 @@ static void	exec_mid_prep(t_cmd_table *cmd, t_pipe_line *pipeline)
 	{
 		dup2(cmd->fd_in, STDIN_FILENO);
 		close(cmd->fd_in);
+		cmd->fd_in = STDIN_FILENO;
 	}
 	else
 	{
@@ -64,12 +70,14 @@ static void	exec_last_prep(t_cmd_table *cmd, t_pipe_line *pipeline)
 	{
 		dup2(cmd->fd_out, STDOUT_FILENO);
 		close(cmd->fd_out);
+		cmd->fd_out = STDOUT_FILENO;
 	}
 	close_pipe(pipeline);
 	if (cmd->fd_in != STDIN_FILENO)
 	{
 		dup2(cmd->fd_in, STDIN_FILENO);
 		close(cmd->fd_in);
+		cmd->fd_in = STDIN_FILENO;
 	}
 	else
 	{

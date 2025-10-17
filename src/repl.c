@@ -6,7 +6,7 @@
 /*   By: jyniemit <jyniemit@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/29 12:37:53 by jyniemit          #+#    #+#             */
-/*   Updated: 2025/10/17 14:54:51 by jyniemit         ###   ########.fr       */
+/*   Updated: 2025/10/17 14:55:18 by jyniemit         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,18 +36,6 @@ static void	reset_flags(t_shell *shell)
 			| HAS_INPUT_REDIR | HAS_OUTPUT_REDIR);
 }
 
-static void	close_cmd_fds(t_cmd_table *cmd)
-{
-	while (cmd)
-	{
-		if (cmd->fd_in != STDIN_FILENO)
-			close(cmd->fd_in);
-		if (cmd->fd_out != STDOUT_FILENO)
-			close(cmd->fd_out);
-		cmd = cmd->next;
-	}
-}
-
 static void	parse_and_execute(t_shell *shell)
 {
 	t_lexer	l;
@@ -67,14 +55,10 @@ static void	parse_and_execute(t_shell *shell)
 		shell->state &= ~(HAS_PIPE | EVALUATING);
 	if (!shell->cmd)
 		return ;
-	if (!(shell->state & EVALUATING))
-		return (close_cmd_fds(shell->cmd));
 	if (shell->cmd && shell->state & HAS_PIPE)
 		exec_pipeline(shell);
 	else
 		exec_no_pipe(shell);
-	if (shell->cmd)
-		close_cmd_fds(shell->cmd);
 	reset_flags(shell);
 }
 
@@ -102,7 +86,6 @@ void	run_shell(t_shell *shell)
 		}
 		if (!line)
 		{
-			close_cmd_fds(shell->cmd);
 			write(STDOUT_FILENO, "exit\n", 5);
 			shell->state |= SHOULD_EXIT;
 			break ;
@@ -115,6 +98,8 @@ void	run_shell(t_shell *shell)
 			shell->state |= EVALUATING;
 			shell_begin_frame(shell);
 			parse_and_execute(shell);
+      if (shell->cmd)
+        close_all_cmd_fds(shell->cmd);
 			shell_end_frame(shell);
 		}
 		free(line);

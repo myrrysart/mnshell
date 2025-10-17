@@ -6,7 +6,7 @@
 /*   By: trupham <trupham@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/25 11:27:57 by trupham           #+#    #+#             */
-/*   Updated: 2025/10/07 19:00:42 by jyniemit         ###   ########.fr       */
+/*   Updated: 2025/10/17 13:01:08 by jyniemit         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,13 +39,14 @@ t_cmd_table	*parser_cmd_build_one(t_shell *shell, t_token *tok)
 			return (NULL);
 		}
 	}
-	return (cmd);
 	if (cmd->cmd_da && cmd->cmd_da->count == 0)
 	{
 		if (cmd->fd_in != STDIN_FILENO) { close(cmd->fd_in); cmd->fd_in = STDIN_FILENO; }
 		if (cmd->fd_out != STDOUT_FILENO) { close(cmd->fd_out); cmd->fd_out = STDOUT_FILENO; }
 	}
+	return (cmd);
 }
+
 static bool	parser_cmd_build_curr(t_shell *shell, t_cmd_table **curr,
 		t_token *token)
 {
@@ -122,10 +123,18 @@ t_cmd_table	*parser_cmd_build_many(t_shell *shell, t_token *token)
 	while (token && token->type != PIPE)
 		token = token->next;
 	if (!parser_cmd_build_main(shell, cmd_table_head, token))
+	{
+		close_all_cmd_fds(cmd_table_head);
 		return (NULL);
+	}
 	curr = cmd_table_head;
 	while (curr->next)
 		curr = curr->next;
 	curr->cmd_pos = LAST;
+	if (!(shell->state & EVALUATING))
+	{
+		close_all_cmd_fds(cmd_table_head);
+		return (NULL);
+	}
 	return (cmd_table_head);
 }

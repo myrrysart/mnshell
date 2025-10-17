@@ -87,12 +87,4 @@ void	exec_pipeline(t_shell *shell)
 		close(shell->pipeline->tmp_fd);
 		shell->pipeline->tmp_fd = -1;
 	}
-	while (cmd)
-	{
-		if (cmd->fd_in != STDIN_FILENO)
-			close(cmd->fd_in);
-		if (cmd->fd_out != STDOUT_FILENO)
-			close(cmd->fd_out);
-		cmd = cmd->next;
-	}
 }
