@@ -6,7 +6,7 @@
 /*   By: Jyniemit <jyniemit@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/04 12:52:10 by Jyniemit          #+#    #+#             */
-/*   Updated: 2025/10/15 18:51:45 by jyniemit         ###   ########.fr       */
+/*   Updated: 2025/10/17 10:29:13 by jyniemit         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,7 +46,7 @@ int	ft_atoi(const char *str)
 	return (res * sign);
 }
 
-long long	ft_atol(const char *str)
+long long	ft_atoll(const char *str)
 {
 	int						i;
 	int						sign;
@@ -68,8 +68,8 @@ long long	ft_atol(const char *str)
 	{
 		raw = raw * 10 + (str[i] - '0');
 		i++;
+		if (raw > LLONG_MAX)
+			return (-1);
 	}
-	if (raw > LLONG_MAX)
-		return (-1);
 	return ((long long int)raw * sign);
 }

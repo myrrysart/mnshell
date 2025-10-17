@@ -6,7 +6,7 @@
 /*   By: jyniemit <jyniemit@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/02 15:41:54 by jyniemit          #+#    #+#             */
-/*   Updated: 2025/10/15 18:26:04 by jyniemit         ###   ########.fr       */
+/*   Updated: 2025/10/17 10:29:33 by jyniemit         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -58,8 +58,8 @@ void	builtin_exit(t_shell *shell, t_cmd_table *cmd)
 			builtin_exit_error(shell, arg, 2);
 			return ;
 		}
-		j = ft_atol(arg);
-		if (j == -1)
+		j = ft_atoll(arg);
+		if (j < 0)
 		{
 			builtin_exit_error(shell, arg, 1);
 			return ;
