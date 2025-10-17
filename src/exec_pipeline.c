@@ -6,7 +6,7 @@
 /*   By: trupham <trupham@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/19 11:46:53 by trupham           #+#    #+#             */
-/*   Updated: 2025/10/17 17:15:24 by trupham          ###   ########.fr       */
+/*   Updated: 2025/10/17 20:42:18 by jyniemit         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -100,18 +100,16 @@ void	exec_pipe_entry(t_shell *shell, t_cmd_table *cmd)
 	{
 		child = exec_pipe(shell, cmd);
 		cmd = cmd->next;
-		waitpid(child, &status, 0);
-		shell_update_code_from_status(shell, status);
-		if (WIFSIGNALED(status) && WTERMSIG(status) == SIGINT)
-		{
-			clean_sig_pipe(shell);
-			sh_abort(shell, EXIT_SIGINT);
-			break ;
-		}
-		if (!(shell->state & EVALUATING))
-		{
-			clean_sig_pipe(shell);
-			break ;
-		}
+	}
+	waitpid(child, &status, 0);
+	shell_update_code_from_status(shell, status);
+	if (WIFSIGNALED(status) && WTERMSIG(status) == SIGINT)
+	{
+		clean_sig_pipe(shell);
+		sh_abort(shell, EXIT_SIGINT);
+	}
+	if (!(shell->state & EVALUATING))
+	{
+		clean_sig_pipe(shell);
 	}
 }
