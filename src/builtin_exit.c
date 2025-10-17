@@ -6,7 +6,7 @@
 /*   By: jyniemit <jyniemit@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/02 15:41:54 by jyniemit          #+#    #+#             */
-/*   Updated: 2025/10/17 15:55:09 by trupham          ###   ########.fr       */
+/*   Updated: 2025/10/17 17:41:22 by trupham          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,24 +46,14 @@ void	builtin_exit(t_shell *shell, t_cmd_table *cmd)
 			i++;
 		while (arg[i])
 		{
-			if (!ft_isdigit(arg[i]))
-			{
-				builtin_exit_error(shell, arg, 1);
-				return ;
-			}
-			i++;
+			if (!ft_isdigit(arg[i++]))
+				return (builtin_exit_error(shell, arg, 1));
 		}
 		if (cmd->cmd_da->items[2])
-		{
-			builtin_exit_error(shell, arg, 2);
-			return ;
-		}
+			return (builtin_exit_error(shell, arg, 2));
 		j = ft_atoll(arg);
 		if (j < 0)
-		{
-			builtin_exit_error(shell, arg, 1);
-			return ;
-		}
+			return (builtin_exit_error(shell, arg, 1));
 		shell->code = (unsigned char)j;
 	}
 	shell->state |= SHOULD_EXIT;
