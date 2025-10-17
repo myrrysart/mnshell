@@ -6,7 +6,7 @@
 #    By: jyniemit <jyniemit@student.hive.fi>        +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2025/10/03 12:12:38 by jyniemit          #+#    #+#              #
-#    Updated: 2025/10/17 18:16:48 by jyniemit         ###   ########.fr        #
+#    Updated: 2025/10/17 19:15:08 by jyniemit         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -61,6 +61,7 @@ SOURCES = \
 	parser_word.c \
 	parser_da.c \
 	parser_handle.c \
+	parser_handle_heredoc.c \
 	parser_report.c \
 	repl.c \
 	shell_init.c \

@@ -6,7 +6,7 @@
 /*   By: jyniemit <jyniemit@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/29 13:40:26 by jyniemit          #+#    #+#             */
-/*   Updated: 2025/10/17 18:44:41 by jyniemit         ###   ########.fr       */
+/*   Updated: 2025/10/17 19:13:59 by jyniemit         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,7 +40,7 @@
 # define ARG_MAX 4096
 # define WR 1
 # define RD 0
-# define MAX_HEREDOCS 16
+# define MAX_HEREDOCS 9
 # define HEREDOC_INTERRUPTED -2
 # ifndef DA_CAP
 #  define DA_CAP 128
@@ -382,4 +382,5 @@ void							print_err(char *name, char *mes);
 void							close_all_cmd_fds(t_cmd_table *cmd);
 void							fork_error(t_shell *shell, t_cmd_table *cmd);
 void							clean_up_fds(t_cmd_table *cmd);
+bool							handle_heredoc(t_shell *sh, t_cmd_table *cmd, t_token **tok);
 #endif // MINISHELL_H
