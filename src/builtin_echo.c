@@ -21,6 +21,8 @@ static bool	has_nl_flag(const char *str)
 		i++;
 	else
 		return (false);
+	if (str[i] == '\0')
+		return (false);
 	while (str[i])
 	{
 		if (str[i] != 'n')
