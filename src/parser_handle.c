@@ -67,7 +67,7 @@ static bool	handle_append(t_shell *sh, t_cmd_table *cmd, t_token **tok)
 
 static bool	handle_heredoc(t_shell *sh, t_cmd_table *cmd, t_token **tok)
 {
-	int newfd;
+	int	newfd;
 
 	sh->heredoc_index++;
 	if (!*tok || !(*tok)->next || !(*tok)->next->content)
