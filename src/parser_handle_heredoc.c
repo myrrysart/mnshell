@@ -6,13 +6,13 @@
 /*   By: jyniemit <jyniemit@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/17 19:12:46 by jyniemit          #+#    #+#             */
-/*   Updated: 2025/10/17 19:14:15 by jyniemit         ###   ########.fr       */
+/*   Updated: 2025/10/17 19:26:13 by jyniemit         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-static int reading_result(t_shell *sh)
+static int	reading_result(t_shell *sh)
 {
 	int	newfd;
 
@@ -31,9 +31,9 @@ static int reading_result(t_shell *sh)
 	}
 	return (newfd);
 }
+
 bool	handle_heredoc(t_shell *sh, t_cmd_table *cmd, t_token **tok)
 {
-
 	if (!*tok || !(*tok)->next || !(*tok)->next->content)
 		return (sh_abort(sh, EXIT_PARSE_ERROR), false);
 	sh->heredoc_index++;
@@ -43,7 +43,7 @@ bool	handle_heredoc(t_shell *sh, t_cmd_table *cmd, t_token **tok)
 		close(cmd->fd_in);
 		cmd->fd_in = STDIN_FILENO;
 	}
-	cmd->fd_in = reading_result(sh); 
+	cmd->fd_in = reading_result(sh);
 	if (cmd->fd_in == -1)
 		return (false);
 	sh->state |= HAS_INPUT_REDIR;

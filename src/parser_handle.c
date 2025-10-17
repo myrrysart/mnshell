@@ -6,7 +6,7 @@
 /*   By: trupham <trupham@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/06 15:41:48 by trupham           #+#    #+#             */
-/*   Updated: 2025/10/17 19:12:34 by jyniemit         ###   ########.fr       */
+/*   Updated: 2025/10/17 19:27:08 by jyniemit         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -70,7 +70,6 @@ static bool	handle_append(t_shell *sh, t_cmd_table *cmd, t_token **tok)
 	*tok = (*tok)->next->next;
 	return (true);
 }
-
 
 bool	handle_token(t_shell *sh, t_cmd_table *cmd, t_token **tok, int *first)
 {

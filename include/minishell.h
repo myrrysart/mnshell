@@ -382,5 +382,6 @@ void							print_err(char *name, char *mes);
 void							close_all_cmd_fds(t_cmd_table *cmd);
 void							fork_error(t_shell *shell, t_cmd_table *cmd);
 void							clean_up_fds(t_cmd_table *cmd);
-bool							handle_heredoc(t_shell *sh, t_cmd_table *cmd, t_token **tok);
+bool							handle_heredoc(t_shell *sh, t_cmd_table *cmd,
+									t_token **tok);
 #endif // MINISHELL_H
