@@ -6,7 +6,7 @@
 /*   By: trupham <trupham@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/16 15:44:12 by trupham           #+#    #+#             */
-/*   Updated: 2025/10/17 17:15:25 by trupham          ###   ########.fr       */
+/*   Updated: 2025/10/17 18:42:25 by jyniemit         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,7 +20,6 @@ void	sh_abort(t_shell *shell, t_shell_code code)
 			| HAS_OUTPUT_REDIR | HAS_QUOTE | IN_SQUOTE
 			| IN_DQUOTE | HEREDOC_EXPAND);
 	g_received_signal = 0;
-	close_all_cmd_fds(shell->cmd);
 }
 
 int	map_exec_errno_to_exit(int err)

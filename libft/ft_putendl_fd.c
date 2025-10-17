@@ -6,7 +6,7 @@
 /*   By: Jyniemit <jyniemit@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/11 13:07:54 by Jyniemit          #+#    #+#             */
-/*   Updated: 2025/09/19 14:21:13 by trupham          ###   ########.fr       */
+/*   Updated: 2025/10/17 18:48:26 by jyniemit         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,9 +18,4 @@ void	ft_putendl_fd(char *s, int fd)
 		return ;
 	write(fd, s, ft_strlen(s));
 	write(fd, "\n", 1);
-}
-
-void	log_debug(char *str, char *file, int line)
-{
-	ft_printf(GREEN "[DEBUG]" RESET "%s:%d: %s", file, line, str);
 }

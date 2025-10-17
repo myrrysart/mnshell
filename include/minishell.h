@@ -1,4 +1,3 @@
-// heredoc flow helpers
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
@@ -7,7 +6,7 @@
 /*   By: jyniemit <jyniemit@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/29 13:40:26 by jyniemit          #+#    #+#             */
-/*   Updated: 2025/10/17 17:21:22 by trupham          ###   ########.fr       */
+/*   Updated: 2025/10/17 18:44:41 by jyniemit         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,9 +20,9 @@
 // STDIN_FILENO, STDOUT_FILENO, STDERR_FILENO
 # include <unistd.h>
 // readline
-# include <stdio.h>
 # include <readline/history.h>
 # include <readline/readline.h>
+# include <stdio.h>
 # include <stdlib.h>
 // sigaction & signals
 # include <signal.h>
@@ -281,14 +280,18 @@ void							buf_putc(t_buf *b, char c);
 void							buf_grow(t_buf *b, size_t need);
 void							buf_init(t_buf *b, t_shell *sh);
 
-int								heredoc_wait_and_restore(t_shell *sh, pid_t pid, int *st, struct sigaction *old_int);
-int								heredoc_status_result(t_shell *sh, int *pfd, int st, int w);
+int								heredoc_wait_and_restore(t_shell *sh, pid_t pid,
+									int *st, struct sigaction *old_int);
+int								heredoc_status_result(t_shell *sh, int *pfd,
+									int st, int w);
 int								heredoc_cancelled(t_shell *sh, int *pfd);
 int								heredoc_generic_error(int *pfd, int return_nbr);
 
 int								hd_is_delim(char *line, char *delim);
-void							hd_output_line(t_shell *sh, int write_fd, char *line, int expand);
-void							hd_read_loop(t_shell *sh, int write_fd, char *delim, int *flag);
+void							hd_output_line(t_shell *sh, int write_fd,
+									char *line, int expand);
+void							hd_read_loop(t_shell *sh, int write_fd,
+									char *delim, int *flag);
 char							*get_env_var(t_shell *shell, char *key);
 void							unset_env_var(t_shell *shell, char *key);
 void							init_shell_env(t_shell *shell, char **av);
@@ -364,8 +367,7 @@ void							exec_apply_redirs(t_cmd_table *cmd);
 void							exec_builtin_with_redirs(t_shell *shell,
 									t_cmd_table *cmd);
 void							close_pipe(t_pipe_line *pipe);
-void							sh_abort(t_shell *shell,
-									t_shell_code code);
+void							sh_abort(t_shell *shell, t_shell_code code);
 void							shell_update_code_from_status(t_shell *shell,
 									int status);
 int								map_exec_errno_to_exit(int err);

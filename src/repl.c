@@ -6,7 +6,7 @@
 /*   By: jyniemit <jyniemit@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/29 12:37:53 by jyniemit          #+#    #+#             */
-/*   Updated: 2025/10/17 17:06:38 by jyniemit         ###   ########.fr       */
+/*   Updated: 2025/10/17 18:40:41 by jyniemit         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -70,8 +70,6 @@ static void	process_command_line(t_shell *shell, char *line)
 	shell->state |= EVALUATING;
 	shell_begin_frame(shell);
 	parse_and_execute(shell);
-	if (shell->cmd)
-		close_all_cmd_fds(shell->cmd);
 	shell_end_frame(shell);
 }
 

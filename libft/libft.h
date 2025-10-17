@@ -6,7 +6,7 @@
 /*   By: Jyniemit <jyniemit@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/30 16:30:50 by Jyniemit          #+#    #+#             */
-/*   Updated: 2025/10/17 10:29:51 by jyniemit         ###   ########.fr       */
+/*   Updated: 2025/10/17 18:45:30 by jyniemit         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -89,10 +89,6 @@ char				*ft_substr(char const *s, unsigned int start, size_t len);
 int					ft_tolower(int c);
 int					ft_toupper(int c);
 void				ft_err_exit(char *message);
-
-# define LOG(message) log_debug(message, __FILE__, __LINE__)
-# define GREEN "\033[32m"
-# define RESET "\033[0m"
 
 void				log_debug(char *str, char *file, int line);
 
