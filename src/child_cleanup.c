@@ -6,7 +6,7 @@
 /*   By: jyniemit <jyniemit@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/15 15:24:35 by jyniemit          #+#    #+#             */
-/*   Updated: 2025/10/17 13:17:08 by jyniemit         ###   ########.fr       */
+/*   Updated: 2025/10/17 17:45:28 by trupham          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,21 +19,24 @@ static int	not_std(int fd)
 	return (0);
 }
 
+void	clean_up_fds(t_cmd_table *cmd)
+{
+	if (cmd->fd_in != STDIN_FILENO)
+	{
+		close(cmd->fd_in);
+		cmd->fd_in = STDIN_FILENO;
+	}
+	if (cmd->fd_out != STDOUT_FILENO)
+	{
+		close(cmd->fd_out);
+		cmd->fd_out = STDOUT_FILENO;
+	}
+}
+
 void	child_cleanup_and_exit(t_shell *sh, t_cmd_table *cmd, int status)
 {
 	if (cmd)
-	{
-		if (not_std(cmd->fd_in))
-		{
-			close(cmd->fd_in);
-			cmd->fd_in = STDIN_FILENO;
-		}
-		if (not_std(cmd->fd_out))
-		{
-			close(cmd->fd_out);
-			cmd->fd_out = STDOUT_FILENO;
-		}
-	}
+		clean_up_fds(cmd);
 	if (sh && sh->pipeline)
 	{
 		if (not_std(sh->pipeline->pipe[RD]))

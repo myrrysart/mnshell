@@ -6,7 +6,7 @@
 /*   By: jyniemit <jyniemit@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/29 14:30:38 by jyniemit          #+#    #+#             */
-/*   Updated: 2025/10/06 13:30:23 by jyniemit         ###   ########.fr       */
+/*   Updated: 2025/10/17 17:15:14 by trupham          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,7 +29,7 @@ void	handle_signal(t_shell *shell, int sig)
 		if (shell->state & EVALUATING)
 		{
 			write(STDOUT_FILENO, "\n", 1);
-			shell_abort_eval(shell, EXIT_SIGINT);
+			sh_abort(shell, EXIT_SIGINT);
 		}
 		else
 		{
@@ -39,7 +39,7 @@ void	handle_signal(t_shell *shell, int sig)
 	else if (sig == SIGTERM)
 	{
 		if (shell->state & EVALUATING)
-			shell_abort_eval(shell, EXIT_SIGTERM);
+			sh_abort(shell, EXIT_SIGTERM);
 		else
 			shell->code = EXIT_SIGTERM;
 	}

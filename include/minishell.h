@@ -6,7 +6,7 @@
 /*   By: jyniemit <jyniemit@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/29 13:40:26 by jyniemit          #+#    #+#             */
-/*   Updated: 2025/10/17 15:49:49 by trupham          ###   ########.fr       */
+/*   Updated: 2025/10/17 17:21:22 by trupham          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -83,8 +83,8 @@ typedef enum e_shell_code
 	EXIT_SIGTERM = 143,
 	EXIT_LINEFAIL = 65,
 	EXIT_SHELLINITFAIL = 66,
-	EXIT_PARSE_ERROR = 2,
-	EXIT_REDIRECT_ERROR = 1,
+	EXIT_PARSE_ERROR = 67,
+	EXIT_REDIRECT_ERROR = 68,
 	EXIT_CAN_RETRY = 123,
 	EXIT_HEREDOC_ERROR = 112,
 }								t_shell_code;
@@ -353,7 +353,7 @@ void							exec_apply_redirs(t_cmd_table *cmd);
 void							exec_builtin_with_redirs(t_shell *shell,
 									t_cmd_table *cmd);
 void							close_pipe(t_pipe_line *pipe);
-void							shell_abort_eval(t_shell *shell,
+void							sh_abort(t_shell *shell,
 									t_shell_code code);
 void							shell_update_code_from_status(t_shell *shell,
 									int status);
@@ -368,4 +368,5 @@ void							errno_report(t_cmd_table *cmd);
 void							print_err(char *name, char *mes);
 void							close_all_cmd_fds(t_cmd_table *cmd);
 void							fork_error(t_shell *shell, t_cmd_table *cmd);
+void							clean_up_fds(t_cmd_table *cmd);
 #endif // MINISHELL_H

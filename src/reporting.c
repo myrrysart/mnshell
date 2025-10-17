@@ -6,13 +6,13 @@
 /*   By: trupham <trupham@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/16 15:44:12 by trupham           #+#    #+#             */
-/*   Updated: 2025/10/17 13:35:35 by jyniemit         ###   ########.fr       */
+/*   Updated: 2025/10/17 17:15:25 by trupham          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-void	shell_abort_eval(t_shell *shell, t_shell_code code)
+void	sh_abort(t_shell *shell, t_shell_code code)
 {
 	if (code != OK)
 		shell->code = code;
