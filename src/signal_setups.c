@@ -31,7 +31,6 @@ void	signal_handler(int sig)
 	}
 }
 
-
 static void	heredoc_sigint(int sig)
 {
 	g_received_signal = sig;

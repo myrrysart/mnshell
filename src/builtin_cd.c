@@ -6,26 +6,24 @@
 /*   By: jyniemit <jyniemit@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/02 15:41:44 by jyniemit          #+#    #+#             */
-/*   Updated: 2025/10/14 19:24:43 by jyniemit         ###   ########.fr       */
+/*   Updated: 2025/10/17 15:41:12 by trupham          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
+static void	cd_err_help(t_shell *shell, char *mes)
+{
+	ft_putendl_fd(mes, STDERR_FILENO);
+	shell->code = EXIT_GENERAL_ERROR;
+}
+
 static void	cd_error(t_shell *shell, char *path, int code)
 {
 	if (code == 1)
-	{
-		ft_putendl_fd("cd: too many arguments", STDERR_FILENO);
-		shell->code = EXIT_GENERAL_ERROR;
-		return ;
-	}
+		return (cd_err_help(shell, "cd: too many arguments"));
 	if (code == 2)
-	{
-		ft_putendl_fd("cd: HOME not set", STDERR_FILENO);
-		shell->code = EXIT_GENERAL_ERROR;
-		return ;
-	}
+		return (cd_err_help(shell, "cd: HOME not set"));
 	if (code == 3)
 	{
 		ft_putstr_fd("cd: ", STDERR_FILENO);
@@ -35,18 +33,11 @@ static void	cd_error(t_shell *shell, char *path, int code)
 		return ;
 	}
 	if (code == 4)
-	{
-		ft_putendl_fd("cd: error retrieving current directory", STDERR_FILENO);
-		shell->code = EXIT_GENERAL_ERROR;
-		return ;
-	}
+		return (cd_err_help(shell, "cd: error retrieving current directory"));
 	if (code == 5)
-	{
-		ft_putendl_fd("cd: OLDPWD not set", STDERR_FILENO);
-		shell->code = EXIT_GENERAL_ERROR;
-		return ;
-	}
+		return (cd_err_help(shell, "cd: OLDPWD not set"));
 }
+
 static int	set_target_path(t_shell *shell, t_cmd_table *cmd, char **out)
 {
 	char	*arg;
@@ -70,6 +61,7 @@ static int	set_target_path(t_shell *shell, t_cmd_table *cmd, char **out)
 	*out = arg;
 	return (1);
 }
+
 void	builtin_cd(t_shell *shell, t_cmd_table *cmd)
 {
 	char	*path;

@@ -6,7 +6,7 @@
 /*   By: trupham <trupham@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/19 11:46:53 by trupham           #+#    #+#             */
-/*   Updated: 2025/10/17 14:55:13 by jyniemit         ###   ########.fr       */
+/*   Updated: 2025/10/17 15:50:06 by trupham          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -61,6 +61,8 @@ static pid_t	exec_pipe(t_shell *shell, t_cmd_table *cmd)
 	if (pipe(pipeline->pipe) < 0)
 		return (-1);
 	child = fork();
+	if (child < 0)
+		fork_error(shell, cmd);
 	if (child == 0)
 	{
 		setup_child_signals();
@@ -91,8 +93,8 @@ static void	clean_sig_pipe(t_shell *shell)
 
 void	exec_pipe_entry(t_shell *shell, t_cmd_table *cmd)
 {
-	pid_t		child;
-	int			status;
+	pid_t	child;
+	int		status;
 
 	while (cmd)
 	{

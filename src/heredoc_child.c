@@ -66,10 +66,9 @@ static void	hd_proc_readl(t_shell *sh, int write_fd, char *delim, int *flag)
 	}
 }
 
-
 void	heredoc_child(t_shell *sh, int write_fd, char *delim)
 {
-	int					received_delim;
+	int	received_delim;
 
 	received_delim = 0;
 	hd_proc_readl(sh, write_fd, delim, &received_delim);

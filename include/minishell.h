@@ -6,7 +6,7 @@
 /*   By: jyniemit <jyniemit@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/29 13:40:26 by jyniemit          #+#    #+#             */
-/*   Updated: 2025/10/17 14:55:06 by jyniemit         ###   ########.fr       */
+/*   Updated: 2025/10/17 15:49:49 by trupham          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -322,6 +322,8 @@ bool							handle_word(t_shell *sh, t_cmd_table *cmd,
 									t_token **tok, int *first);
 char							*parser_expand_dollar(t_shell *shell,
 									char *str);
+bool							ensure_next_is_word(t_token *tok);
+void							print_redir_error(char *path);
 
 // lexer prototypes
 t_token							*build_token(t_arena *arena, t_token token);
@@ -341,7 +343,8 @@ bool							is_quote(const char c);
 
 // exec prototypes
 char							*get_path(t_shell *shell, char *cmd);
-void							exec_pipe_entry(t_shell *shell, t_cmd_table *cmd);
+void							exec_pipe_entry(t_shell *shell,
+									t_cmd_table *cmd);
 void							exec_pipeline(t_shell *shell);
 void							exec_no_pipe(t_shell *shell);
 void							exec_prep(t_cmd_table *cmd,
@@ -357,9 +360,12 @@ void							shell_update_code_from_status(t_shell *shell,
 int								map_exec_errno_to_exit(int err);
 
 // execution
-void							builtin_select(t_shell *shell, t_cmd_table *cmd);
-void							child_cleanup_and_exit(t_shell *sh, t_cmd_table *cmd, int status);
+void							builtin_select(t_shell *shell,
+									t_cmd_table *cmd);
+void							child_cleanup_and_exit(t_shell *sh,
+									t_cmd_table *cmd, int status);
 void							errno_report(t_cmd_table *cmd);
 void							print_err(char *name, char *mes);
 void							close_all_cmd_fds(t_cmd_table *cmd);
+void							fork_error(t_shell *shell, t_cmd_table *cmd);
 #endif // MINISHELL_H

@@ -15,7 +15,7 @@
 t_cmd_table	*parser_cmd_build_one(t_shell *shell, t_token *tok)
 {
 	t_cmd_table	*cmd;
-	int		first;
+	int			first;
 
 	cmd = arena_alloc(sh_work_arena(shell), sizeof(*cmd));
 	if (!cmd)
@@ -41,8 +41,16 @@ t_cmd_table	*parser_cmd_build_one(t_shell *shell, t_token *tok)
 	}
 	if (cmd->cmd_da && cmd->cmd_da->count == 0)
 	{
-		if (cmd->fd_in != STDIN_FILENO) { close(cmd->fd_in); cmd->fd_in = STDIN_FILENO; }
-		if (cmd->fd_out != STDOUT_FILENO) { close(cmd->fd_out); cmd->fd_out = STDOUT_FILENO; }
+		if (cmd->fd_in != STDIN_FILENO)
+		{
+			close(cmd->fd_in);
+			cmd->fd_in = STDIN_FILENO;
+		}
+		if (cmd->fd_out != STDOUT_FILENO)
+		{
+			close(cmd->fd_out);
+			cmd->fd_out = STDOUT_FILENO;
+		}
 	}
 	return (cmd);
 }

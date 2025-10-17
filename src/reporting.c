@@ -66,4 +66,3 @@ void	errno_report(t_cmd_table *cmd)
 	else if (errno == ENOEXEC)
 		print_err(cmd->cmd_da->items[0], ": Exec format error");
 }
-

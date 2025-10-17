@@ -6,7 +6,7 @@
 /*   By: jyniemit <jyniemit@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/02 15:41:54 by jyniemit          #+#    #+#             */
-/*   Updated: 2025/10/17 10:29:33 by jyniemit         ###   ########.fr       */
+/*   Updated: 2025/10/17 15:55:09 by trupham          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,8 +27,8 @@ static void	builtin_exit_error(t_shell *shell, char *arg, int code)
 	}
 	if (code == 2)
 	{
-			ft_putendl_fd("exit: too many arguments", 2);
-			shell->code = EXIT_GENERAL_ERROR;
+		ft_putendl_fd("exit: too many arguments", 2);
+		shell->code = EXIT_GENERAL_ERROR;
 	}
 }
 

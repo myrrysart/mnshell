@@ -131,11 +131,13 @@ static void	print_env_sorted_ascii(t_shell *shell)
 			break ;
 		i = -1;
 		while (++i < shell->env_count)
+		{
 			if (ascii_cmp(shell->heap_env[i], min_str) == 0)
 			{
 				ft_printf("%s\n", shell->heap_env[i]);
 				printed++;
 			}
+		}
 		last = min_str;
 	}
 }
