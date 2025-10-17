@@ -6,7 +6,7 @@
 /*   By: trupham <trupham@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/25 11:27:57 by trupham           #+#    #+#             */
-/*   Updated: 2025/10/17 13:01:08 by jyniemit         ###   ########.fr       */
+/*   Updated: 2025/10/17 17:26:41 by trupham          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,26 +32,12 @@ t_cmd_table	*parser_cmd_build_one(t_shell *shell, t_token *tok)
 	{
 		if (!handle_token(shell, cmd, &tok, &first))
 		{
-			if (cmd->fd_in != STDIN_FILENO)
-				close(cmd->fd_in);
-			if (cmd->fd_out != STDOUT_FILENO)
-				close(cmd->fd_out);
+			clean_up_fds(cmd);
 			return (NULL);
 		}
 	}
 	if (cmd->cmd_da && cmd->cmd_da->count == 0)
-	{
-		if (cmd->fd_in != STDIN_FILENO)
-		{
-			close(cmd->fd_in);
-			cmd->fd_in = STDIN_FILENO;
-		}
-		if (cmd->fd_out != STDOUT_FILENO)
-		{
-			close(cmd->fd_out);
-			cmd->fd_out = STDOUT_FILENO;
-		}
-	}
+		clean_up_fds(cmd);
 	return (cmd);
 }
 
@@ -109,6 +95,12 @@ static bool	parser_cmd_build_main(t_shell *shell, t_cmd_table *head,
 	return (true);
 }
 
+static void	*null_return_and_close_fds(t_cmd_table *cmd)
+{
+	close_all_cmd_fds(cmd);
+	return (NULL);
+}
+
 /* @brief: entry to the parser
  * first it builds the head of the command table then traverse the token list
  * to PIPE which is the delimiter that separates different commands.
@@ -131,18 +123,12 @@ t_cmd_table	*parser_cmd_build_many(t_shell *shell, t_token *token)
 	while (token && token->type != PIPE)
 		token = token->next;
 	if (!parser_cmd_build_main(shell, cmd_table_head, token))
-	{
-		close_all_cmd_fds(cmd_table_head);
-		return (NULL);
-	}
+		null_return_and_close_fds(cmd_table_head);
 	curr = cmd_table_head;
 	while (curr->next)
 		curr = curr->next;
 	curr->cmd_pos = LAST;
 	if (!(shell->state & EVALUATING))
-	{
-		close_all_cmd_fds(cmd_table_head);
-		return (NULL);
-	}
+		null_return_and_close_fds(cmd_table_head);
 	return (cmd_table_head);
 }

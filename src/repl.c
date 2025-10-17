@@ -49,7 +49,7 @@ static void	parse_and_execute(t_shell *shell)
 	t = build_token_list(shell, &l);
 	check_flag(shell, t);
 	if (!parser_is_syntax_correct(t))
-		return (shell_abort_eval(shell, EXIT_PARSE_ERROR));
+		return (sh_abort(shell, EXIT_PARSE_ERROR));
 	shell->cmd = parser_cmd_build_many(shell, t);
 	if (!shell->cmd)
 		shell->state &= ~(HAS_PIPE | EVALUATING);
