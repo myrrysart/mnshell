@@ -6,7 +6,7 @@
 /*   By: trupham <trupham@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/19 11:46:53 by trupham           #+#    #+#             */
-/*   Updated: 2025/10/17 15:50:06 by trupham          ###   ########.fr       */
+/*   Updated: 2025/10/17 16:35:38 by trupham          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,6 +39,9 @@ static void	exec_extern(t_shell *shell, t_cmd_table *cmd)
 
 static void	clean_pipe(t_pipe_line *pipeline, t_cmd_table *cmd)
 {
+	if (pipeline->tmp_fd != -1)
+		close(pipeline->tmp_fd);
+	pipeline->tmp_fd = dup(pipeline->pipe[RD]);
 	if (cmd->fd_in > STDERR_FILENO)
 	{
 		close(cmd->fd_in);
@@ -75,9 +78,6 @@ static pid_t	exec_pipe(t_shell *shell, t_cmd_table *cmd)
 			child_cleanup_and_exit(shell, cmd, shell->code);
 		}
 	}
-	if (pipeline->tmp_fd != -1)
-		close(pipeline->tmp_fd);
-	pipeline->tmp_fd = dup(pipeline->pipe[RD]);
 	clean_pipe(pipeline, cmd);
 	return (child);
 }
