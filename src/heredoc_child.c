@@ -6,7 +6,7 @@
 /*   By: jyniemit <jyniemit@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/07 16:49:16 by jyniemit          #+#    #+#             */
-/*   Updated: 2025/10/16 19:15:19 by jyniemit         ###   ########.fr       */
+/*   Updated: 2025/10/17 18:15:09 by jyniemit         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,11 +14,11 @@
 
 static void	heredoc_delim_error_message(char *delim)
 {
-	ft_putstr_fd("minishell: warning: here-document delimited \
-by end-of-file (wanted \'",
-					STDERR_FILENO);
+	ft_putstr_fd("minishell: warning: here-document delimited by end-of-file ",
+		STDERR_FILENO);
+	ft_putstr_fd("(wanted '", STDERR_FILENO);
 	ft_putstr_fd(delim, STDERR_FILENO);
-	ft_putstr_fd("\')\n", STDERR_FILENO);
+	ft_putstr_fd("')\n", STDERR_FILENO);
 }
 
 static void	hd_write_expansion(t_shell *sh, char *line, int write_fd)
@@ -32,38 +32,21 @@ static void	hd_write_expansion(t_shell *sh, char *line, int write_fd)
 		write(write_fd, line, ft_strlen(line));
 }
 
-static void	hd_proc_readl(t_shell *sh, int write_fd, char *delim, int *flag)
+int	hd_is_delim(char *line, char *delim)
 {
-	int		expand;
-	char	*line;
+	if (ft_strlen(line) == ft_strlen(delim) && !ft_strncmp(line, delim,
+			ft_strlen(delim)))
+		return (1);
+	return (0);
+}
 
-	expand = (sh->state & HEREDOC_EXPAND) != 0;
-	setup_heredoc_signals();
-	while (1)
-	{
-		line = readline("> ");
-		if (g_received_signal == SIGINT)
-		{
-			if (line)
-				free(line);
-			break ;
-		}
-		if (!line)
-			break ;
-		if (ft_strlen(line) == ft_strlen(delim) && !ft_strncmp(line, delim,
-				ft_strlen(delim)))
-		{
-			free(line);
-			*flag = 1;
-			break ;
-		}
-		if (expand)
-			hd_write_expansion(sh, line, write_fd);
-		else
-			write(write_fd, line, ft_strlen(line));
-		write(write_fd, "\n", 1);
-		free(line);
-	}
+void	hd_output_line(t_shell *sh, int write_fd, char *line, int expand)
+{
+	if (expand)
+		hd_write_expansion(sh, line, write_fd);
+	else
+		write(write_fd, line, ft_strlen(line));
+	write(write_fd, "\n", 1);
 }
 
 void	heredoc_child(t_shell *sh, int write_fd, char *delim)
@@ -71,7 +54,8 @@ void	heredoc_child(t_shell *sh, int write_fd, char *delim)
 	int	received_delim;
 
 	received_delim = 0;
-	hd_proc_readl(sh, write_fd, delim, &received_delim);
+	setup_heredoc_signals();
+	hd_read_loop(sh, write_fd, delim, &received_delim);
 	if (g_received_signal == SIGINT)
 	{
 		close(write_fd);

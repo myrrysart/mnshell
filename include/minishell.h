@@ -1,3 +1,4 @@
+// heredoc flow helpers
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
@@ -280,6 +281,14 @@ void							buf_putc(t_buf *b, char c);
 void							buf_grow(t_buf *b, size_t need);
 void							buf_init(t_buf *b, t_shell *sh);
 
+int								heredoc_wait_and_restore(t_shell *sh, pid_t pid, int *st, struct sigaction *old_int);
+int								heredoc_status_result(t_shell *sh, int *pfd, int st, int w);
+int								heredoc_cancelled(t_shell *sh, int *pfd);
+int								heredoc_generic_error(int *pfd, int return_nbr);
+
+int								hd_is_delim(char *line, char *delim);
+void							hd_output_line(t_shell *sh, int write_fd, char *line, int expand);
+void							hd_read_loop(t_shell *sh, int write_fd, char *delim, int *flag);
 char							*get_env_var(t_shell *shell, char *key);
 void							unset_env_var(t_shell *shell, char *key);
 void							init_shell_env(t_shell *shell, char **av);
@@ -295,6 +304,8 @@ void							builtin_pwd(t_shell *shell, t_cmd_table *cmd);
 void							builtin_cd(t_shell *shell, t_cmd_table *cmd);
 void							builtin_export(t_shell *shell,
 									t_cmd_table *cmd);
+int								ascii_cmp(const char *a, const char *b);
+void							print_env_sorted_ascii(t_shell *shell);
 void							builtin_unset(t_shell *shell, t_cmd_table *cmd);
 char							*find_executable_path(char *cmd, char **env);
 
