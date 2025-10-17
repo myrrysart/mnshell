@@ -60,7 +60,6 @@ static void	process_command_line(t_shell *shell, char *line)
 void	run_shell(t_shell *shell)
 {
 	char	*line;
-	char	*raw_line;
 
 	while (!(shell->state & SHOULD_EXIT))
 	{
