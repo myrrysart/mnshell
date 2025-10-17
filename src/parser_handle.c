@@ -6,7 +6,7 @@
 /*   By: trupham <trupham@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/06 15:41:48 by trupham           #+#    #+#             */
-/*   Updated: 2025/10/14 18:20:00 by jyniemit         ###   ########.fr       */
+/*   Updated: 2025/10/16 19:43:56 by jyniemit         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -92,17 +92,23 @@ static bool	handle_append(t_shell *sh, t_cmd_table *cmd, t_token **tok)
 static bool	handle_heredoc(t_shell *sh, t_cmd_table *cmd, t_token **tok)
 {
 	sh->heredoc_index++;
+	int newfd;
 	strip_delimiter(sh, *tok);
 	if (cmd->fd_in != STDIN_FILENO)
 		close(cmd->fd_in);
-	cmd->fd_in = read_heredoc(sh);
-	if (cmd->fd_in == HEREDOC_INTERRUPTED)
-		return (sh->heredoc_index--, shell_abort_eval(sh, EXIT_SIGINT), false);
-	if (cmd->fd_in < 0)
+	newfd = read_heredoc(sh);
+	if (newfd == HEREDOC_INTERRUPTED)
+	{
+		sh->heredoc_index--;
+		shell_abort_eval(sh, EXIT_SIGINT);
+		return (false);
+	}
+	if (newfd < 0)
 		return (sh->heredoc_index--, shell_abort_eval(sh, EXIT_HEREDOC_ERROR),
 			false);
-	cmd->heredoc_index = sh->heredoc_index;
 	sh->state |= HAS_INPUT_REDIR;
+	cmd->fd_in = newfd;
+	cmd->heredoc_index = sh->heredoc_index;
 	*tok = (*tok)->next->next;
 	return (true);
 }

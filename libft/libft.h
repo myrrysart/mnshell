@@ -6,7 +6,7 @@
 /*   By: Jyniemit <jyniemit@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/30 16:30:50 by Jyniemit          #+#    #+#             */
-/*   Updated: 2025/10/07 19:15:15 by jyniemit         ###   ########.fr       */
+/*   Updated: 2025/10/17 10:29:51 by jyniemit         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,6 +53,7 @@ int					handle_hex_up(va_list args);
 
 // LIBFT functions:
 int					ft_atoi(const char *str);
+long long			ft_atoll(const char *str);
 void				ft_bzero(void *s, size_t n);
 void				*ft_calloc(size_t count, size_t size);
 int					ft_isalnum(int c);
