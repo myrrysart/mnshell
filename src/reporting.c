@@ -49,6 +49,8 @@ void	print_err(char *name, char *mes)
 
 void	errno_report(t_cmd_table *cmd)
 {
+	if (!cmd || !cmd->cmd_da || !cmd->cmd_da->items || !cmd->cmd_da->items[0])
+		return ;
 	if (errno == EACCES)
 		print_err(cmd->cmd_da->items[0], ": Permission denied");
 	else if (errno == ENOENT)
@@ -57,7 +59,7 @@ void	errno_report(t_cmd_table *cmd)
 		if (ft_strchr(cmd->cmd_da->items[0], '/'))
 			ft_putendl_fd(": No such file or directory", 2);
 		else
-			ft_putendl_fd(": Command not found.", 2);
+			ft_putendl_fd(": command not found", 2);
 	}
 	else if (errno == ENOTDIR)
 		print_err(cmd->cmd_da->items[0], ": Not a directory");
