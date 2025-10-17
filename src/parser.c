@@ -44,7 +44,9 @@ t_cmd_table	*parser_cmd_build_one(t_shell *shell, t_token *tok)
 		if (cmd->fd_in != STDIN_FILENO) { close(cmd->fd_in); cmd->fd_in = STDIN_FILENO; }
 		if (cmd->fd_out != STDOUT_FILENO) { close(cmd->fd_out); cmd->fd_out = STDOUT_FILENO; }
 	}
+	return (cmd);
 }
+
 static bool	parser_cmd_build_curr(t_shell *shell, t_cmd_table **curr,
 		t_token *token)
 {

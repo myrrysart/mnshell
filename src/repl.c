@@ -41,8 +41,6 @@ static void	parse_and_execute(t_shell *shell)
 		exec_pipeline(shell);
 	else
 		exec_no_pipe(shell);
-	if (shell->cmd)
-		close_cmd_fds(shell->cmd);
 	reset_flags(shell);
 }
 
@@ -77,7 +75,6 @@ void	run_shell(t_shell *shell)
 		}
 		if (!line)
 		{
-			close_cmd_fds(shell->cmd);
 			write(STDOUT_FILENO, "exit\n", 5);
 			shell->state |= SHOULD_EXIT;
 			break ;
