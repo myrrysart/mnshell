@@ -6,7 +6,7 @@
 #    By: jyniemit <jyniemit@student.hive.fi>        +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2025/10/03 12:12:38 by jyniemit          #+#    #+#              #
-#    Updated: 2025/10/17 15:31:25 by trupham          ###   ########.fr        #
+#    Updated: 2025/10/17 18:16:48 by jyniemit         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -35,6 +35,7 @@ SOURCES = \
 	builtin_echo.c \
 	builtin_exit.c \
 	builtin_export.c \
+	builtin_export_utils.c \
 	builtin_pwd.c \
 	builtin_unset.c \
 	environment.c \
@@ -48,6 +49,7 @@ SOURCES = \
 	heredoc_child.c \
 	heredoc_signals.c \
 	heredoc_buf_utils.c \
+	heredoc_flow.c \
 	lexer.c \
 	lexer_handle.c \
 	lexer_handle_quote.c \

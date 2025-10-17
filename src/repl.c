@@ -6,7 +6,7 @@
 /*   By: jyniemit <jyniemit@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/29 12:37:53 by jyniemit          #+#    #+#             */
-/*   Updated: 2025/10/17 14:55:18 by jyniemit         ###   ########.fr       */
+/*   Updated: 2025/10/17 17:06:38 by jyniemit         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,7 +32,8 @@ void	check_flag(t_shell *shell, t_token *t)
 
 static void	reset_flags(t_shell *shell)
 {
-	shell->state &= ~(HAS_PIPE | EVALUATING | HAS_QUOTE | HAS_INPUT_REDIR | HAS_OUTPUT_REDIR);
+	shell->state &= ~(HAS_PIPE | EVALUATING | HAS_QUOTE
+			| HAS_INPUT_REDIR | HAS_OUTPUT_REDIR);
 }
 
 static void	parse_and_execute(t_shell *shell)
@@ -61,28 +62,28 @@ static void	parse_and_execute(t_shell *shell)
 	reset_flags(shell);
 }
 
+static void	process_command_line(t_shell *shell, char *line)
+{
+	add_history(line);
+	ft_strlcpy(shell->command_line, line, ARG_MAX - 1);
+	shell->command_line[ARG_MAX - 1] = '\0';
+	shell->state |= EVALUATING;
+	shell_begin_frame(shell);
+	parse_and_execute(shell);
+	if (shell->cmd)
+		close_all_cmd_fds(shell->cmd);
+	shell_end_frame(shell);
+}
+
 void	run_shell(t_shell *shell)
 {
 	char	*line;
-	char	*raw_line;
 
 	while (!(shell->state & SHOULD_EXIT))
 	{
 		if (g_received_signal)
 			handle_signal(shell, g_received_signal);
-		if (isatty(fileno(stdin)))
-			line = readline(PROMPT);
-		else
-		{
-			raw_line = get_next_line(fileno(stdin));
-			if (!raw_line)
-			{
-				shell->state |= SHOULD_EXIT;
-				break ;
-			}
-			line = ft_strtrim(raw_line, "\n");
-			free(raw_line);
-		}
+		line = readline(PROMPT);
 		if (!line)
 		{
 			write(STDOUT_FILENO, "exit\n", 5);
@@ -90,17 +91,7 @@ void	run_shell(t_shell *shell)
 			break ;
 		}
 		if (*line)
-		{
-			add_history(line);
-			ft_strlcpy(shell->command_line, line, ARG_MAX - 1);
-			shell->command_line[ARG_MAX - 1] = '\0';
-			shell->state |= EVALUATING;
-			shell_begin_frame(shell);
-			parse_and_execute(shell);
-			if (shell->cmd)
-				close_all_cmd_fds(shell->cmd);
-			shell_end_frame(shell);
-		}
+			process_command_line(shell, line);
 		free(line);
 	}
 }
