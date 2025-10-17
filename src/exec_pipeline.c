@@ -6,7 +6,7 @@
 /*   By: trupham <trupham@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/19 11:46:53 by trupham           #+#    #+#             */
-/*   Updated: 2025/10/17 16:35:38 by trupham          ###   ########.fr       */
+/*   Updated: 2025/10/17 17:15:24 by trupham          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -105,7 +105,7 @@ void	exec_pipe_entry(t_shell *shell, t_cmd_table *cmd)
 		if (WIFSIGNALED(status) && WTERMSIG(status) == SIGINT)
 		{
 			clean_sig_pipe(shell);
-			shell_abort_eval(shell, EXIT_SIGINT);
+			sh_abort(shell, EXIT_SIGINT);
 			break ;
 		}
 		if (!(shell->state & EVALUATING))

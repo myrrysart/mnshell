@@ -6,7 +6,7 @@
 /*   By: jyniemit <jyniemit@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/15 15:24:35 by jyniemit          #+#    #+#             */
-/*   Updated: 2025/10/17 13:17:08 by jyniemit         ###   ########.fr       */
+/*   Updated: 2025/10/17 17:20:57 by trupham          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,6 +17,20 @@ static int	not_std(int fd)
 	if (fd > STDERR_FILENO)
 		return (1);
 	return (0);
+}
+
+void	clean_up_fds(t_cmd_table *cmd)
+{
+	if (cmd->fd_in != STDIN_FILENO)
+	{
+		close(cmd->fd_in);
+		cmd->fd_in = STDIN_FILENO;
+	}
+	if (cmd->fd_out != STDOUT_FILENO)
+	{
+		close(cmd->fd_out);
+		cmd->fd_out = STDOUT_FILENO;
+	}
 }
 
 void	child_cleanup_and_exit(t_shell *sh, t_cmd_table *cmd, int status)
