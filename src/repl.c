@@ -6,7 +6,7 @@
 /*   By: jyniemit <jyniemit@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/29 12:37:53 by jyniemit          #+#    #+#             */
-/*   Updated: 2025/10/17 18:40:41 by jyniemit         ###   ########.fr       */
+/*   Updated: 2025/10/17 22:15:02 by jyniemit         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -80,7 +80,11 @@ void	run_shell(t_shell *shell)
 	while (!(shell->state & SHOULD_EXIT))
 	{
 		if (g_received_signal)
+		{
 			handle_signal(shell, g_received_signal);
+			if (shell->state & SHOULD_EXIT)
+				break ;
+		}
 		line = readline(PROMPT);
 		if (!line)
 		{

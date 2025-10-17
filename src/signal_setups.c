@@ -6,7 +6,7 @@
 /*   By: jyniemit <jyniemit@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/06 13:18:42 by jyniemit          #+#    #+#             */
-/*   Updated: 2025/10/16 19:42:03 by jyniemit         ###   ########.fr       */
+/*   Updated: 2025/10/17 21:48:50 by jyniemit         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,15 +19,11 @@ void	signal_handler(int sig)
 	g_received_signal = sig;
 	if (sig == SIGINT)
 	{
-		if (rl_readline_state & RL_STATE_READCMD)
-		{
-			write(STDOUT_FILENO, "\n", 1);
-			rl_on_new_line();
-			rl_replace_line("", 0);
-			rl_redisplay();
-			return ;
-		}
 		write(STDOUT_FILENO, "\n", 1);
+		rl_replace_line("", 0);
+		rl_on_new_line();
+		rl_redisplay();
+		return ;
 	}
 }
 
@@ -67,8 +63,8 @@ void	init_signals(t_shell *shell)
 	struct sigaction	sa;
 
 	sigemptyset(&sa.sa_mask);
-	sa.sa_flags = SA_RESTART;
 	sa.sa_handler = signal_handler;
+	sa.sa_flags = SA_RESTART;
 	sigaction(SIGINT, &sa, &shell->saved_sigint);
 	sa.sa_handler = SIG_IGN;
 	sa.sa_flags = 0;

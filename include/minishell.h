@@ -6,7 +6,7 @@
 /*   By: jyniemit <jyniemit@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/29 13:40:26 by jyniemit          #+#    #+#             */
-/*   Updated: 2025/10/17 19:13:59 by jyniemit         ###   ########.fr       */
+/*   Updated: 2025/10/17 21:03:46 by jyniemit         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -83,8 +83,8 @@ typedef enum e_shell_code
 	EXIT_SIGTERM = 143,
 	EXIT_LINEFAIL = 65,
 	EXIT_SHELLINITFAIL = 66,
-	EXIT_PARSE_ERROR = 67,
-	EXIT_REDIRECT_ERROR = 68,
+	EXIT_PARSE_ERROR = 2,
+	EXIT_REDIRECT_ERROR = 1,
 	EXIT_CAN_RETRY = 123,
 	EXIT_HEREDOC_ERROR = 112,
 }								t_shell_code;

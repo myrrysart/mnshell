@@ -6,7 +6,7 @@
 /*   By: trupham <trupham@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/16 15:44:12 by trupham           #+#    #+#             */
-/*   Updated: 2025/10/17 18:42:25 by jyniemit         ###   ########.fr       */
+/*   Updated: 2025/10/17 21:07:52 by jyniemit         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,7 +33,7 @@ int	map_exec_errno_to_exit(int err)
 
 void	shell_update_code_from_status(t_shell *shell, int status)
 {
-	shell->last_code = status;
+	shell->code = status;
 	if (WIFEXITED(status))
 		shell->code = WEXITSTATUS(status);
 	else if (WIFSIGNALED(status))
