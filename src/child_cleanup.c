@@ -53,10 +53,10 @@ void	child_cleanup_and_exit(t_shell *sh, t_cmd_table *cmd, int status)
 	exit(status);
 }
 
-void close_all_cmd_fds(t_cmd_table *cmd)
+void	close_all_cmd_fds(t_cmd_table *cmd)
 {
-    while (cmd)
-    {
+	while (cmd)
+	{
 		if (not_std(cmd->fd_in))
 		{
 			close(cmd->fd_in);
@@ -67,6 +67,6 @@ void close_all_cmd_fds(t_cmd_table *cmd)
 			close(cmd->fd_out);
 			cmd->fd_out = STDOUT_FILENO;
 		}
-        cmd = cmd->next;
-    }
+		cmd = cmd->next;
+	}
 }

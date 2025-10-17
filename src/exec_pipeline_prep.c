@@ -16,8 +16,8 @@ void	close_pipe(t_pipe_line *pipe)
 {
 	close(pipe->pipe[RD]);
 	close(pipe->pipe[WR]);
-    pipe->pipe[WR] = -1;
-    pipe->pipe[RD] = -1;
+	pipe->pipe[WR] = -1;
+	pipe->pipe[RD] = -1;
 }
 
 static void	exec_first_prep(t_cmd_table *cmd, t_pipe_line *pipeline)

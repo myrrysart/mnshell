@@ -6,7 +6,7 @@
 /*   By: jyniemit <jyniemit@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/30 17:23:53 by jyniemit          #+#    #+#             */
-/*   Updated: 2025/10/17 14:54:36 by jyniemit         ###   ########.fr       */
+/*   Updated: 2025/10/17 15:50:36 by trupham          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,6 +18,13 @@ static void	exec_cleanup_parent(t_cmd_table *cmd)
 		close(cmd->fd_in);
 	if (cmd->fd_out != STDOUT_FILENO)
 		close(cmd->fd_out);
+}
+
+void fork_error(t_shell *shell, t_cmd_table *cmd)
+{
+	perror("fork");
+	shell->code = errno;
+	exec_cleanup_parent(cmd);
 }
 
 void	exec_no_pipe(t_shell *shell)
@@ -38,12 +45,7 @@ void	exec_no_pipe(t_shell *shell)
 	}
 	child = fork();
 	if (child < 0)
-	{
-		perror("fork");
-		shell->code = errno;
-		exec_cleanup_parent(cmd);
-		return ;
-	}
+		return (fork_error(shell, cmd));
 	if (child == 0)
 	{
 		setup_child_signals();
@@ -74,8 +76,6 @@ void	exec_no_pipe(t_shell *shell)
 	exec_cleanup_parent(cmd);
 }
 
-/*looping through the command table and execute each command
- */
 void	exec_pipeline(t_shell *shell)
 {
 	t_cmd_table	*cmd;

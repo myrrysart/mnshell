@@ -32,8 +32,7 @@ void	check_flag(t_shell *shell, t_token *t)
 
 static void	reset_flags(t_shell *shell)
 {
-	shell->state &= ~(HAS_PIPE | EVALUATING | HAS_QUOTE
-			| HAS_INPUT_REDIR | HAS_OUTPUT_REDIR);
+	shell->state &= ~(HAS_PIPE | EVALUATING | HAS_QUOTE | HAS_INPUT_REDIR | HAS_OUTPUT_REDIR);
 }
 
 static void	parse_and_execute(t_shell *shell)
@@ -98,8 +97,8 @@ void	run_shell(t_shell *shell)
 			shell->state |= EVALUATING;
 			shell_begin_frame(shell);
 			parse_and_execute(shell);
-      if (shell->cmd)
-        close_all_cmd_fds(shell->cmd);
+			if (shell->cmd)
+				close_all_cmd_fds(shell->cmd);
 			shell_end_frame(shell);
 		}
 		free(line);

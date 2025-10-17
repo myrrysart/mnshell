@@ -6,35 +6,11 @@
 /*   By: trupham <trupham@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/06 15:41:48 by trupham           #+#    #+#             */
-/*   Updated: 2025/10/17 13:44:06 by jyniemit         ###   ########.fr       */
+/*   Updated: 2025/10/17 15:29:53 by trupham          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
-
-/* redirect & heredoc helpers */
-static bool	ensure_next_is_word(t_token *tok)
-{
-	if (!tok || !tok->next)
-		return (false);
-	return (tok->next->type == WORD || tok->next->type == SQUOTE
-		|| tok->next->type == DQUOTE);
-}
-
-static void	print_redir_error(char *path)
-{
-	ft_putstr_fd(path, 2);
-	if (errno == EACCES)
-		ft_putendl_fd(": Permission denied", 2);
-	else if (errno == ENOENT)
-		ft_putendl_fd(": No such file or directory", 2);
-	else if (errno == EISDIR)
-		ft_putendl_fd(": Is a directory", 2);
-	else if (errno == ENOTDIR)
-		ft_putendl_fd(": Not a directory", 2);
-	else
-		ft_putendl_fd(": Redirection error", 2);
-}
 
 static bool	handle_redirect_out(t_shell *sh, t_cmd_table *cmd, t_token **tok)
 {
@@ -91,9 +67,9 @@ static bool	handle_append(t_shell *sh, t_cmd_table *cmd, t_token **tok)
 
 static bool	handle_heredoc(t_shell *sh, t_cmd_table *cmd, t_token **tok)
 {
-	sh->heredoc_index++;
-	int newfd;
+	int	newfd;
 
+	sh->heredoc_index++;
 	strip_delimiter(sh, *tok);
 	if (cmd->fd_in > STDERR_FILENO)
 	{
