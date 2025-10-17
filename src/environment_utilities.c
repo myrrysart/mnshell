@@ -56,7 +56,11 @@ char	*expand_dollar_variable(t_shell *shell, const char *var_name)
 		return (arena_strdup(sh_work_arena(shell), ""));
 	if (var_name[0] == '?' && var_name[1] == '\0')
 	{
-		tmp = ft_itoa(shell->code);
+		if (var_name[0] == '?' && var_name[1] == '\0'
+				&& g_received_signal == SIGINT && shell->state & EVALUATING)
+			tmp = ft_itoa(130);
+		else
+			tmp = ft_itoa(shell->code);
 		if (!tmp)
 			return (arena_strdup(sh_work_arena(shell), "0"));
 		arena_copy = arena_strdup(sh_work_arena(shell), tmp);
