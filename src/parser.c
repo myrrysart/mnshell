@@ -123,12 +123,12 @@ t_cmd_table	*parser_cmd_build_many(t_shell *shell, t_token *token)
 	while (token && token->type != PIPE)
 		token = token->next;
 	if (!parser_cmd_build_main(shell, cmd_table_head, token))
-		null_return_and_close_fds(cmd_table_head);
+		return (null_return_and_close_fds(cmd_table_head));
 	curr = cmd_table_head;
 	while (curr->next)
 		curr = curr->next;
 	curr->cmd_pos = LAST;
 	if (!(shell->state & EVALUATING))
-		null_return_and_close_fds(cmd_table_head);
+		return (null_return_and_close_fds(cmd_table_head));
 	return (cmd_table_head);
 }
