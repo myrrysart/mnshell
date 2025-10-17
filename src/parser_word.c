@@ -6,7 +6,7 @@
 /*   By: jyniemit <jyniemit@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/07 18:53:40 by jyniemit          #+#    #+#             */
-/*   Updated: 2025/10/10 11:28:31 by trupham          ###   ########.fr       */
+/*   Updated: 2025/10/17 16:45:07 by trupham          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -79,11 +79,6 @@ bool	handle_word(t_shell *sh, t_cmd_table *cmd, t_token **tok, int *first)
 	if (*first && cmd->cmd_type == EXTERNAL)
 	{
 		str_append(sh_work_arena(sh), str, get_path(sh, rm_quote(sh, *tok)));
-		if (str->len == 0)
-		{
-			*tok = (*tok)->next;
-			return (true);
-		}
 		da_append(sh_work_arena(sh), cmd->cmd_da, str->str);
 		*tok = (*tok)->next;
 	}
