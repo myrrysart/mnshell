@@ -6,7 +6,7 @@
 /*   By: jyniemit <jyniemit@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/16 13:05:20 by jyniemit          #+#    #+#             */
-/*   Updated: 2025/10/17 18:00:00 by jyniemit         ###   ########.fr       */
+/*   Updated: 2025/10/18 04:49:24 by jyniemit         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -64,7 +64,7 @@ int	heredoc_generic_error(int *pfd, int return_nbr)
 
 int	read_heredoc(t_shell *sh)
 {
-	int				pfd[2] = { -1, -1 };
+	int					pfd[2];
 	pid_t				pid;
 	int					st;
 	struct sigaction	old_int;
