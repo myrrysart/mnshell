@@ -31,7 +31,7 @@ static void	exec_child_prep(t_shell *shell, t_cmd_table *cmd)
 {
 	struct stat	st;
 
-	setup_child_signals();
+	sig_mode_set(SIGMODE_CHILD);
 	exec_apply_redirs(cmd);
 	if (cmd->cmd_da && cmd->cmd_da->count == 1
 		&& ft_strncmp(cmd->cmd_da->items[0], ".", 2) == 0)
@@ -72,7 +72,7 @@ void	exec_no_pipe(t_shell *sh)
 		errno_report(sh->cmd);
 		child_cleanup_and_exit(sh, sh->cmd, map_exec_errno_to_exit(errno));
 	}
-	waitpid(child, &status, 0);
+	waitpid_retry(child, &status);
 	shell_update_code_from_status(sh, status);
 	exec_cleanup_parent(sh->cmd);
 }

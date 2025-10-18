@@ -14,7 +14,7 @@
 
 static void	reset_flags(t_shell *shell)
 {
-	shell->state &= ~(HAS_PIPE | EVALUATING | HAS_QUOTE 
+	shell->state &= ~(HAS_PIPE | EVALUATING | HAS_QUOTE
 			| HAS_INPUT_REDIR | HAS_OUTPUT_REDIR);
 }
 
@@ -50,11 +50,11 @@ static void	process_command_line(t_shell *shell, char *line)
 	ft_strlcpy(shell->command_line, line, ARG_MAX - 1);
 	shell->command_line[ARG_MAX - 1] = '\0';
 	shell->state |= EVALUATING;
-	set_eval_signal_mode(shell);
+	sig_mode_set(SIGMODE_EVAL);
 	shell_begin_frame(shell);
 	parse_and_execute(shell);
 	shell_end_frame(shell);
-	set_prompt_signal_mode(shell);
+	sig_mode_set(SIGMODE_PROMPT);
 }
 
 void	run_shell(t_shell *shell)
@@ -65,7 +65,7 @@ void	run_shell(t_shell *shell)
 	{
 		if (reset_signal(shell))
 			break ;
-		set_prompt_signal_mode(shell);
+		sig_mode_set(SIGMODE_PROMPT);
 		line = readline(PROMPT);
 		if (reset_signal(shell))
 		{

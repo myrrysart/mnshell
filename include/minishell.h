@@ -6,7 +6,7 @@
 /*   By: jyniemit <jyniemit@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/29 13:40:26 by jyniemit          #+#    #+#             */
-/*   Updated: 2025/10/18 01:05:03 by jyniemit         ###   ########.fr       */
+/*   Updated: 2025/10/18 02:11:46 by jyniemit         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,6 +50,14 @@
 # endif // DA_CAP
 
 extern volatile sig_atomic_t	g_received_signal;
+
+typedef enum e_sig_mode
+{
+	SIGMODE_PROMPT = 0,
+	SIGMODE_EVAL,
+	SIGMODE_HEREDOC_CHILD,
+	SIGMODE_CHILD
+}								t_sig_mode;
 
 // arena prototype
 # ifndef ARENA_CAP
@@ -247,16 +255,16 @@ typedef struct s_buf
 }								t_buf;
 
 void							init_signals(t_shell *shell);
-void							setup_child_signals(void);
-void							setup_heredoc_signals(void);
-void							set_prompt_signal_mode(t_shell *shell);
-void							set_eval_signal_mode(t_shell *shell);
+void							sig_mode_set(t_sig_mode mode);
 void							init_shell(char **av, char **env,
 									t_shell *shell);
 void							run_shell(t_shell *shell);
 void							check_flag(t_shell *shell, t_token *t);
 int								reset_signal(t_shell *shell);
 void							handle_signal(t_shell *shell, int sig);
+int								waitpid_retry(pid_t pid, int *st);
+void							sh_sig_prompt(int sig);
+void							sh_sig_hdoc_child(int sig);
 
 // frame arena helpers
 void							shell_begin_frame(t_shell *shell);
@@ -330,9 +338,7 @@ t_cmd_table						*parser_cmd_build_many(t_shell *shell,
 bool							parser_is_syntax_correct(t_token *token);
 void							parser_cmd_type(t_shell *shell,
 									t_cmd_table *cmd, t_token *token);
-bool							parser_is_syntax_correct(t_token *token);
-void							parser_cmd_type(t_shell *shell,
-									t_cmd_table *cmd, t_token *token);
+
 void							strip_delimiter(t_shell *shell, t_token *token);
 bool							handle_token(t_shell *shell, t_cmd_table *cmd,
 									t_token **tok, int *first);
@@ -375,6 +381,8 @@ void							sh_abort(t_shell *shell, t_shell_code code);
 void							shell_update_code_from_status(t_shell *shell,
 									int status);
 int								map_exec_errno_to_exit(int err);
+void							exec_pipeline_wait_and_finalize(t_shell *shell,
+									pid_t last_child, int count);
 
 // execution
 void							builtin_select(t_shell *shell,

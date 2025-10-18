@@ -44,6 +44,7 @@ SOURCES = \
 	exec_others.c \
 	exec_utils.c \
 	exec_pipeline_prep.c \
+	exec_pipeline_wait.c \
 	heredoc.c \
 	heredoc_utils.c \
 	heredoc_child.c \
@@ -68,6 +69,7 @@ SOURCES = \
 	shell_init.c \
 	shell_environment.c \
 	signals.c \
+	signals_manager.c \
 	signal_setups.c \
 	str_builder.c \
 	exec_redirs.c \
