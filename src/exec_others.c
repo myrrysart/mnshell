@@ -6,19 +6,11 @@
 /*   By: jyniemit <jyniemit@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/30 17:23:53 by jyniemit          #+#    #+#             */
-/*   Updated: 2025/10/17 16:27:55 by trupham          ###   ########.fr       */
+/*   Updated: 2025/10/18 04:11:40 by jyniemit         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
-
-static void	exec_cleanup_parent(t_cmd_table *cmd)
-{
-	if (cmd->fd_in != STDIN_FILENO)
-		close(cmd->fd_in);
-	if (cmd->fd_out != STDOUT_FILENO)
-		close(cmd->fd_out);
-}
 
 void	fork_error(t_shell *shell, t_cmd_table *cmd)
 {
@@ -27,26 +19,11 @@ void	fork_error(t_shell *shell, t_cmd_table *cmd)
 	exec_cleanup_parent(cmd);
 }
 
-static void	exec_child_prep(t_shell *shell, t_cmd_table *cmd)
+static void	exec_guard(t_shell *sh)
 {
-	struct stat	st;
-
-	sig_mode_set(SIGMODE_CHILD);
-	exec_apply_redirs(cmd);
-	if (cmd->cmd_da && cmd->cmd_da->count == 1
-		&& ft_strncmp(cmd->cmd_da->items[0], ".", 2) == 0)
-	{
-		ft_putendl_fd(".: filename argument required", 2);
-		child_cleanup_and_exit(shell, cmd, EXIT_BUILTIN_MISUSE);
-	}
-	if (cmd->cmd_da && cmd->cmd_da->items[0]
-		&& stat(cmd->cmd_da->items[0], &st) == 0 && S_ISDIR(st.st_mode))
-	{
-		print_err(cmd->cmd_da->items[0], ": Is a directory");
-		child_cleanup_and_exit(shell, cmd, EXIT_CMD_NOT_EXECUTABLE);
-	}
-	if (!cmd->cmd_da || !cmd->cmd_da->items[0])
-		child_cleanup_and_exit(shell, cmd, OK);
+	exec_cleanup_parent(sh->cmd);
+	sh->code = 0;
+	return ;
 }
 
 void	exec_no_pipe(t_shell *sh)
@@ -57,11 +34,7 @@ void	exec_no_pipe(t_shell *sh)
 	if (sh->cmd->cmd_type != EXTERNAL)
 		return (exec_builtin_with_redirs(sh, sh->cmd));
 	if (!sh->cmd->cmd_da || sh->cmd->cmd_da->count == 0)
-	{
-		exec_cleanup_parent(sh->cmd);
-		sh->code = 0;
-		return ;
-	}
+		exec_guard(sh);
 	child = fork();
 	if (child < 0)
 		return (fork_error(sh, sh->cmd));
@@ -74,18 +47,8 @@ void	exec_no_pipe(t_shell *sh)
 	}
 	waitpid_retry(child, &status);
 	shell_update_code_from_status(sh, status);
+	if (WIFSIGNALED(status) && WTERMSIG(status) == SIGINT
+		&& isatty(STDIN_FILENO))
+		write(STDOUT_FILENO, "\n", 1);
 	exec_cleanup_parent(sh->cmd);
-}
-
-void	exec_pipeline(t_shell *shell)
-{
-	t_cmd_table	*cmd;
-
-	cmd = shell->cmd;
-	exec_pipe_entry(shell, cmd);
-	if (shell->pipeline && shell->pipeline->tmp_fd != -1)
-	{
-		close(shell->pipeline->tmp_fd);
-		shell->pipeline->tmp_fd = -1;
-	}
 }

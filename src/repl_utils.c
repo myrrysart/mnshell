@@ -30,6 +30,26 @@ void	check_flag(t_shell *shell, t_token *t)
 	}
 }
 
+void	reset_flags(t_shell *shell)
+{
+	shell->state &= ~(HAS_PIPE | EVALUATING | HAS_QUOTE
+			| HAS_INPUT_REDIR | HAS_OUTPUT_REDIR);
+}
+
+void	process_command_line(t_shell *shell, char *line)
+{
+	if (!(shell->state & NON_INTERACTIVE))
+		add_history(line);
+	ft_strlcpy(shell->command_line, line, ARG_MAX - 1);
+	shell->command_line[ARG_MAX - 1] = '\0';
+	shell->state |= EVALUATING;
+	sig_mode_set(SIGMODE_EVAL);
+	shell_begin_frame(shell);
+	repl_parse_and_execute(shell);
+	shell_end_frame(shell);
+	sig_mode_set(SIGMODE_PROMPT);
+}
+
 int	reset_signal(t_shell *shell)
 {
 	if (g_received_signal)

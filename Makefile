@@ -45,6 +45,7 @@ SOURCES = \
 	exec_utils.c \
 	exec_pipeline_prep.c \
 	exec_pipeline_wait.c \
+	exec_single_utils.c \
 	heredoc.c \
 	heredoc_utils.c \
 	heredoc_child.c \

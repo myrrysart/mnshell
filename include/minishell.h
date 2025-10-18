@@ -6,7 +6,7 @@
 /*   By: jyniemit <jyniemit@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/29 13:40:26 by jyniemit          #+#    #+#             */
-/*   Updated: 2025/10/18 02:11:46 by jyniemit         ###   ########.fr       */
+/*   Updated: 2025/10/18 04:12:09 by jyniemit         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -259,6 +259,10 @@ void							sig_mode_set(t_sig_mode mode);
 void							init_shell(char **av, char **env,
 									t_shell *shell);
 void							run_shell(t_shell *shell);
+void							repl_parse_and_execute(t_shell *shell);
+void							process_command_line(t_shell *shell,
+									char *line);
+void							reset_flags(t_shell *shell);
 void							check_flag(t_shell *shell, t_token *t);
 int								reset_signal(t_shell *shell);
 void							handle_signal(t_shell *shell, int sig);
@@ -383,6 +387,9 @@ void							shell_update_code_from_status(t_shell *shell,
 int								map_exec_errno_to_exit(int err);
 void							exec_pipeline_wait_and_finalize(t_shell *shell,
 									pid_t last_child, int count);
+void							exec_cleanup_parent(t_cmd_table *cmd);
+void							exec_child_prep(t_shell *shell,
+									t_cmd_table *cmd);
 
 // execution
 void							builtin_select(t_shell *shell,

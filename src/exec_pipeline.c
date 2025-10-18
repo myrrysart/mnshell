@@ -102,3 +102,16 @@ void	exec_pipe_entry(t_shell *shell, t_cmd_table *cmd)
 	}
 	exec_pipeline_wait_and_finalize(shell, last_child, count);
 }
+
+void	exec_pipeline(t_shell *shell)
+{
+	t_cmd_table	*cmd;
+
+	cmd = shell->cmd;
+	exec_pipe_entry(shell, cmd);
+	if (shell->pipeline && shell->pipeline->tmp_fd != -1)
+	{
+		close(shell->pipeline->tmp_fd);
+		shell->pipeline->tmp_fd = -1;
+	}
+}
