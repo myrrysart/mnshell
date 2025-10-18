@@ -12,13 +12,7 @@
 
 #include "minishell.h"
 
-static void	reset_flags(t_shell *shell)
-{
-	shell->state &= ~(HAS_PIPE | EVALUATING | HAS_QUOTE 
-			| HAS_INPUT_REDIR | HAS_OUTPUT_REDIR);
-}
-
-static void	parse_and_execute(t_shell *shell)
+void	repl_parse_and_execute(t_shell *shell)
 {
 	t_lexer	l;
 	t_token	*t;
@@ -44,42 +38,61 @@ static void	parse_and_execute(t_shell *shell)
 	reset_flags(shell);
 }
 
-static void	process_command_line(t_shell *shell, char *line)
+static int	repl_step_non_interactive(t_shell *shell)
 {
-	add_history(line);
-	ft_strlcpy(shell->command_line, line, ARG_MAX - 1);
-	shell->command_line[ARG_MAX - 1] = '\0';
-	shell->state |= EVALUATING;
-	set_eval_signal_mode(shell);
-	shell_begin_frame(shell);
-	parse_and_execute(shell);
-	shell_end_frame(shell);
-	set_prompt_signal_mode(shell);
+	char	*line;
+	size_t	len;
+
+	sig_mode_set(SIGMODE_PROMPT);
+	line = get_next_line(STDIN_FILENO);
+	if (reset_signal(shell))
+		return (free(line), 0);
+	if (!line)
+		return (shell->state |= SHOULD_EXIT, 0);
+	if (*line)
+	{
+		len = ft_strlen(line);
+		if (len && line[len - 1] == '\n')
+			line[len - 1] = '\0';
+		if (*line)
+			process_command_line(shell, line);
+	}
+	free(line);
+	return (1);
+}
+
+static int	repl_step_interactive(t_shell *shell)
+{
+	char	*line;
+
+	sig_mode_set(SIGMODE_PROMPT);
+	line = readline(PROMPT);
+	if (reset_signal(shell))
+		return (free(line), 0);
+	if (!line)
+	{
+		write(STDOUT_FILENO, "exit\n", 5);
+		shell->state |= SHOULD_EXIT;
+		return (0);
+	}
+	if (*line)
+		process_command_line(shell, line);
+	free(line);
+	return (1);
 }
 
 void	run_shell(t_shell *shell)
 {
-	char	*line;
-
 	while (!(shell->state & SHOULD_EXIT))
 	{
 		if (reset_signal(shell))
 			break ;
-		set_prompt_signal_mode(shell);
-		line = readline(PROMPT);
-		if (reset_signal(shell))
+		if (shell->state & NON_INTERACTIVE)
 		{
-			free(line);
-			break ;
+			if (!repl_step_non_interactive(shell))
+				break ;
 		}
-		if (!line)
-		{
-			write(STDOUT_FILENO, "exit\n", 5);
-			shell->state |= SHOULD_EXIT;
+		else if (!repl_step_interactive(shell))
 			break ;
-		}
-		if (*line)
-			process_command_line(shell, line);
-		free(line);
 	}
 }

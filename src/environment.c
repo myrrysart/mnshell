@@ -17,7 +17,10 @@ static void	expand_env_capacity(t_shell *shell)
 	char	**new_env;
 	int		i;
 
-	shell->env_capacity *= 2;
+	if (shell->env_capacity == 0)
+		shell->env_capacity = 8;
+	else
+		shell->env_capacity *= 2;
 	new_env = arena_alloc(shell->arena, sizeof(char *) * (shell->env_capacity
 				+ 1));
 	i = -1;

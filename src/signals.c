@@ -6,7 +6,7 @@
 /*   By: jyniemit <jyniemit@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/29 14:30:38 by jyniemit          #+#    #+#             */
-/*   Updated: 2025/10/17 22:13:28 by jyniemit         ###   ########.fr       */
+/*   Updated: 2025/10/18 02:10:44 by jyniemit         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,4 +43,23 @@ void	handle_signal(t_shell *shell, int sig)
 		shell->state |= SHOULD_EXIT;
 	}
 	g_received_signal = 0;
+}
+
+void	sh_sig_hdoc_child(int sig)
+{
+	g_received_signal = sig;
+	if (sig == SIGINT)
+		close(STDIN_FILENO);
+}
+
+void	sh_sig_prompt(int sig)
+{
+	g_received_signal = sig;
+	if (sig == SIGINT && isatty(STDIN_FILENO))
+	{
+		write(STDOUT_FILENO, "\n", 1);
+		rl_replace_line("", 0);
+		rl_on_new_line();
+		rl_redisplay();
+	}
 }
