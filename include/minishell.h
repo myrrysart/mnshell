@@ -6,7 +6,7 @@
 /*   By: jyniemit <jyniemit@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/29 13:40:26 by jyniemit          #+#    #+#             */
-/*   Updated: 2025/10/18 04:12:09 by jyniemit         ###   ########.fr       */
+/*   Updated: 2025/10/20 11:28:58 by jyniemit         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,24 +16,13 @@
 
 // PATH_MAX
 # include <errno.h>
-# include <limits.h>
-// STDIN_FILENO, STDOUT_FILENO, STDERR_FILENO
-# include <unistd.h>
 // readline
 # include <readline/history.h>
 # include <readline/readline.h>
-# include <stdio.h>
-# include <stdlib.h>
-// sigaction & signals
-# include <signal.h>
-// uint typedefinitions
-# include <stdint.h>
 // our own libraries
 # include "libft.h"
 // parser libraries
 # include <fcntl.h>
-# include <stdbool.h>
-# include <stddef.h>
 # include <sys/stat.h>
 # include <sys/wait.h>
 # define MAX_PROCESSES 30587
@@ -130,17 +119,12 @@ typedef struct s_shell
 {
 	t_shell_state				state;
 	t_shell_code				code;
-	int							last_code;
 
 	char						command_line[ARG_MAX];
-	char						*args[ARG_MAX];
-	int							argc;
 
 	t_token						*token;
 	t_cmd_table					*cmd;
 	t_pipe_line					*pipeline;
-	pid_t						process_id[MAX_PROCESSES];
-	int							process_exit_status[MAX_PROCESSES];
 
 	char						**original_env;
 	char						**heap_env;
@@ -150,7 +134,6 @@ typedef struct s_shell
 
 	int							heredoc_index;
 	int							heredoc_count;
-	int							heredoc_fd;
 	char						heredoc_delim[MAX_HEREDOCS][256];
 	struct sigaction			saved_sigint;
 	struct sigaction			saved_sigquit;
@@ -343,7 +326,6 @@ bool							parser_is_syntax_correct(t_token *token);
 void							parser_cmd_type(t_shell *shell,
 									t_cmd_table *cmd, t_token *token);
 
-void							strip_delimiter(t_shell *shell, t_token *token);
 bool							handle_token(t_shell *shell, t_cmd_table *cmd,
 									t_token **tok, int *first);
 bool							handle_word(t_shell *sh, t_cmd_table *cmd,
