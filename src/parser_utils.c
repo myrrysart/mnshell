@@ -6,33 +6,11 @@
 /*   By: trupham <trupham@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/06 15:39:47 by trupham           #+#    #+#             */
-/*   Updated: 2025/10/07 18:47:29 by jyniemit         ###   ########.fr       */
+/*   Updated: 2025/10/20 10:44:48 by jyniemit         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
-
-void	strip_delimiter(t_shell *sh, t_token *token)
-{
-	int	i;
-	int	j;
-
-	i = 0;
-	j = 0;
-	sh->state |= HEREDOC_EXPAND;
-	while (token->next->content[i] && j < 255)
-	{
-		if (token->next->content[i] == '\'' || token->next->content[i] == '"')
-			sh->state &= ~HEREDOC_EXPAND;
-		else
-		{
-			sh->heredoc_delim[sh->heredoc_index][j] = token->next->content[i];
-			j++;
-		}
-		i++;
-	}
-	sh->heredoc_delim[sh->heredoc_index][j] = '\0';
-}
 
 void	parser_cmd_type(t_shell *shell, t_cmd_table *cmd, t_token *token)
 {
