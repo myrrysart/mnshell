@@ -6,7 +6,7 @@
 /*   By: jyniemit <jyniemit@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/17 19:12:46 by jyniemit          #+#    #+#             */
-/*   Updated: 2025/10/20 11:12:09 by jyniemit         ###   ########.fr       */
+/*   Updated: 2025/10/21 11:31:51 by jyniemit         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,6 +50,7 @@ static t_token	*strip_delimiter(t_shell *sh, t_token *token)
 	j = 0;
 	sh->state |= HEREDOC_EXPAND;
 	walker = token->next;
+	ft_bzero(sh->heredoc_delim[sh->heredoc_index], 255);
 	while (walker && (walker->type == WORD || walker->type == SQUOTE
 			|| walker->type == DQUOTE))
 	{
